@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Route } from "next";
 import { APPS } from "@/lib/apps";
 
 export default function Page() {
@@ -22,7 +23,7 @@ export default function Page() {
               <p className="mt-3 text-gray-700">{app.description}</p>
               <div className="mt-4 flex gap-3">
                 <a className="btn btn-primary" href={app.href} target="_blank" rel="noreferrer">Open</a>
-                <Link className="btn" href="/sign-in">Sign in</Link>
+                <Link className="btn" href={"/sign-in" as Route}>Sign in</Link>
               </div>
             </div>
           ))}

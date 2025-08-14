@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Route } from "next";
+
 export default function Page() {
   return (
     <section className="section">
@@ -44,7 +47,7 @@ export default function Page() {
               <ul className="mt-4 list-disc pl-6 text-gray-700">
                 {pkg.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              <a href="/sign-in" className="btn btn-primary mt-6">Get started</a>
+              <Link href={"/sign-in" as Route} className="btn btn-primary mt-6">Get started</Link>
             </div>
           ))}
         </div>

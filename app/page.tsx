@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Route } from "next";
+
 export default function Page() {
   return (
     <section className="section">
@@ -12,8 +15,8 @@ export default function Page() {
               Sign in once at Xenco Labs to access the entire ecosystem.
             </p>
             <div className="mt-6 flex gap-3">
-              <a href="/apps" className="btn btn-primary">Explore Apps</a>
-              <a href="/sign-in" className="btn">Sign in</a>
+              <Link href={"/apps" as Route} className="btn btn-primary">Explore Apps</Link>
+              <Link href={"/sign-in" as Route} className="btn">Sign in</Link>
             </div>
           </div>
           <div className="card">

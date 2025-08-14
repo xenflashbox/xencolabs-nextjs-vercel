@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { Route } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,17 +16,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body>
           <header className="border-b">
             <div className="container flex h-16 items-center justify-between">
-              <Link href="/" className="font-semibold text-xl">Xenco Labs</Link>
+              <Link href={"/" as Route} className="font-semibold text-xl">Xenco Labs</Link>
               <nav className="flex items-center gap-6">
-                <Link className="link" href="/apps">Apps</Link>
-                <Link className="link" href="/services">Services</Link>
-                <Link className="link" href="/labs/c1">C1 Lab</Link>
+                <Link className="link" href={"/apps" as Route}>Apps</Link>
+                <Link className="link" href={"/services" as Route}>Services</Link>
+                <Link className="link" href={"/labs/c1" as Route}>C1 Lab</Link>
                 <SignedOut>
-                  <Link className="btn" href="/sign-in">Sign in</Link>
+                  <Link className="btn" href={"/sign-in" as Route}>Sign in</Link>
                 </SignedOut>
                 <SignedIn>
-                  <Link className="btn" href="/dashboard">Dashboard</Link>
-                  <UserButton afterSignOutUrl="/" />
+                  <Link className="btn" href={"/dashboard" as Route}>Dashboard</Link>
+                  <UserButton afterSignOutUrl={"/" as Route} />
                 </SignedIn>
               </nav>
             </div>
