@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { C1Chat } from "@/lib/c1-mock";
+import { C1Chat } from "@/lib/c1-sdk-wrapper";
 
 export default function Page() {
   const [apiKey, setApiKey] = useState<string | null>(null);
