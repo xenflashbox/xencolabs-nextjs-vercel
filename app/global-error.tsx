@@ -1,7 +1,6 @@
 "use client";
- 
 import { useEffect } from "react";
- 
+
 export default function GlobalError({
   error,
   reset,
@@ -10,40 +9,34 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Global error:", error);
+    console.error("Global Error:", error);
   }, [error]);
- 
+
   return (
-    <html>
+    <html lang="en">
       <body>
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="p-8 bg-red-50 border border-red-200 rounded-lg text-center max-w-md">
-            <h2 className="text-2xl font-bold text-red-700">
-              Something went wrong!
-            </h2>
-            <p className="mt-4 text-red-600">
-              Sorry, we encountered a critical error.
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+          <div className="w-full max-w-md rounded-lg border border-red-100 bg-white p-8 shadow-md">
+            <h2 className="mb-4 text-2xl font-bold text-red-600">Application Error</h2>
+            <p className="mb-6 text-gray-700">
+              An unexpected error has occurred. We've been notified and are working to fix it.
             </p>
-            <div className="mt-6">
-              <button
-                onClick={reset}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                Try again
-              </button>
-            </div>
-            <div className="mt-6 p-4 bg-white rounded border text-left text-sm">
-              <p className="font-medium">Error information:</p>
-              <p className="font-mono text-xs mt-1 text-gray-600">
-                {error.message || "An unexpected error occurred"}
+            <button
+              onClick={() => reset()}
+              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Try Again
+            </button>
+            
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-6 border-t border-gray-200 pt-4">
+                <p className="text-sm text-gray-500">Debug information:</p>
+                <p className="mt-2 text-xs text-gray-500">{error.message}</p>
                 {error.digest && (
-                  <span className="block mt-1 text-gray-500">
-                    Digest: {error.digest}
-                  </span>
+                  <p className="mt-1 text-xs text-gray-500">Digest: {error.digest}</p>
                 )}
-              </p>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </body>
