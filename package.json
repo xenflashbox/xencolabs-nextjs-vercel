@@ -39,6 +39,5 @@
   "resolutions": {
     "**/zustand": "^4.3.0",
     "**/lucide-react": "^0.263.0"
-  },
-
+  }
 }
