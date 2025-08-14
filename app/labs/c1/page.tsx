@@ -1,66 +1,68 @@
 "use client";
-import { useEffect, useState } from "react";
-// Use the mock implementation directly to avoid SDK import issues
-import { C1Chat } from "@/lib/c1-mock";
-import { ErrorBoundary } from "@/lib/ErrorBoundary";
-
-// Loading fallback component
-function ChatLoading() {
-  return (
-    <div className="p-4 text-center">
-      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" 
-           role="status">
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-      <p className="mt-2">Loading C1 Chat...</p>
-    </div>
-  );
-}
+import { useState } from "react";
 
 export default function Page() {
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    // For demo, always set a placeholder API key
-    setApiKey('demo-api-key');
-    
-    // Mark as loaded after a small delay to ensure client-side hydration
-    const timer = setTimeout(() => setIsLoaded(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
+  const [message, setMessage] = useState("");
+  
   return (
-    <ErrorBoundary>
-      <section className="section">
-        <div className="container">
-          <h1 className="text-3xl font-bold">C1 Lab</h1>
-          <p className="mt-2 text-gray-700">
-            A minimal C1 Chat surface for quick experiments.
+    <section className="section">
+      <div className="container">
+        <h1 className="text-3xl font-bold">C1 Lab</h1>
+        <p className="mt-2 text-gray-700">
+          A sandbox for AI experimentation.
+        </p>
+        
+        <div className="bg-amber-50 p-4 rounded-lg my-6 border border-amber-200">
+          <h2 className="text-lg font-semibold text-amber-800">Coming Soon</h2>
+          <p className="mt-2 text-amber-700">
+            The C1 SDK integration is temporarily disabled while we resolve compatibility issues with Next.js App Router.
           </p>
-          <div className="bg-blue-50 p-4 rounded-lg mb-4 border border-blue-200">
-            <p className="text-blue-700 font-semibold">Currently using mock implementation</p>
-            <p className="text-sm text-blue-600 mt-1">
-              The real C1 SDK integration will be available soon.
+          <p className="mt-2 text-amber-700">
+            Check back soon for updates or contact us for more information.
+          </p>
+        </div>
+        
+        <div className="card mt-6">
+          <div className="flex flex-col space-y-4">
+            <h3 className="text-xl font-medium">Leave a message</h3>
+            <p className="text-gray-600">
+              Have suggestions for what you'd like to see in the C1 Lab? Let us know!
             </p>
-          </div>
-          
-          <div className="card mt-6">
-            {!isLoaded ? (
-              <ChatLoading />
-            ) : (
-              <C1Chat
-                apiKey={apiKey || 'demo-key'}
-                title="Xenco Labs — C1 Sandbox"
-                instructions="You are a helpful AI lab assistant."
-                initialMessages={[{ role: "user", content: "Hello C1! Can you explain what you can do?" }]}
-              />
-            )}
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-3 min-h-[120px]"
+              placeholder="Your feedback or suggestions..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button 
+              className="btn btn-primary self-start"
+              onClick={() => {
+                alert("Thanks for your feedback! We'll review it soon.");
+                setMessage("");
+              }}
+            >
+              Submit Feedback
+            </button>
           </div>
         </div>
-      </section>
-    </ErrorBoundary>
+        
+        {/* 
+          C1 SDK INTEGRATION PLACEHOLDER
+          The code below is commented out but preserved for future reimplementation
+          
+          import { C1Chat } from "@/lib/c1-sdk-wrapper";
+          // or import { C1Chat } from "@/lib/c1-mock";
+          
+          <div className="card mt-6">
+            <C1Chat
+              apiKey={process.env.NEXT_PUBLIC_THESYS_API_KEY || 'demo-key'}
+              title="Xenco Labs — C1 Sandbox"
+              instructions="You are a helpful AI lab assistant."
+              initialMessages={[{ role: "user", content: "Hello C1! Can you explain what you can do?" }]}
+            />
+          </div>
+        */}
+      </div>
+    </section>
   );
 }

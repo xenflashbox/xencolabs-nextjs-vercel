@@ -1,6 +1,6 @@
 "use client";
 import * as React from 'react';
-import { ErrorBoundary } from './ErrorBoundary';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 // Import the mock implementation to use as a fallback
 import { C1Chat as MockC1Chat } from './c1-mock';

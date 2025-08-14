@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <nav className="flex items-center gap-6">
                 <Link className="link" href={"/apps" as Route}>Apps</Link>
                 <Link className="link" href={"/services" as Route}>Services</Link>
-                <Link className="link" href={"/labs/c1" as Route}>C1 Lab</Link>
+                {/* C1 Lab temporarily removed */}
                 <SignedOut>
                   <Link className="btn" href={"/sign-in" as Route}>Sign in</Link>
                 </SignedOut>

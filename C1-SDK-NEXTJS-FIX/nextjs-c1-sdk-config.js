@@ -1,11 +1,8 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: { typedRoutes: true },
   webpack: (config, { isServer }) => {
-    // These aliases were needed for C1 SDK compatibility
-    // Keeping them commented out in case we need to restore the SDK later
-    /*
+    // Fix for zustand/react/shallow compatibility
     config.resolve.alias = {
       ...config.resolve.alias,
       'zustand/react/shallow': 'zustand/shallow',
@@ -14,7 +11,6 @@ const nextConfig = {
 
     // Fix for lucide-react/dynamicIconImports
     config.resolve.alias['lucide-react/dynamicIconImports'] = 'lucide-react';
-    */
 
     // Additional fallbacks that might be needed
     if (!isServer) {
@@ -30,8 +26,14 @@ const nextConfig = {
     return config;
   },
   
-  // Temporarily commented out for C1 SDK removal
-  // transpilePackages: ['@thesis/c1-sdk'],
+  // Transpile the C1 SDK if needed
+  transpilePackages: ['@thesis/c1-sdk'],
+  
+  // Enable experimental features if required by C1 SDK
+  experimental: {
+    // serverActions: true, // Uncomment if using Server Actions
+    // appDir: true, // Uncomment if using App Router
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

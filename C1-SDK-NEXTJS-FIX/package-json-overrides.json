@@ -1,0 +1,22 @@
+{
+  "name": "your-nextjs-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "@thesis/c1-sdk": "^1.0.0",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.3.0",
+    "lucide-react": "^0.263.0"
+  },
+  "overrides": {
+    "@thesis/c1-sdk": {
+      "zustand": "$zustand",
+      "lucide-react": "$lucide-react"
+    }
+  },
+  "resolutions": {
+    "**/zustand": "^4.3.0",
+    "**/lucide-react": "^0.263.0"
+  }
+}

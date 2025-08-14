@@ -9,7 +9,7 @@ export default authMiddleware({
     "/sign-up(.*)",
     "/apps",
     "/services",
-    "/labs/c1",
+    // "/labs/c1", - temporarily removed
     "/api/health"
   ],
 });

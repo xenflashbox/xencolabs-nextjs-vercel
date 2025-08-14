@@ -11,6 +11,7 @@ export * from '@thesis/c1-sdk';
 
 // If the SDK expects specific icon imports, you can add them here
 export { 
+  // Add any specific icons the C1 SDK might expect
   Search,
   User,
   Settings,
