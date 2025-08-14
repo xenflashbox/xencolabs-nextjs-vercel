@@ -1,19 +1,8 @@
 "use client";
-import { useEffect, useState, Suspense } from "react";
-import { C1Chat } from "@/lib/c1-sdk-wrapper";
+import { useEffect, useState } from "react";
+// Use the mock implementation directly to avoid SDK import issues
+import { C1Chat } from "@/lib/c1-mock";
 import { ErrorBoundary } from "@/lib/ErrorBoundary";
-
-// Separate component for the chat to help with hydration issues
-function ChatComponent({ apiKey }: { apiKey: string }) {
-  return (
-    <C1Chat
-      apiKey={apiKey}
-      title="Xenco Labs — C1 Sandbox"
-      instructions="You are a helpful AI lab assistant."
-      initialMessages={[{ role: "user", content: "Hello C1! Can you explain what you can do?" }]}
-    />
-  );
-}
 
 // Loading fallback component
 function ChatLoading() {
@@ -35,8 +24,8 @@ export default function Page() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Set API key
-    setApiKey(process.env.NEXT_PUBLIC_THESYS_API_KEY ?? null);
+    // For demo, always set a placeholder API key
+    setApiKey('demo-api-key');
     
     // Mark as loaded after a small delay to ensure client-side hydration
     const timer = setTimeout(() => setIsLoaded(true), 500);
@@ -49,18 +38,25 @@ export default function Page() {
         <div className="container">
           <h1 className="text-3xl font-bold">C1 Lab</h1>
           <p className="mt-2 text-gray-700">
-            A minimal C1 Chat surface for quick experiments. Provide a valid C1 API key in <code>.env</code>.
+            A minimal C1 Chat surface for quick experiments.
           </p>
+          <div className="bg-blue-50 p-4 rounded-lg mb-4 border border-blue-200">
+            <p className="text-blue-700 font-semibold">Currently using mock implementation</p>
+            <p className="text-sm text-blue-600 mt-1">
+              The real C1 SDK integration will be available soon.
+            </p>
+          </div>
           
           <div className="card mt-6">
-            {!apiKey ? (
-              <p className="text-gray-700">Set <code>NEXT_PUBLIC_THESYS_API_KEY</code> in your environment to enable this page.</p>
-            ) : !isLoaded ? (
+            {!isLoaded ? (
               <ChatLoading />
             ) : (
-              <Suspense fallback={<ChatLoading />}>
-                <ChatComponent apiKey={apiKey} />
-              </Suspense>
+              <C1Chat
+                apiKey={apiKey || 'demo-key'}
+                title="Xenco Labs — C1 Sandbox"
+                instructions="You are a helpful AI lab assistant."
+                initialMessages={[{ role: "user", content: "Hello C1! Can you explain what you can do?" }]}
+              />
             )}
           </div>
         </div>
