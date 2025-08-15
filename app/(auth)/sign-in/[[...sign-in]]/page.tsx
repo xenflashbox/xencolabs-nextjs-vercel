@@ -38,9 +38,8 @@ export default function SignInPage({
         // Keep routing path stable
         routing="path"
         path="/sign-in"
-        signInUrl={`/sign-in${key ? `?from=${key}` : ''}`}
-        // If you want sign-up link to carry the tag along:
-        signUpUrl={`/sign-up${key ? `?from=${key}` : ''}`}
+        // Use afterSignUpUrl to direct to sign-up with the from param
+        afterSignUpUrl={`/sign-up${key ? `?from=${key}` : ''}`}
       />
     </div>
   )

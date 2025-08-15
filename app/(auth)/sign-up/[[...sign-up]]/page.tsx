@@ -38,8 +38,8 @@ export default function SignUpPage({
         // Keep routing path stable
         routing="path"
         path="/sign-up"
-        // If you want sign-up link to carry the tag along:
-        signUpUrl={`/sign-up${key ? `?from=${key}` : ''}`}
+        // Use afterSignInUrl to direct users after successful signup
+        afterSignInUrl={`/dashboard${key ? `?from=${key}` : ''}`}
       />
     </div>
   )
