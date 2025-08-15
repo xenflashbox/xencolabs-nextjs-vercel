@@ -5,7 +5,7 @@
 ### 1. Update app/layout.tsx on satellite:
 
 ```tsx
-import { ClerkProvider } from '@clerk/nextjs'
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Point to primary domain for auth
@@ -13,18 +13,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const primarySignUpUrl = 'https://xencolabs.com/sign-up'
 
   return (
-    <ClerkProvider
-      isSatellite
-      domain={(url) => url.host}
-      signInUrl={primarySignInUrl}
-      signUpUrl={primarySignUpUrl}
-    >
-      <html lang="en">
-        <body>
+    <html lang="en">
+      <body>
+        <ClerkProvider
+          isSatellite
+          domain={(url) => url.host}
+          signInUrl={primarySignInUrl}
+          signUpUrl={primarySignUpUrl}
+        >
+          <header className="border-b">
+            <div className="container flex h-16 items-center justify-between">
+              <div className="font-semibold text-xl">Satellite App</div>
+              <nav className="flex items-center gap-6">
+                <SignedOut>
+                  {/* CRITICAL: Use SignInButton or absolute links, NOT local /sign-in */}
+                  <SignInButton mode="modal">
+                    <button className="btn">Sign In</button>
+                  </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                  <UserButton afterSignOutUrl="/" />
+                </SignedIn>
+              </nav>
+            </div>
+          </header>
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   )
 }
 ```
@@ -33,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ```tsx
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import type { NextRequest } from 'next/server'
 
 const isPublicRoute = createRouteMatcher(['/'])
 
@@ -43,9 +60,19 @@ const options = {
   domain: 'https://[SATELLITE_DOMAIN]', // Replace with actual domain
 }
 
-export default clerkMiddleware(async (auth, req) => {
-  if (isPublicRoute(req)) return
-  await auth.protect()
+// FIXED: Do NOT use auth.protect() - it doesn't exist
+export default clerkMiddleware((auth, req: NextRequest) => {
+  // For public routes, allow access
+  if (isPublicRoute(req)) {
+    return
+  }
+  
+  // For protected routes, check authentication
+  const { userId } = auth()
+  if (!userId) {
+    // Redirect to primary domain for sign-in
+    return auth().redirectToSignIn()
+  }
 }, options)
 
 export const config = {
@@ -69,7 +96,7 @@ CLERK_SECRET_KEY=sk_test_... (or sk_live_...)
 
 For each satellite domain, make sure to:
 
-1. Go to Clerk Dashboard í Configure í Domains
+1. Go to Clerk Dashboard ÔøΩ Configure ÔøΩ Domains
 2. Add each satellite domain (resumecoach.me, blogcraft.app, etc.)
 3. Set xencolabs.com as the primary domain
 4. Enable satellite domain configuration
@@ -136,18 +163,41 @@ const options = {
 }
 ```
 
+## üö® CRITICAL REQUIREMENTS FROM CLERK SUPPORT:
+
+1. **ClerkProvider MUST be inside `<body>`, not wrapping `<html>`**
+   - ‚ùå WRONG: `<ClerkProvider><html>...`
+   - ‚úÖ CORRECT: `<html><body><ClerkProvider>...`
+
+2. **DO NOT use local `/sign-in` links on satellites**
+   - ‚ùå WRONG: `<Link href="/sign-in">Sign In</Link>`
+   - ‚úÖ CORRECT: Use `<SignInButton />` or absolute links to primary
+
+3. **DO NOT use `auth.protect()` - it doesn't exist**
+   - ‚ùå WRONG: `await auth.protect()`
+   - ‚úÖ CORRECT: Use `const { userId } = auth()` and `auth().redirectToSignIn()`
+
+4. **Pick ONE apex style and use consistently**
+   - Either `xencolabs.com` OR `www.xencolabs.com`
+   - Do NOT mix both
+
+5. **Add safety redirect pages on satellites**
+
 ## Key Points:
 
 1. **Primary Domain (xencolabs.com)**: 
    - Uses explicit `signInUrl` and `signUpUrl` properties
    - Lists all satellites in `allowedRedirectOrigins`
    - Does NOT use `isSatellite` property
+   - ClerkProvider MUST be inside `<body>`
 
 2. **Satellite Domains**: 
    - Must use `isSatellite: true`
    - Must specify the correct `domain` property
    - Must point `signInUrl` and `signUpUrl` to primary domain
    - Use `domain={(url) => url.host}` in layout for dynamic domain detection
+   - ClerkProvider MUST be inside `<body>`
+   - Use SignInButton or absolute links only
 
 3. **Environment Variables**: 
    - Same CLERK keys across all domains
@@ -162,8 +212,8 @@ const options = {
 ## Troubleshooting:
 
 If authentication still fails:
-1. Check Clerk Dashboard í Configure í Domains
+1. Check Clerk Dashboard ÔøΩ Configure ÔøΩ Domains
 2. Verify all domains are properly added
 3. Ensure environment variables are identical
 4. Check browser console for CORS errors
-5. Test auth flow: satellite í primary í back to satellite
+5. Test auth flow: satellite ÔøΩ primary ÔøΩ back to satellite

@@ -1,0 +1,443 @@
+import React, { useState } from 'react';
+import { ArrowRight, CheckCircle, Star, Clock, DollarSign, AlertCircle, Layers, MousePointer, Zap, Code, Globe, Download, Users, BarChart3, X, ChevronDown } from 'lucide-react';
+
+const LandingCraftLanding = () => {
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState('saas');
+
+  const templates = {
+    saas: { name: 'SaaS Launch', conversions: '12.4%' },
+    course: { name: 'Course Sales', conversions: '9.8%' },
+    lead: { name: 'Lead Generation', conversions: '15.2%' },
+    event: { name: 'Event Registration', conversions: '11.6%' }
+  };
+
+  const faqs = [
+    {
+      question: "How is this different from Wix or Squarespace?",
+      answer: "Those are website builders trying to do everything. We do one thing perfectly: high-converting landing pages. Our AI is trained specifically on landing page copy that converts, not generic website content."
+    },
+    {
+      question: "Do I need any technical skills?",
+      answer: "If you can write an email and drag a mouse, you're overqualified. Our AI wizard literally asks you questions in plain English and builds your page."
+    },
+    {
+      question: "What if I don't like what the AI creates?",
+      answer: "Everything is editable! Think of AI as your talented intern - it does the heavy lifting, you add the finishing touches. Plus, you can regenerate content unlimited times."
+    },
+    {
+      question: "Is the hosting really included?",
+      answer: "Yes! Professional plan and up include Vercel hosting - the same infrastructure that powers Netflix and TikTok. Your pages will load lightning fast, globally."
+    }
+  ];
+
+  return (
+    <div className="bg-gray-900 text-white min-h-screen">
+      
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-gray-900/90 backdrop-blur-md border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-8">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
+                  <Layers className="text-white w-5 h-5" />
+                </div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  Landing Craft
+                </span>
+                <span className="text-sm text-gray-500 ml-2">by Xenco Labs</span>
+              </div>
+              <div className="hidden md:flex items-center space-x-6">
+                <a href="#how" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">How it Works</a>
+                <a href="#templates" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">Templates</a>
+                <a href="#pricing" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">Pricing</a>
+                <a href="/" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">← Xenco Labs</a>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all">
+                Build Your Page Free
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 bg-blue-900/30 border border-blue-500/30 text-blue-300 rounded-full text-sm font-medium mb-8">
+              <Clock className="w-4 h-4 mr-2" />
+              AI Landing Pages That Actually Convert
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              Stop Losing Customers to
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"> DIY Disasters</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+              While you struggle with WordPress or pay $3,000 to agencies, your competitors are launching professional landing pages in minutes with AI. Join 2,847+ solopreneurs who finally cracked the code.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl text-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2">
+                Create My Page Now
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button className="px-8 py-4 border-2 border-blue-500 text-blue-400 hover:bg-blue-500/10 rounded-xl text-lg font-semibold transition-all hover:scale-105">
+                Watch 2-Min Demo
+              </button>
+            </div>
+
+            <div className="text-gray-400 text-sm">
+              Join smart solopreneurs building pages that convert: 
+              <span className="text-gray-300"> Digital Marketers • SaaS Founders • Course Creators • Consultants</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pain Points Section */}
+      <section className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Your Competition Launched While You Were
+              <span className="text-red-400"> Still Choosing Colors</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30 text-center">
+              <DollarSign className="w-12 h-12 text-red-400 mb-4 mx-auto" />
+              <h3 className="text-3xl font-bold text-red-400 mb-2">$3,000</h3>
+              <p className="text-xl font-semibold mb-2">Spent on a landing page that converts at 0.5%?</p>
+              <p className="text-gray-400">Designer made it pretty, not profitable</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30 text-center">
+              <Clock className="w-12 h-12 text-red-400 mb-4 mx-auto" />
+              <h3 className="text-3xl font-bold text-red-400 mb-2">3 Weeks</h3>
+              <p className="text-xl font-semibold mb-2">WordPress nightmare?</p>
+              <p className="text-gray-400">Lost 21 potential customers while you debugged</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30 text-center">
+              <Users className="w-12 h-12 text-red-400 mb-4 mx-auto" />
+              <h3 className="text-3xl font-bold text-red-400 mb-2">Ghosted</h3>
+              <p className="text-xl font-semibold mb-2">Freelancer disappeared mid-project?</p>
+              <p className="text-gray-400">Your launch delayed, momentum killed</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30 text-center">
+              <AlertCircle className="w-12 h-12 text-red-400 mb-4 mx-auto" />
+              <h3 className="text-3xl font-bold text-red-400 mb-2">DIY</h3>
+              <p className="text-xl font-semibold mb-2">Page looks like... well, DIY?</p>
+              <p className="text-gray-400">Visitors bounce in 3 seconds flat</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Launch Your Landing Page in
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"> 5 Minutes. </span>
+              Not 5 Days.
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              AI writes your copy. Drag-and-drop builds your design. One click publishes to the web. No coding, no complexity, no creative block.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">AI Content Wizard</h3>
+              <p className="text-gray-400">Answer simple questions. AI generates professional copy that converts.</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Download className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">AI Image Generation</h3>
+              <p className="text-gray-400">Stop searching stock photos. DALL-E creates custom images instantly.</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <MousePointer className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Drag-Drop Simplicity</h3>
+              <p className="text-gray-400">Mix and match components like LEGOs. No coding required.</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Globe className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">One-Click Publishing</h3>
+              <p className="text-gray-400">Hit publish. You're live on Vercel's lightning-fast servers.</p>
+            </div>
+          </div>
+
+          {/* Interactive Builder Demo */}
+          <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">Two Ways to Build. Zero Ways to Fail.</h3>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-gray-900 rounded-xl p-6 border border-blue-500/30">
+                <h4 className="text-xl font-bold mb-4 text-blue-400">Wizard Mode</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Perfect for beginners</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>AI guides every step</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Professional results in minutes</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-gray-900 rounded-xl p-6 border border-cyan-500/30">
+                <h4 className="text-xl font-bold mb-4 text-cyan-400">Builder Mode</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Full creative control</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Component library access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Advanced customization</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="text-center mt-8">
+              <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all">
+                Try Both Modes Free
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Templates Section */}
+      <section id="templates" className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Templates That Actually Convert
+            </h2>
+            <p className="text-xl text-gray-300">
+              Designed by pros. Customized by AI. Perfected by you.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-4 mb-12">
+            {Object.entries(templates).map(([key, template]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedTemplate(key)}
+                className={`p-6 rounded-xl border-2 transition-all ${
+                  selectedTemplate === key
+                    ? 'border-blue-500 bg-blue-500/10'
+                    : 'border-gray-700 hover:border-gray-600'
+                }`}
+              >
+                <h3 className="font-bold mb-2">{template.name}</h3>
+                <p className="text-2xl font-bold text-blue-400">{template.conversions}</p>
+                <p className="text-sm text-gray-400">avg conversion</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="bg-gray-900 rounded-2xl p-12 border border-gray-700 text-center">
+            <h3 className="text-2xl font-bold mb-4">Preview: {templates[selectedTemplate].name} Template</h3>
+            <p className="text-gray-400 mb-8">Each template includes 15+ customizable sections optimized for {templates[selectedTemplate].conversions} conversions</p>
+            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+              Browse All Templates
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how" className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              From Idea to Live in 3 Simple Steps
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                1
+              </div>
+              <h3 className="text-xl font-bold mb-3">Choose Your Style</h3>
+              <p className="text-gray-400">Pick from 8 premium templates optimized for conversions</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                2
+              </div>
+              <h3 className="text-xl font-bold mb-3">AI Does the Heavy Lifting</h3>
+              <p className="text-gray-400">Answer questions, AI writes copy and generates images instantly</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                3
+              </div>
+              <h3 className="text-xl font-bold mb-3">Customize & Launch</h3>
+              <p className="text-gray-400">Drag-drop to perfect it, then go live with one click</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Real Solopreneurs. Real Results.
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "I launched my coaching landing page during my lunch break. Literally 20 minutes from idea to live. Already converted 3 clients. This is insane!"
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center font-bold">
+                  MS
+                </div>
+                <div>
+                  <p className="font-semibold">Maria Santos</p>
+                  <p className="text-sm text-gray-400">Business Coach</p>
+                  <p className="text-sm text-blue-400">12 clients in first month</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "Spent $2,500 on my last agency landing page. Built a better one myself with Landing Craft for $25. The AI copy actually sounds like me, not corporate robot speak."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center font-bold">
+                  DC
+                </div>
+                <div>
+                  <p className="font-semibold">David Chen</p>
+                  <p className="text-sm text-gray-400">SaaS Founder</p>
+                  <p className="text-sm text-blue-400">47% higher conversions</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "The AI image generation alone is worth the price. No more generic stock photos - every image is unique to my brand. My designer friends think I hired a pro!"
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center font-bold">
+                  JW
+                </div>
+                <div>
+                  <p className="font-semibold">Jessica Williams</p>
+                  <p className="text-sm text-gray-400">Digital Marketer</p>
+                  <p className="text-sm text-blue-400">5 pages, 5 campaigns, 5 wins</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Pricing That Makes Sense
+            </h2>
+            <p className="text-xl text-gray-300">
+              No setup fees. No surprises. Cancel anytime.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {/* Starter */}
+            <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-4">Starter</h3>
+              <div className="text-3xl font-bold mb-4">Free</div>
+              <ul className="space-y-3 mb-6 text-sm">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                  <span>1 page/month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                  <span>Basic AI content</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <X className="w-4 h-4 text-red-500 mt-0.5" />
+                  <span className="text-gray-500">No AI images</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                  <span>48hr preview</span>
+                </li>
+              </ul>
+              <button className="w-full px-4 py-2 border border-gray-600 text-gray-300 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                Start Free
+              </button>
+            </div>
+
+            {/* Solopreneur */}
+            <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-4">Solopreneur</h3>
+              <div className="text-3xl font-bold mb-4">$24.95<span className="text-sm text-gray-400">/mo</span></div>
+              <ul className="space-y-3 mb-6 text-sm">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                  <span>5 pages/month</span

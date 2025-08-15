@@ -1,0 +1,648 @@
+import React, { useState } from 'react';
+import { ArrowRight, CheckCircle, Star, Zap, DollarSign, Clock, RefreshCw, Layers, BarChart3, Users, Target, TrendingUp, AlertCircle, X } from 'lucide-react';
+
+const PromptMarketerLanding = () => {
+  const [selectedTool, setSelectedTool] = useState('social');
+
+  const tools = {
+    social: {
+      name: 'Social Media Suite',
+      tools: ['Instagram Posts', 'Twitter Threads', 'LinkedIn Articles', 'Facebook Ads', 'TikTok Scripts'],
+      demo: 'Generate a week of social content in 5 minutes'
+    },
+    email: {
+      name: 'Email Marketing',
+      tools: ['Welcome Series', 'Sales Sequences', 'Newsletters', 'Cart Abandonment', 'Re-engagement'],
+      demo: 'Create entire email funnels that convert'
+    },
+    ads: {
+      name: 'Ad Copy Generator',
+      tools: ['Google Ads', 'Facebook Ads', 'Display Ads', 'YouTube Scripts', 'Native Ads'],
+      demo: 'A/B test 10 ad variations instantly'
+    },
+    content: {
+      name: 'Content Marketing',
+      tools: ['Blog Outlines', 'Case Studies', 'White Papers', 'eBooks', 'Webinar Scripts'],
+      demo: 'Turn one idea into 20 pieces of content'
+    }
+  };
+
+  return (
+    <div className="bg-gray-900 text-white min-h-screen">
+      
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-gray-900/90 backdrop-blur-md border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-8">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-3">
+                  <Zap className="text-white w-5 h-5" />
+                </div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  PromptMarketer
+                </span>
+                <span className="text-sm text-gray-500 ml-2">by Xenco Labs</span>
+              </div>
+              <div className="hidden md:flex items-center space-x-6">
+                <a href="#tools" className="text-gray-300 hover:text-purple-400 font-medium transition-colors">Tools</a>
+                <a href="#pricing" className="text-gray-300 hover:text-purple-400 font-medium transition-colors">Pricing</a>
+                <a href="#testimonials" className="text-gray-300 hover:text-purple-400 font-medium transition-colors">Results</a>
+                <a href="/" className="text-gray-300 hover:text-purple-400 font-medium transition-colors">← Xenco Labs</a>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all">
+                Replace Your Agency
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 bg-purple-900/30 border border-purple-500/30 text-purple-300 rounded-full text-sm font-medium mb-8">
+              <Zap className="w-4 h-4 mr-2" />
+              40+ Marketing Tools in One Platform
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              Fire Your
+              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"> $5,000/Month </span>
+              Marketing Agency
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+              While agencies take weeks and deliver cookie-cutter campaigns, generate professional marketing content for every channel in minutes
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl text-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2">
+                Replace Your Agency Today
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button className="px-8 py-4 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10 rounded-xl text-lg font-semibold transition-all hover:scale-105">
+                See All 40+ Tools
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-8 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>No contracts</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>Cancel anytime</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>Results in minutes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pain Points Section */}
+      <section className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Marketing Agencies Are
+              <span className="text-red-400"> Robbing You Blind</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30">
+              <DollarSign className="w-12 h-12 text-red-400 mb-4" />
+              <h3 className="text-xl font-bold mb-3">$5,000/month for recycled templates?</h3>
+              <p className="text-gray-400">Same strategies they use for 50 other clients. Zero originality.</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30">
+              <Clock className="w-12 h-12 text-red-400 mb-4" />
+              <h3 className="text-xl font-bold mb-3">2-week turnaround for one campaign?</h3>
+              <p className="text-gray-400">By then, the opportunity is gone and competitors won.</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30">
+              <RefreshCw className="w-12 h-12 text-red-400 mb-4" />
+              <h3 className="text-xl font-bold mb-3">Need a small change? That'll be extra.</h3>
+              <p className="text-gray-400">Nickel and dimed for every revision. Costs spiral out of control.</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30">
+              <Layers className="w-12 h-12 text-red-400 mb-4" />
+              <h3 className="text-xl font-bold mb-3">Different tool for every channel?</h3>
+              <p className="text-gray-400">Juggling 10+ subscriptions is chaos. Nothing works together.</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-2xl text-gray-300">
+              There's a better way to do marketing...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              One Platform.
+              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"> Every Marketing Tool. </span>
+              Instant Results.
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              PromptMarketer gives you 40+ AI-powered marketing tools that work together. Create entire campaigns across every channel in the time it takes to brief an agency.
+            </p>
+          </div>
+
+          {/* Interactive Tool Demo */}
+          <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
+            <div className="grid md:grid-cols-4 gap-4 mb-8">
+              {Object.entries(tools).map(([key, tool]) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedTool(key)}
+                  className={`p-4 rounded-xl font-semibold transition-all ${
+                    selectedTool === key
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                      : 'bg-gray-900 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {tool.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="bg-gray-900 rounded-xl p-8">
+              <h3 className="text-2xl font-bold mb-4">{tools[selectedTool].name}</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-purple-400">Tools Included:</h4>
+                  <ul className="space-y-2">
+                    {tools[selectedTool].tools.map((tool, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span>{tool}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-purple-400">See it in action:</h4>
+                  <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                    <p className="text-gray-300">{tools[selectedTool].demo}</p>
+                    <button className="mt-4 text-purple-400 hover:text-purple-300 font-medium flex items-center gap-2">
+                      Watch demo <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Value Props */}
+      <section className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-12">
+            <div>
+              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Complete Campaigns in 10 Minutes</h3>
+              <ul className="space-y-3 text-gray-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Social posts for every platform</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Email sequences that convert</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Ad copy that stops the scroll</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <div className="w-16 h-16 bg-pink-600 rounded-2xl flex items-center justify-center mb-6">
+                <Target className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Consistency Across Every Channel</h3>
+              <ul className="space-y-3 text-gray-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>One message, adapted perfectly</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Brand voice maintained</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>No more mixed messaging</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-6">
+                <BarChart3 className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">A/B Test Everything Instantly</h3>
+              <ul className="space-y-3 text-gray-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Generate 10 variations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Test what works</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                  <span>Scale winners immediately</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section id="testimonials" className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Marketers Who Fired Their Agency
+            </h2>
+            <p className="text-xl text-gray-300">And never looked back</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "Replaced my $4,000/month agency with PromptMarketer. Better campaigns, instant delivery, and I keep full control. Saved $45,000 this year alone."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center font-bold">
+                  JK
+                </div>
+                <div>
+                  <p className="font-semibold">Jennifer Kim</p>
+                  <p className="text-sm text-gray-400">E-commerce Director</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "Agency wanted 2 weeks for a product launch campaign. Did it myself in 30 minutes with PromptMarketer. Campaign converted at 3.2x industry average."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center font-bold">
+                  MD
+                </div>
+                <div>
+                  <p className="font-semibold">Marcus Davis</p>
+                  <p className="text-sm text-gray-400">SaaS Founder</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-lg mb-6 text-gray-300">
+                "The email sequences alone paid for the entire year. Generated $67K from one automated campaign that took 15 minutes to create."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center font-bold">
+                  AT
+                </div>
+                <div>
+                  <p className="font-semibold">Amanda Torres</p>
+                  <p className="text-sm text-gray-400">Marketing Consultant</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-6 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Pricing That Makes Agencies
+              <span className="text-purple-400"> Look Ridiculous</span>
+            </h2>
+            <p className="text-xl text-gray-300">
+              Get more tools, better results, for 98% less cost
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Starter */}
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-700">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">Starter</h3>
+                <div className="text-5xl font-bold text-purple-400 mb-2">$99<span className="text-lg text-gray-400">/mo</span></div>
+                <p className="text-gray-400">Perfect for solopreneurs</p>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>20+ essential tools</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>1,000 generations/month</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>3 brand voices</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Basic analytics</span>
+                </li>
+              </ul>
+              
+              <button className="w-full px-6 py-3 border-2 border-purple-500 text-purple-400 rounded-lg font-semibold hover:bg-purple-500/10 transition-colors">
+                Start Free Trial
+              </button>
+            </div>
+
+            {/* Professional */}
+            <div className="bg-gray-900 rounded-2xl p-8 border-2 border-purple-500 relative transform scale-105">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-bold">
+                  REPLACES $5K AGENCY
+                </span>
+              </div>
+              
+              <div className="text-center mb-8 mt-4">
+                <h3 className="text-2xl font-bold mb-4">Professional</h3>
+                <div className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                  $299<span className="text-lg text-gray-400">/mo</span>
+                </div>
+                <p className="text-gray-400">For growing businesses</p>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>All 40+ tools</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Unlimited generations</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Unlimited brand voices</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Advanced analytics</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Priority support</span>
+                </li>
+              </ul>
+              
+              <button className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all">
+                Start Free Trial
+              </button>
+            </div>
+
+            {/* Enterprise */}
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-700">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
+                <div className="text-5xl font-bold text-purple-400 mb-2">Custom</div>
+                <p className="text-gray-400">For agencies & teams</p>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Everything in Pro</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>White-label options</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>API access</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Custom integrations</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Dedicated success manager</span>
+                </li>
+              </ul>
+              
+              <button className="w-full px-6 py-3 border-2 border-gray-600 text-gray-300 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                Contact Sales
+              </button>
+            </div>
+          </div>
+
+          {/* Comparison */}
+          <div className="mt-16 bg-gray-900 rounded-2xl p-8 border border-gray-700">
+            <h3 className="text-2xl font-bold mb-8 text-center">The Math Is Simple</h3>
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div>
+                <p className="text-gray-400 mb-2">Traditional Agency</p>
+                <p className="text-3xl font-bold text-red-400">$5,000/mo</p>
+                <p className="text-sm text-gray-500 mt-2">2-week delivery</p>
+              </div>
+              <div>
+                <p className="text-gray-400 mb-2">Freelancer Team</p>
+                <p className="text-3xl font-bold text-yellow-400">$3,000/mo</p>
+                <p className="text-sm text-gray-500 mt-2">1-week delivery</p>
+              </div>
+              <div>
+                <p className="text-gray-400 mb-2">PromptMarketer</p>
+                <p className="text-3xl font-bold text-green-400">$299/mo</p>
+                <p className="text-sm text-gray-500 mt-2">10-minute delivery</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Questions Agencies Don't Want You to Ask
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-3">How is this different from ChatGPT?</h3>
+              <p className="text-gray-300">
+                ChatGPT is a general AI. PromptMarketer is 40+ specialized marketing tools with proven templates, brand voice training, and multi-channel optimization. It's like comparing a Swiss Army knife to a professional toolkit.
+              </p>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-3">Will it really sound like my brand?</h3>
+              <p className="text-gray-300">
+                Yes. You train the AI on your brand voice, tone, and style. Upload examples of your best content, and it learns to write exactly like you (but faster).
+              </p>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-3">What if I need help or strategy?</h3>
+              <p className="text-gray-300">
+                Each tool includes strategy guides and best practices. Plus, our community of 5,000+ marketers shares tips, templates, and wins daily. Better than any agency "account manager."
+              </p>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-xl font-bold mb-3">Can I white-label this for clients?</h3>
+              <p className="text-gray-300">
+                Enterprise plan includes white-label options. Many agencies use PromptMarketer behind the scenes to deliver client work faster and keep higher margins.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 px-6 bg-gradient-to-r from-purple-900/50 to-pink-900/50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Your Agency Is Praying You Don't Find This Page
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Join 5,000+ marketers who've ditched agencies for AI that actually delivers
+          </p>
+          
+          <div className="bg-gray-900 rounded-2xl p-8 border border-purple-500/30 max-w-2xl mx-auto mb-8">
+            <div className="grid md:grid-cols-3 gap-4 text-center mb-6">
+              <div>
+                <p className="text-3xl font-bold text-purple-400">94%</p>
+                <p className="text-sm text-gray-400">Cost savings vs agency</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-purple-400">10min</p>
+                <p className="text-sm text-gray-400">Average campaign time</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-purple-400">5,000+</p>
+                <p className="text-sm text-gray-400">Happy marketers</p>
+              </div>
+            </div>
+          </div>
+          
+          <button className="px-12 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl text-xl font-semibold transition-all hover:scale-105">
+            Replace Your Agency Now →
+          </button>
+          
+          <p className="text-gray-400 mt-6">
+            30-day money back guarantee • Cancel anytime • No contracts
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-950 text-gray-400 py-16 px-6 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
+            <div>
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-3">
+                  <Zap className="text-white w-5 h-5" />
+                </div>
+                <span className="text-xl font-bold text-white">PromptMarketer</span>
+              </div>
+              <p className="text-sm">
+                40+ AI marketing tools that replace expensive agencies with better results.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Product</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#tools" className="hover:text-white transition-colors">All Tools</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="/demos" className="hover:text-white transition-colors">Demos</a></li>
+                <li><a href="/templates" className="hover:text-white transition-colors">Templates</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/" className="hover:text-white transition-colors">Xenco Labs</a></li>
+                <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms</a></li>
+                <li><a href="/refunds" className="hover:text-white transition-colors">Refunds</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm mb-4 md:mb-0">
+              © 2025 PromptMarketer by Xenco Labs. All rights reserved.
+            </p>
+            <p className="text-sm">
+              Made by marketers, for marketers 💜
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default PromptMarketerLanding;
