@@ -21,7 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     'https://landingcraft.app',
     'https://promptmarketer.app',
     'https://blogcraft.org',
-    'https://reresume.app'
+    'https://reresume.app',
+    'https://www.resumecoach.me',
+    'https://www.blogcraft.app',
+    'https://www.landingcraft.app',
+    'https://www.promptmarketer.app',
+    'https://www.blogcraft.org',
+    'https://www.reresume.app'
   ]
 
   return (
