@@ -11,7 +11,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider allowedRedirectOrigins={[
+      'https://resumecoach.me',
+      'https://blogcraft.app',
+      'https://landingcraft.app',
+      'https://promptmarketer.app',
+      'https://blogcraft.org',
+      'https://reresume.app'
+    ]}>
       <html lang="en">
         <body>
           <header className="border-b">
