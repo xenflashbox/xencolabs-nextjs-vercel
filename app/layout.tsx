@@ -10,15 +10,26 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Primary domain sign-in/sign-up URLs
+  const primarySignInUrl = '/sign-in'
+  const primarySignUpUrl = '/sign-up'
+  
+  // All satellite domains that can redirect back
+  const satelliteUrls = [
+    'https://resumecoach.me',
+    'https://blogcraft.app',
+    'https://landingcraft.app',
+    'https://promptmarketer.app',
+    'https://blogcraft.org',
+    'https://reresume.app'
+  ]
+
   return (
-    <ClerkProvider allowedRedirectOrigins={[
-      'https://resumecoach.me',
-      'https://blogcraft.app',
-      'https://landingcraft.app',
-      'https://promptmarketer.app',
-      'https://blogcraft.org',
-      'https://reresume.app'
-    ]}>
+    <ClerkProvider
+      signInUrl={primarySignInUrl}
+      signUpUrl={primarySignUpUrl}
+      allowedRedirectOrigins={satelliteUrls}
+    >
       <html lang="en">
         <body>
           <header className="border-b">

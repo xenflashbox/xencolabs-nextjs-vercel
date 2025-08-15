@@ -1,20 +1,23 @@
-import { authMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-// See https://clerk.com/docs/references/nextjs/auth-middleware for more information
-export default authMiddleware({
-  // Routes that can be accessed while signed out
-  publicRoutes: [
-    "/",
-    "/sign-in(.*)",
-    "/sign-up(.*)",
-    "/apps",
-    "/services",
-    // "/labs/c1", - temporarily removed
-    "/api/health"
-  ],
-});
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/apps',
+  '/services',
+  '/api/health'
+])
 
-// Stop Middleware from running on static files and API routes
+// Primary domain middleware configuration
+export default clerkMiddleware(async (auth, req) => {
+  if (isPublicRoute(req)) return
+  await auth.protect()
+})
+
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/"],
-};
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
+}
