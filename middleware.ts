@@ -1,5 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import type { NextRequest } from 'next/server'
 
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -8,11 +7,21 @@ const isPublicRoute = createRouteMatcher([
   '/apps',
   '/apps/(.*)',
   '/services',
-  '/api/health'
+  '/api/health',
+  '/entrepreneurs',
+  '/agencies',
+  '/enterprise',
+  '/about',
+  '/contact',
+  '/blog',
+  '/consulting',
+  '/support',
+  '/terms',
+  '/privacy'
 ])
 
 // Primary domain middleware configuration
-export default clerkMiddleware((auth, req: NextRequest) => {
+export default clerkMiddleware((auth, req) => {
   // For public routes, allow access
   if (isPublicRoute(req)) {
     return
