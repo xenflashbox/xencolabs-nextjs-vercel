@@ -2,32 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Custom Properties for theming */
 :root {
   --bg: 255 255 255;
   --fg: 17 24 39;
+  --border: 229 231 235;
+  --accent: 99 102 241;
+  --primary: 147 51 234;
 }
 
-html, body {
-  height: 100%;
-  background: rgb(var(--bg));
-  color: rgb(var(--fg));
+.dark {
+  --bg: 17 24 39;
+  --fg: 249 250 251;
+  --border: 75 85 99;
+  --accent: 129 140 248;
+  --primary: 168 85 247;
 }
 
+/* Base styles with smooth transitions */
+* {
+  @apply border-gray-200 dark:border-gray-700;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  min-height: 100vh;
+}
+
+/* Legacy classes for backward compatibility */
 .container {
   @apply mx-auto max-w-6xl px-4;
 }
+
 .section {
   @apply py-12 md:py-16;
 }
+
 .card {
-  @apply rounded-2xl border border-gray-200 shadow-sm p-6 bg-white;
+  @apply rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 bg-white dark:bg-gray-900 transition-colors;
 }
+
 .btn {
-  @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 border border-gray-300 hover:border-gray-400;
+  @apply inline-flex items-center gap-2 rounded-lg px-4 py-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors;
 }
+
 .btn-primary {
-  @apply bg-teal text-white border-none hover:opacity-90;
+  @apply bg-gradient-to-r from-purple-600 to-blue-600 text-white border-none hover:from-purple-700 hover:to-blue-700 transition-all hover:scale-105;
 }
+
+.btn-secondary {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 border-none transition-colors;
+}
+
 .link {
-  @apply text-teal hover:underline;
+  @apply text-purple-600 dark:text-purple-400 hover:underline transition-colors;
+}
+
+/* Focus styles for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+}
+
+/* Scrollbar styling for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Utility classes for consistent theming */
+.gradient-text {
+  @apply bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent;
+}
+
+.glass-effect {
+  @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
