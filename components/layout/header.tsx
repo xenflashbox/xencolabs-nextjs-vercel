@@ -34,10 +34,10 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))] rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-lg">X</span>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold gradient-text">
                 Xenco Labs
               </span>
             </Link>
@@ -46,7 +46,7 @@ export function Header() {
             {navConfig.backLink && (
               <Link 
                 href={navConfig.backLink.href as any}
-                className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
+                className="text-gray-600 dark:text-gray-300 hover:text-[hsl(var(--primary))] font-medium transition-colors"
               >
                 {navConfig.backLink.label}
               </Link>
@@ -58,7 +58,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href as any}
-                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
+                  className="text-gray-600 dark:text-gray-300 hover:text-[hsl(var(--primary))] font-medium transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -105,7 +105,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href as any}
-                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
+                  className="text-gray-600 dark:text-gray-300 hover:text-[hsl(var(--primary))] font-medium transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}

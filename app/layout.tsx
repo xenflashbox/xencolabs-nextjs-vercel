@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body>
+      <body className="bg-background text-foreground">
         <ClerkProvider
           signInUrl={primarySignInUrl}
           signUpUrl={primarySignUpUrl}
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <header className="border-b">
             <div className="container flex h-16 items-center justify-between">
-              <Link href={"/" as Route} className="font-semibold text-xl">Xenco Labs</Link>
+              <Link href={"/" as Route} className="font-semibold text-xl gradient-text">Xenco Labs</Link>
               <nav className="flex items-center gap-6">
                 <Link className="link" href={"/apps" as Route}>Apps</Link>
                 <Link className="link" href={"/services" as Route}>Services</Link>

@@ -9,16 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700",
+        default: "bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))] text-white hover:opacity-90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white",
+        outline: "border-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white",
         secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-purple-600 underline-offset-4 hover:underline",
-        enterprise: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700",
-        agencies: "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700",
-        entrepreneurs: "bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600",
-        app: "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700"
+        ghost: "hover:bg-[hsl(var(--accent))] hover:text-white",
+        link: "text-[hsl(var(--primary))] underline-offset-4 hover:underline",
+        enterprise: "bg-gradient-to-r from-[hsl(var(--primary))] to-indigo-600 text-white hover:opacity-90",
+        agencies: "bg-gradient-to-r from-[hsl(var(--primary))] to-pink-600 text-white hover:opacity-90",
+        entrepreneurs: "bg-gradient-to-r from-[hsl(var(--accent))] to-red-500 text-white hover:opacity-90",
+        app: "bg-gradient-to-r from-[hsl(var(--secondary))] to-emerald-600 text-white hover:opacity-90"
       },
       size: {
         default: "h-10 px-4 py-2",
