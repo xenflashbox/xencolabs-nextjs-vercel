@@ -50,7 +50,6 @@ export default function SignInPage({ searchParams }: { searchParams: { from?: st
         }}
         routing="path"
         path="/sign-in"
-        afterSignUpUrl="/sign-up" // keep flow on-brand
       />
     </div>
   );

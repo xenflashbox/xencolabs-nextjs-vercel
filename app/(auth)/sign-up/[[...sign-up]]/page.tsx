@@ -44,7 +44,6 @@ export default function SignUpPage({ searchParams }: { searchParams: { from?: st
         }}
         routing="path"
         path="/sign-up"
-        afterSignInUrl="/dashboard"
       />
     </div>
   );
