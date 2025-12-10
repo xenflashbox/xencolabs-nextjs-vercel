@@ -20,15 +20,27 @@ function normalizeFrom(from?: string | string[] | null) {
   return key;
 }
 
-export default function SignUpPage({ searchParams }: { searchParams: { from?: string } }) {
+export default function SignUpPage({ searchParams }: { searchParams: { from?: string; redirect_url?: string } }) {
+  // 1) Use explicit ?from=... if present
   let key = normalizeFrom(searchParams?.from);
+  
+  // 2) Fallback to Referer host if not provided
   if (!key) {
     const ref = headers().get("referer") || headers().get("referrer");
     key = normalizeFrom(ref);
   }
+  
+  // 3) Also try to extract brand from redirect_url
+  if (!key && searchParams?.redirect_url) {
+    key = normalizeFrom(searchParams.redirect_url);
+  }
+
   const brand = (key && BRANDS[key]) || BRANDS.default;
 
-  console.log("[signup]", { from: searchParams?.from ?? null, key, ref: headers().get("referer") });
+  // Get the redirect URL from query params - this is where satellite domains send users back to
+  const redirectUrl = searchParams?.redirect_url;
+
+  console.log("[signup]", { from: searchParams?.from ?? null, key, ref: headers().get("referer"), redirect_url: redirectUrl });
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
@@ -44,6 +56,8 @@ export default function SignUpPage({ searchParams }: { searchParams: { from?: st
         }}
         routing="path"
         path="/sign-up"
+        forceRedirectUrl={redirectUrl}
+        fallbackRedirectUrl={redirectUrl || "/dashboard"}
       />
     </div>
   );
