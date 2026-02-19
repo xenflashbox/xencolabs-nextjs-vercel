@@ -17,7 +17,9 @@ const isPublicRoute = createRouteMatcher([
   '/consulting',
   '/support',
   '/terms',
-  '/privacy'
+  '/privacy',
+  '/sitemap.xml',
+  '/robots.txt',
 ])
 
 // Primary domain middleware configuration
