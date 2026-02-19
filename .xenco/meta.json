@@ -1,0 +1,25 @@
+{
+  "kind": "service",
+  "service_id": "xencolabs-nextjs-vercel",
+  "repo_id": "xcl-nxv-01",
+  "owner": "xenco",
+  "deploy": {
+    "type": "vercel",
+    "platform": "vercel",
+    "git_remote": "origin",
+    "git_branch": "main",
+    "production_url": "https://xencolabs.com",
+    "health_url": "https://xencolabs.com",
+    "version_url": "https://xencolabs.com/api/health"
+  },
+  "workspace": {
+    "expected_repo_root": "/home/xen/docker/apps/xencolabs-nextjs-vercel"
+  },
+  "stack": {
+    "framework": "next.js",
+    "runtime": "node",
+    "auth": "clerk",
+    "database": "neon-postgres",
+    "css": "tailwindcss"
+  }
+}

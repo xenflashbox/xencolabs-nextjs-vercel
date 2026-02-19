@@ -1,8 +1,9 @@
 // apps/xencolabs/app/sign-in/[[...sign-in]]/page.tsx
-import { SignIn as ClerkSignIn } from "@clerk/nextjs";
 import { headers } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
+import SignInClientWrapper from "./SignInClientWrapper";
 
-export const dynamic = "force-dynamic"; // ensure per-query render
+export const dynamic = "force-dynamic";
 
 const BRANDS: Record<string, { name: string; color: string; tagline: string }> = {
   resumecoach:    { name: "ResumeCoach.me", color: "#2563eb", tagline: "Welcome to the ResumeCoach area of the Xenco Labs ecosystem." },
@@ -15,52 +16,40 @@ const BRANDS: Record<string, { name: string; color: string; tagline: string }> =
 function normalizeFrom(from?: string | string[] | null) {
   const raw = Array.isArray(from) ? from[0] : from;
   if (!raw) return null;
-  // turn "landingcraft.app" or "https://landingcraft.app" into "landingcraft"
   const host = raw.replace(/^https?:\/\//, "").replace(/^www\./, "");
   const key = host.split(".")[0].toLowerCase();
   return key;
 }
 
-export default function SignInPage({ searchParams }: { searchParams: { from?: string; redirect_url?: string } }) {
-  // 1) Use explicit ?from=... if present
-  let key = normalizeFrom(searchParams?.from);
+export default async function SignInPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ from?: string; redirect_url?: string }> 
+}) {
+  const params = await searchParams;
+  const { userId } = await auth();
+  const redirectUrl = params?.redirect_url;
+  
+  let key = normalizeFrom(params?.from);
 
-  // 2) Fallback to Referer host if not provided (not guaranteed to exist)
   if (!key) {
-    const ref = headers().get("referer") || headers().get("referrer");
+    const headersList = await headers();
+    const ref = headersList.get("referer") || headersList.get("referrer");
     key = normalizeFrom(ref);
   }
 
-  // 3) Also try to extract brand from redirect_url
-  if (!key && searchParams?.redirect_url) {
-    key = normalizeFrom(searchParams.redirect_url);
+  if (!key && redirectUrl) {
+    key = normalizeFrom(redirectUrl);
   }
 
   const brand = (key && BRANDS[key]) || BRANDS.default;
 
-  // Get the redirect URL from query params - this is where satellite domains send users back to
-  const redirectUrl = searchParams?.redirect_url;
-
-  // Debug once while you validate:
-  console.log("[signin]", { from: searchParams?.from ?? null, key, ref: headers().get("referer"), redirect_url: redirectUrl });
-
+  // Pass auth state and redirect URL to client component
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
-      <header className="w-full max-w-3xl mb-6 px-6 text-center">
-        <h1 className="text-2xl font-bold">{brand.name}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{brand.tagline}</p>
-      </header>
-
-      <ClerkSignIn
-        appearance={{
-          variables: { colorPrimary: brand.color },
-          elements: { card: "shadow-xl border", headerTitle: "text-xl" },
-        }}
-        routing="path"
-        path="/sign-in"
-        forceRedirectUrl={redirectUrl}
-        fallbackRedirectUrl={redirectUrl || "/dashboard"}
-      />
-    </div>
+    <SignInClientWrapper 
+      brand={brand} 
+      redirectUrl={redirectUrl} 
+      isAuthenticated={!!userId}
+    />
   );
 }
