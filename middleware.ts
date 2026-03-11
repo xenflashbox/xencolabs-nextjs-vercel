@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/apps/(.*)',
   '/services',
   '/api/health',
+  '/api/upwork/callback',
   '/entrepreneurs',
   '/agencies',
   '/enterprise',
@@ -18,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
   '/support',
   '/terms',
   '/privacy',
+  '/api-integrations',
   '/sitemap.xml',
   '/robots.txt',
 ])
