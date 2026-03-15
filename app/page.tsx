@@ -30,8 +30,8 @@ const liveProducts = [
     name: 'Sonoma Grove Suites',
     subtitle: 'Vacation Rental Platform',
     description: 'Direct booking with Lodgify API, multi-channel distribution.',
-    url: 'https://sonomagrovesites.com',
-    domain: 'sonomagrovesites.com',
+    url: 'https://sonomagrovesuites.com',
+    domain: 'sonomagrovesuites.com',
   },
 ];
 
@@ -273,7 +273,7 @@ export default function Page() {
               View our work on Upwork <ArrowRight className="w-3.5 h-3.5" />
             </a>
             <a
-              href="https://github.com/xencolabs"
+              href="https://github.com/xenflashbox"
               target="_blank"
               rel="noopener noreferrer"
               className="link font-medium inline-flex items-center gap-1.5 text-sm"

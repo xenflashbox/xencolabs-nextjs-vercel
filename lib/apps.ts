@@ -23,8 +23,8 @@ export const APPS = [
   {
     "name": "Sonoma Grove Suites",
     "subtitle": "Vacation rental platform",
-    "subdomain": "sonomagrovesites.com",
-    "href": "https://sonomagrovesites.com",
+    "subdomain": "sonomagrovesuites.com",
+    "href": "https://sonomagrovesuites.com",
     "description": "Vacation rental booking platform with Lodgify API integration."
   }
 ] as const;

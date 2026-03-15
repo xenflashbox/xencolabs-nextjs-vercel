@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import { Route } from 'next'
 
 export function Footer() {
   return (
@@ -52,9 +51,9 @@ export function Footer() {
             <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Services</h4>
             <ul className="space-y-2.5">
               <li>
-                <Link href={"/#services" as Route} className="text-white/70 hover:text-white transition-colors text-sm">
+                <a href="https://blogcraft.app/managed" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   Managed Content
-                </Link>
+                </a>
               </li>
               <li>
                 <Link href="/contact" className="text-white/70 hover:text-white transition-colors text-sm">
@@ -79,7 +78,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com/xencolabs" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                <a href="https://github.com/xenflashbox" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   GitHub
                 </a>
               </li>
