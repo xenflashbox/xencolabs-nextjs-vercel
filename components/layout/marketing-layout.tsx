@@ -8,7 +8,7 @@ interface MarketingLayoutProps {
 
 export function MarketingLayout({ children }: MarketingLayoutProps) {
   return (
-    <div className="bg-background text-foreground min-h-screen transition-colors duration-300">
+    <div className="min-h-screen">
       <Header />
       <main>{children}</main>
       <Footer />

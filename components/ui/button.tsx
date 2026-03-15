@@ -5,20 +5,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-105",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cta-primary)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))] text-white hover:opacity-90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white",
-        secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
-        ghost: "hover:bg-[hsl(var(--accent))] hover:text-white",
-        link: "text-[hsl(var(--primary))] underline-offset-4 hover:underline",
-        enterprise: "bg-gradient-to-r from-[hsl(var(--primary))] to-indigo-600 text-white hover:opacity-90",
-        agencies: "bg-gradient-to-r from-[hsl(var(--primary))] to-pink-600 text-white hover:opacity-90",
-        entrepreneurs: "bg-gradient-to-r from-[hsl(var(--accent))] to-red-500 text-white hover:opacity-90",
-        app: "bg-gradient-to-r from-[hsl(var(--secondary))] to-emerald-600 text-white hover:opacity-90"
+        default: "bg-[var(--cta-primary)] text-white hover:bg-[var(--cta-primary-hover)] shadow-cta hover:shadow-cta-hover hover:-translate-y-px",
+        destructive: "bg-[var(--status-error)] text-white hover:opacity-90",
+        outline: "border-[1.5px] border-[var(--border-strong)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary)] hover:text-white",
+        secondary: "bg-[var(--surface-secondary)] text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]",
+        ghost: "hover:bg-[var(--surface-tertiary)] hover:text-[var(--brand-primary)]",
+        link: "text-[var(--brand-primary)] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

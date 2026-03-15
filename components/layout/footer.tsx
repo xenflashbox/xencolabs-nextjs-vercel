@@ -1,96 +1,107 @@
 import React from 'react'
 import Link from 'next/link'
+import { Route } from 'next'
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 py-16 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
+    <footer className="section-purple py-16 px-6">
+      <div className="max-w-content mx-auto">
+        <div className="grid md:grid-cols-4 gap-10 mb-12">
           {/* Brand Column */}
           <div>
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-lg">X</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center">
+                <span className="text-white font-display font-bold text-lg">X</span>
               </div>
-              <span className="text-xl font-bold text-white">Xenco Labs</span>
+              <span className="text-xl font-display font-bold text-white">Xenco Labs</span>
             </div>
-            <p className="text-gray-400 max-w-sm">
-              AI product studio building tools that ship to production.
+            <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+              Building AI-powered tools that scale businesses without scaling teams.
             </p>
           </div>
 
           {/* Apps Column */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Apps</h4>
-            <ul className="space-y-2">
+            <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Apps</h4>
+            <ul className="space-y-2.5">
               <li>
-                <a href="https://blogcraft.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a href="https://blogcraft.app" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   BlogCraft
                 </a>
               </li>
               <li>
-                <a href="https://resumecoach.me" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a href="https://resumecoach.me" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   ResumeCoach
                 </a>
               </li>
               <li>
-                <a href="https://imagecrafter.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a href="https://imagecrafter.app" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   ImageCrafter
                 </a>
               </li>
               <li>
-                <span className="text-gray-500">
-                  MCP Forge <span className="text-xs text-gray-600">(Coming Soon)</span>
+                <span className="text-white/40 text-sm">
+                  MCP Forge <span className="text-xs text-white/30">(Coming Soon)</span>
                 </span>
               </li>
             </ul>
           </div>
 
-          {/* Company Column */}
+          {/* Services Column */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-2">
+            <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Services</h4>
+            <ul className="space-y-2.5">
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  About
+                <Link href={"/#services" as Route} className="text-white/70 hover:text-white transition-colors text-sm">
+                  Managed Content
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href="/contact" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Consulting
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-white/70 hover:text-white transition-colors text-sm">
                   Contact
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal Column */}
+          {/* Connect Column */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2">
+            <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Connect</h4>
+            <ul className="space-y-2.5">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
-                  Privacy
-                </Link>
+                <a href="https://www.upwork.com/freelancers/~01fd29e6c782080051" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Upwork
+                </a>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  Terms
-                </Link>
+                <a href="https://github.com/xencolabs" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/company/xencolabs" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  LinkedIn
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Row */}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm mb-4 md:mb-0">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-white/50 text-sm">
             &copy; {new Date().getFullYear()} Xenco Labs. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <Link href="/privacy" className="text-white/50 hover:text-white/80 transition-colors text-sm">
               Privacy
             </Link>
-            <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <Link href="/terms" className="text-white/50 hover:text-white/80 transition-colors text-sm">
               Terms
             </Link>
           </div>

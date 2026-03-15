@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | Xenco Labs",
   },
   description:
-    "Xenco Labs is a product studio building AI-powered tools. BlogCraft, ResumeCoach, ImageCrafter, and more.",
+    "Xenco Labs is a founder-led product studio building AI-powered tools. BlogCraft, ResumeCoach, ImageCrafter, and more.",
   metadataBase: new URL("https://xencolabs.com"),
   openGraph: {
     type: "website",
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     siteName: "Xenco Labs",
     title: "Xenco Labs - AI Product Studio",
     description:
-      "A product studio building AI-powered tools that ship to production.",
+      "A founder-led product studio building AI-powered tools that ship to production.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Xenco Labs - AI Product Studio",
     description:
-      "A product studio building AI-powered tools that ship to production.",
+      "A founder-led product studio building AI-powered tools that ship to production.",
   },
   robots: {
     index: true,
@@ -49,11 +49,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Primary domain sign-in/sign-up URLs
   const primarySignInUrl = '/sign-in'
   const primarySignUpUrl = '/sign-up'
-  
-  // All satellite domains that can redirect back
+
   const satelliteUrls = [
     'https://resumecoach.me',
     'https://dev.resumecoach.me',
@@ -73,6 +71,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* Google Fonts — Design System */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
@@ -89,39 +94,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
       </head>
-      <body className="bg-background text-foreground">
+      <body className="font-body">
         <ClerkProvider
           signInUrl={primarySignInUrl}
           signUpUrl={primarySignUpUrl}
           allowedRedirectOrigins={satelliteUrls}
         >
-          {/* Global handler for satellite domain redirects */}
           <Suspense fallback={null}>
             <AuthRedirectHandler />
           </Suspense>
-          
-          <header className="border-b">
-            <div className="container flex h-16 items-center justify-between">
-              <Link href={"/" as Route} className="font-semibold text-xl gradient-text">Xenco Labs</Link>
-              <nav className="flex items-center gap-6">
-                <Link className="link" href={"/apps" as Route}>Apps</Link>
-                <Link className="link" href={"/services" as Route}>Services</Link>
-                <SignedOut>
-                  <Link className="btn" href={"/sign-in" as Route}>Sign in</Link>
-                </SignedOut>
-                <SignedIn>
-                  <Link className="btn" href={"/dashboard" as Route}>Dashboard</Link>
-                  <UserButton afterSignOutUrl={"/" as Route} />
-                </SignedIn>
-              </nav>
-            </div>
-          </header>
-          <main>{children}</main>
-          <footer className="border-t">
-            <div className="container py-8 text-sm text-gray-600">
-              © {new Date().getFullYear()} Xenco Labs · All rights reserved.
-            </div>
-          </footer>
+          {children}
         </ClerkProvider>
       </body>
     </html>
