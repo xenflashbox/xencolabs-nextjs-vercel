@@ -11,26 +11,26 @@ const GA_MEASUREMENT_ID = "G-459EY5MHDQ";
 
 export const metadata: Metadata = {
   title: {
-    default: "Xenco Labs - AI-Powered Products & Services",
+    default: "Xenco Labs - AI Product Studio",
     template: "%s | Xenco Labs",
   },
   description:
-    "AI-powered products and services that replace entire departments. BlogCraft, ResumeCo, LandingCraft, and more.",
+    "Xenco Labs is a product studio building AI-powered tools. BlogCraft, ResumeCoach, ImageCrafter, and more.",
   metadataBase: new URL("https://xencolabs.com"),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://xencolabs.com",
     siteName: "Xenco Labs",
-    title: "Xenco Labs - AI-Powered Products & Services",
+    title: "Xenco Labs - AI Product Studio",
     description:
-      "AI-powered products and services that replace entire departments.",
+      "A product studio building AI-powered tools that ship to production.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Xenco Labs - AI-Powered Products & Services",
+    title: "Xenco Labs - AI Product Studio",
     description:
-      "AI-powered products and services that replace entire departments.",
+      "A product studio building AI-powered tools that ship to production.",
   },
   robots: {
     index: true,

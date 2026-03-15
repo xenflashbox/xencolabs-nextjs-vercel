@@ -15,78 +15,41 @@ export function Footer() {
               <span className="text-xl font-bold text-white">Xenco Labs</span>
             </div>
             <p className="text-gray-400 max-w-sm">
-              Building the AI-powered tools that scale businesses without scaling teams.
+              AI product studio building tools that ship to production.
             </p>
           </div>
-          
+
           {/* Apps Column */}
           <div>
             <h4 className="font-semibold text-white mb-4">Apps</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/apps/blogcraft" className="hover:text-white transition-colors">
+                <a href="https://blogcraft.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                   BlogCraft
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/apps/promptmarketer" className="hover:text-white transition-colors">
-                  PromptMarketer
-                </Link>
-              </li>
-              <li>
-                <Link href="/apps/resumecoach" className="hover:text-white transition-colors">
+                <a href="https://resumecoach.me" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                   ResumeCoach
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/apps/landingcraft" className="hover:text-white transition-colors">
-                  LandingCraft <span className="text-xs text-orange-400">(Soon)</span>
-                </Link>
+                <a href="https://imagecrafter.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  ImageCrafter
+                </a>
               </li>
               <li>
-                <Link href="/apps/mcpforge" className="hover:text-white transition-colors">
-                  MCP Forge <span className="text-xs text-orange-400">(Soon)</span>
-                </Link>
+                <span className="text-gray-500">
+                  MCP Forge <span className="text-xs text-gray-600">(Coming Soon)</span>
+                </span>
               </li>
             </ul>
           </div>
-          
-          {/* Services Column */}
+
+          {/* Company Column */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Services</h4>
+            <h4 className="font-semibold text-white mb-4">Company</h4>
             <ul className="space-y-2">
-              <li>
-                <Link href="/enterprise" className="hover:text-white transition-colors">
-                  Enterprise
-                </Link>
-              </li>
-              <li>
-                <Link href="/agencies" className="hover:text-white transition-colors">
-                  Agencies
-                </Link>
-              </li>
-              <li>
-                <Link href="/entrepreneurs" className="hover:text-white transition-colors">
-                  Entrepreneurs
-                </Link>
-              </li>
-              <li>
-                <Link href="/consulting" className="hover:text-white transition-colors">
-                  Consulting
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          {/* Resources Column */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/blog" className="hover:text-white transition-colors">
-                  Blog
-                </Link>
-              </li>
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
                   About
@@ -97,19 +60,31 @@ export function Footer() {
                   Contact
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Legal Column */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <ul className="space-y-2">
               <li>
-                <Link href="/support" className="hover:text-white transition-colors">
-                  Support
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms
                 </Link>
               </li>
             </ul>
           </div>
         </div>
-        
+
         {/* Bottom Row */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} Xenco Labs. All rights reserved.
+            &copy; {new Date().getFullYear()} Xenco Labs. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
@@ -117,9 +92,6 @@ export function Footer() {
             </Link>
             <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
               Terms
-            </Link>
-            <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
-              Contact
             </Link>
           </div>
         </div>

@@ -65,69 +65,28 @@ export const DESIGN_TOKENS = {
 
 // Navigation configuration based on current route
 export const getNavigationConfig = (pathname: string) => {
-  // Enterprise audience navigation
-  if (pathname.includes('/enterprise')) {
-    return {
-      items: [
-        { label: 'Solutions', href: '/enterprise#solutions' },
-        { label: 'ROI Calculator', href: '/enterprise#roi' },
-        { label: 'Case Studies', href: '/enterprise#cases' }
-      ],
-      cta: { label: 'Schedule Demo', href: '/enterprise#demo' },
-      variant: 'enterprise'
-    }
-  }
-  
-  // Agencies audience navigation
-  if (pathname.includes('/agencies')) {
-    return {
-      items: [
-        { label: 'Tools', href: '/agencies#tools' },
-        { label: 'Pricing', href: '/agencies#pricing' },
-        { label: 'Success Stories', href: '/agencies#success' }
-      ],
-      cta: { label: 'Start Trial', href: '/agencies#trial' },
-      variant: 'agencies'
-    }
-  }
-  
-  // Entrepreneurs audience navigation
-  if (pathname.includes('/entrepreneurs')) {
-    return {
-      items: [
-        { label: 'Apps', href: '/entrepreneurs#apps' },
-        { label: 'Pricing', href: '/entrepreneurs#pricing' },
-        { label: 'Community', href: '/entrepreneurs#community' }
-      ],
-      cta: { label: 'Start Free', href: '/entrepreneurs#free' },
-      variant: 'entrepreneurs'
-    }
-  }
-  
   // App showcase navigation
   if (pathname.includes('/apps/')) {
     return {
       items: [
-        { label: 'Features', href: '#features' },
-        { label: 'Pricing', href: '#pricing' },
-        { label: 'Examples', href: '#examples' }
+        { label: 'Home', href: '/' },
+        { label: 'About', href: '/about' },
+        { label: 'Contact', href: '/contact' }
       ],
-      cta: { label: 'Start Free Trial', href: '#trial' },
+      cta: { label: 'All Apps', href: '/#products' },
       backLink: { label: '← Xenco Labs', href: '/' },
       variant: 'app'
     }
   }
-  
-  // Default hub navigation
+
+  // Default navigation
   return {
     items: [
-      { label: 'Apps', href: '#apps' },
-      { label: 'Enterprise', href: '/enterprise' },
-      { label: 'Agencies', href: '/agencies' },
-      { label: 'Entrepreneurs', href: '/entrepreneurs' },
-      { label: 'Blog', href: '/blog' }
+      { label: 'Apps', href: '/#products' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' }
     ],
-    cta: { label: 'Start Free Trial', href: '#trial' },
+    cta: { label: 'Explore Apps', href: '/#products' },
     variant: 'hub'
   }
 }
