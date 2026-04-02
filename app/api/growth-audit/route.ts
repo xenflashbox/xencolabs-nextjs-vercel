@@ -23,6 +23,31 @@ const auditRequestSchema = z.object({
   ]),
 });
 
+async function saveToDatabase(data: z.infer<typeof auditRequestSchema>) {
+  const sql = neon(process.env.DATABASE_URL!);
+
+  // Ensure table exists (idempotent)
+  await sql`
+    CREATE TABLE IF NOT EXISTS xl_growth_audit_requests (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      company_name TEXT NOT NULL,
+      website_url TEXT NOT NULL,
+      contact_name TEXT NOT NULL,
+      work_email TEXT NOT NULL,
+      company_size TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
+  await sql`
+    INSERT INTO xl_growth_audit_requests (company_name, website_url, contact_name, work_email, company_size)
+    VALUES (${data.companyName}, ${data.websiteUrl}, ${data.contactName}, ${data.workEmail}, ${data.companySize})
+  `;
+
+  console.log(`[growth-audit] Saved to database: ${data.companyName}`);
+}
+
 async function sendNotificationEmail(data: z.infer<typeof auditRequestSchema>) {
   const host = process.env.SMTP_HOST;
   const port = parseInt(process.env.SMTP_PORT || '465', 10);
@@ -95,19 +120,26 @@ export async function POST(request: NextRequest) {
 
     const data = result.data;
 
-    // Store in database
-    const sql = neon(process.env.DATABASE_URL!);
-    await sql`
-      INSERT INTO growth_audit_requests (company_name, website_url, contact_name, work_email, company_size)
-      VALUES (${data.companyName}, ${data.websiteUrl}, ${data.contactName}, ${data.workEmail}, ${data.companySize})
-    `;
-    console.log(`[growth-audit] Saved to database: ${data.companyName}`);
+    // Run database and email independently — neither blocks the other
+    const [dbResult, emailResult] = await Promise.allSettled([
+      saveToDatabase(data),
+      sendNotificationEmail(data),
+    ]);
 
-    // Send email notification (non-blocking — don't fail if email fails)
-    try {
-      await sendNotificationEmail(data);
-    } catch (emailError) {
-      console.error('[growth-audit] Email send failed:', emailError);
+    if (dbResult.status === 'rejected') {
+      console.error('[growth-audit] Database save failed:', dbResult.reason);
+    }
+    if (emailResult.status === 'rejected') {
+      console.error('[growth-audit] Email send failed:', emailResult.reason);
+    }
+
+    // Succeed if at least one channel worked
+    if (dbResult.status === 'rejected' && emailResult.status === 'rejected') {
+      console.error('[growth-audit] Both database and email failed');
+      return NextResponse.json(
+        { success: false, error: 'Internal server error' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(
