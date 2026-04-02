@@ -225,32 +225,52 @@ export default function GrowthPage() {
 
       {/* ─── 3. The Reframe ─── */}
       <section className="section-light py-24 px-6">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="section-headline text-[var(--text-primary)] mb-8 text-center">
-            The internet is the new Yellow Pages.
-          </h2>
-          <div className="text-lg text-[var(--text-secondary)] font-body leading-relaxed space-y-6">
-            <p>
-              Thirty years ago, when someone needed a plumber, they opened the
-              phone book. They&apos;d already self-filtered — they knew what they
-              needed. The businesses with the best listings got the calls.
-            </p>
-            <p>
-              Today, the workflow is identical. Your buyers are searching right
-              now — for your product, your niche, your solution. They&apos;re
-              comparing options. They&apos;re reading content. They&apos;re
-              deciding who to contact.
-            </p>
-            <p>
-              The question isn&apos;t whether to be online. It&apos;s whether
-              you&apos;re the listing they find — or the one they skip.
-            </p>
+        <div className="max-w-content mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left — Yellow Pages photo */}
+            <div>
+              <Image
+                src="/images/growth/yellowpages-2007.webp"
+                alt="Yellow Pages directory, 2007"
+                width={800}
+                height={600}
+                className="rounded-xl shadow-lg w-full h-auto"
+              />
+              <p className="text-xs text-[var(--text-tertiary)] italic mt-3">
+                Yellow Pages, 2007. Full-page ads, half-page ads, quarter-page
+                ads — the original search engine optimization.
+              </p>
+            </div>
+
+            {/* Right — Copy */}
+            <div>
+              <h2 className="section-headline text-[var(--text-primary)] mb-8">
+                The internet is the new Yellow Pages.
+              </h2>
+              <div className="text-lg text-[var(--text-secondary)] font-body leading-relaxed space-y-6">
+                <p>
+                  Thirty years ago, when someone needed a plumber, they opened the
+                  phone book. They&apos;d already self-filtered — they knew what they
+                  needed. The businesses with the best listings got the calls.
+                </p>
+                <p>
+                  Today, the workflow is identical. Your buyers are searching right
+                  now — for your product, your niche, your solution. They&apos;re
+                  comparing options. They&apos;re reading content. They&apos;re
+                  deciding who to contact.
+                </p>
+                <p>
+                  The question isn&apos;t whether to be online. It&apos;s whether
+                  you&apos;re the listing they find — or the one they skip.
+                </p>
+              </div>
+              <blockquote className="border-l-4 border-[var(--brand-primary)] bg-[var(--surface-secondary)] p-6 rounded-r-lg mt-12 italic text-xl font-display font-medium text-[var(--text-primary)]">
+                &ldquo;You don&apos;t need a thousand leads. You need a hundred good
+                ones — pre-qualified, self-directed, receptive to your message — and
+                a close ratio that reflects it.&rdquo;
+              </blockquote>
+            </div>
           </div>
-          <blockquote className="border-l-4 border-[var(--brand-primary)] bg-[var(--surface-secondary)] p-6 rounded-r-lg mt-12 italic text-xl font-display font-medium text-[var(--text-primary)]">
-            &ldquo;You don&apos;t need a thousand leads. You need a hundred good
-            ones — pre-qualified, self-directed, receptive to your message — and
-            a close ratio that reflects it.&rdquo;
-          </blockquote>
         </div>
       </section>
 
