@@ -180,11 +180,11 @@ export default function Page() {
         <div className="max-w-content mx-auto">
           <div className="text-center mb-14">
             <h2 className="section-headline text-[var(--text-primary)] mb-3">
-              Self-Serve or Managed. Your Choice.
+              Three ways to work with us.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Self-Serve */}
             <div className="card">
               <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
@@ -231,6 +231,33 @@ export default function Page() {
                 className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
               >
                 Schedule a Call <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Digital Growth Strategy */}
+            <div className="card relative border-[var(--brand-primary)] border-opacity-40">
+              <span className="absolute -top-3 left-4 bg-[var(--cta-primary)] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                Most Impact
+              </span>
+              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3 mt-2">
+                Digital Growth Strategy
+              </h3>
+              <p className="text-[var(--text-secondary)] font-body mb-4">
+                We retool your entire digital sales funnel.
+              </p>
+              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
+                Starting at $10,000/mo
+              </p>
+              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
+                <li>&bull; Mid-market and enterprise companies</li>
+                <li>&bull; Underperforming digital presence</li>
+                <li>&bull; Full strategy, demo site, and execution</li>
+              </ul>
+              <Link
+                href="/growth"
+                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
+              >
+                See How It Works <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

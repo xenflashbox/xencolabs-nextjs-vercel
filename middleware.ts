@@ -20,6 +20,8 @@ const isPublicRoute = createRouteMatcher([
   '/terms',
   '/privacy',
   '/api-integrations',
+  '/growth',
+  '/api/growth-audit',
   '/sitemap.xml',
   '/robots.txt',
 ])
