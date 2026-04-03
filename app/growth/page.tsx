@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { GrowthAuditForm } from './audit-form';
+import { PitchShowcase } from './pitch-showcase';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -395,6 +396,75 @@ export default function GrowthPage() {
               official Nexusguard property.
             </p>
           </div>
+
+          {/* AI-Produced Brand Videos */}
+          <div className="mt-16 pt-16 border-t border-[var(--border-default)]">
+            <p className="label-text text-[var(--brand-primary)] mb-4">
+              AI-PRODUCED BRAND VIDEOS
+            </p>
+            <h3 className="font-display font-bold text-2xl lg:text-3xl text-[var(--text-primary)] mt-4">
+              60-second brand videos. Zero production crew. $0 cost.
+            </h3>
+            <p className="text-[var(--text-secondary)] text-lg font-body mt-4 max-w-2xl">
+              Every engagement includes custom video content — AI-generated with
+              voice synthesis and motion, tailored to your industry and embedded
+              directly on your site.
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
+              {/* Video 1 — NexusGuard */}
+              <div>
+                <div className="rounded-xl overflow-hidden shadow-lg aspect-video">
+                  <iframe
+                    src="https://www.youtube.com/embed/nsk2QV7zh2s"
+                    title="Your Network Is Under Attack — AI Brand Video for Nexusguard"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+                <div className="mt-3">
+                  <p className="font-display font-semibold text-sm text-[var(--text-primary)]">
+                    Your Network Is Under Attack
+                  </p>
+                  <p className="text-sm text-[var(--text-tertiary)] font-body">
+                    Produced for Nexusguard — cybersecurity / DDoS mitigation
+                  </p>
+                </div>
+              </div>
+
+              {/* Video 2 — AER Worldwide */}
+              <div>
+                <div className="rounded-xl overflow-hidden shadow-lg aspect-video">
+                  <iframe
+                    src="https://www.youtube.com/embed/gRn403c5A6U"
+                    title="The Call Nobody Wants to Get — AI Brand Video for AER Worldwide"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+                <div className="mt-3">
+                  <p className="font-display font-semibold text-sm text-[var(--text-primary)]">
+                    The Call Nobody Wants to Get
+                  </p>
+                  <p className="text-sm text-[var(--text-tertiary)] font-body">
+                    Produced for AER Worldwide — IT asset disposition / data
+                    security
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-[var(--text-tertiary)] italic text-center max-w-2xl mx-auto mt-8">
+              Two different industries. Two different stories. Same production
+              pipeline. These videos feature AI-generated versions of each
+              company&apos;s actual executives — produced at zero cost with no
+              film crew, no studio, no actors.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -519,7 +589,10 @@ export default function GrowthPage() {
         </div>
       </section>
 
-      {/* ─── 9. Audit Form ─── */}
+      {/* ─── 9. Pitch Showcase (Clerk-Gated) ─── */}
+      <PitchShowcase />
+
+      {/* ─── 10. Audit Form ─── */}
       <section id="audit-form" className="section-purple py-24 px-6">
         <div className="max-w-content mx-auto text-center">
           <h2 className="font-display font-bold text-3xl lg:text-4xl text-white mb-4">
