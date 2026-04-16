@@ -179,9 +179,9 @@ export default function GrowthPage() {
             Your website speaks to people who already trust you.
           </h1>
           <p className="text-lg text-[var(--text-secondary)] font-body max-w-2xl mx-auto mb-10 leading-relaxed">
-            We build the digital presence that converts everyone else — the
-            prospects searching, comparing, and deciding right now without ever
-            talking to your sales team.
+            We install an AI-powered growth system that converts everyone else
+            — the prospects searching, comparing, and deciding right now without
+            ever talking to your sales team.
           </p>
           <a
             href="#audit-form"
@@ -501,62 +501,114 @@ export default function GrowthPage() {
             Built for companies with strong products and underperforming digital
             presence.
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+            {/* Growth Sprint */}
+            <div className="card relative border-t-2 border-t-[var(--brand-primary)] flex flex-col">
+              <span className="absolute -top-3 left-4 bg-[var(--cta-primary)] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                Start Here
+              </span>
+              <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-3 mt-2">
+                GROWTH SPRINT
+              </p>
+              <p className="text-[var(--text-secondary)] font-body mb-6">
+                A fixed-fee, 30-day implementation for companies that want to
+                see results before committing to a retainer.
+              </p>
+              <p className="font-display font-semibold text-[var(--text-primary)] mb-2">
+                What you get in 30 days:
+              </p>
+              <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6 list-disc list-inside">
+                <li>Digital presence audit and competitive analysis</li>
+                <li>Messaging framework aligned to buyer pain</li>
+                <li>1-3 conversion-optimized landing pages</li>
+                <li>Lead capture redesign or self-assessment funnel</li>
+                <li>90-day content strategy and roadmap</li>
+                <li>KPI dashboard specification</li>
+                <li>Recorded walkthrough for your team</li>
+              </ul>
+              <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
+                $12,500
+              </p>
+              <p className="text-sm font-body text-[var(--text-tertiary)] mb-6">
+                Fixed fee. No retainer required.
+              </p>
+              <a
+                href="#audit-form"
+                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center justify-center gap-2 mt-auto"
+              >
+                Get a Free Growth Audit <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+
             {/* Enterprise */}
-            <div className="card border-t-2 border-t-[var(--brand-primary)]">
+            <div className="card flex flex-col">
               <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-3">
                 ENTERPRISE
               </p>
               <p className="text-[var(--text-secondary)] font-body mb-6">
-                Companies doing $20M+ that need to modernize how they generate
-                and qualify leads online.
+                Companies doing $20M+ that need ongoing growth operations —
+                strategy, execution, optimization, and reporting every month.
               </p>
               <p className="font-display font-semibold text-[var(--text-primary)] mb-2">
-                Typical engagement:
+                Everything in the Sprint, plus:
               </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6">
-                <li>$10,000 – $20,000/month retainer</li>
-                <li>3-month minimum commitment</li>
-                <li>Full strategy, production, and reporting</li>
+              <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6 list-disc list-inside">
+                <li>Ongoing content production via BlogCraft</li>
+                <li>Monthly SEO and conversion optimization</li>
+                <li>Automated narrated pitch presentations</li>
+                <li>AI-generated brand video featuring your executives</li>
+                <li>Monthly KPI reporting and strategy adjustment</li>
                 <li>Dedicated account management</li>
               </ul>
-              <p className="text-sm font-body text-[var(--text-tertiary)] mb-4">
-                Industries we&apos;ve worked with: Cybersecurity · IT Asset
-                Management · SaaS · Manufacturing
+              <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
+                $10,000 – $20,000
+              </p>
+              <p className="text-sm font-body text-[var(--text-tertiary)]">
+                /month · 3-month minimum
+              </p>
+              <p className="text-xs font-body text-[var(--text-tertiary)] mt-4 mb-6">
+                Cybersecurity · IT Asset Management · SaaS · Manufacturing
               </p>
               <Link
                 href="/contact"
-                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
+                className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center justify-center gap-2 mt-auto"
               >
                 Schedule a Consultation <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
             {/* Growth Partnership */}
-            <div className="card">
+            <div className="card flex flex-col">
               <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-3">
                 GROWTH PARTNERSHIP
               </p>
               <p className="text-[var(--text-secondary)] font-body mb-6">
-                Small businesses with great products that need a digital presence
-                built from scratch.
+                Small businesses with great products that need a complete
+                digital presence built from scratch — at zero upfront cost.
               </p>
               <p className="font-display font-semibold text-[var(--text-primary)] mb-2">
-                Typical engagement:
+                What we provide:
               </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6">
-                <li>$0 upfront cost</li>
-                <li>Revenue share on web-generated leads</li>
-                <li>We build and operate the digital infrastructure</li>
-                <li>You focus on product and fulfillment</li>
+              <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6 list-disc list-inside">
+                <li>Website design, hosting, and maintenance</li>
+                <li>Product catalog and lead capture system</li>
+                <li>Blog content creation and SEO optimization</li>
+                <li>AI-generated product imagery</li>
+                <li>Analytics and conversion tracking</li>
+                <li>Ongoing feature development</li>
               </ul>
-              <p className="text-sm font-body text-[var(--text-tertiary)] mb-4">
-                Best for: Local businesses · Specialty manufacturers · Service
-                providers
+              <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
+                $0 upfront
+              </p>
+              <p className="text-sm font-body text-[var(--text-tertiary)]">
+                Revenue share on web-generated leads
+              </p>
+              <p className="text-xs font-body text-[var(--text-tertiary)] mt-4 mb-6">
+                Local businesses · Specialty manufacturers · Service providers
               </p>
               <Link
                 href="/contact"
-                className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
+                className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center justify-center gap-2 mt-auto"
               >
                 Learn About Partnerships <ArrowRight className="w-4 h-4" />
               </Link>
