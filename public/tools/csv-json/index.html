@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSV ↔ JSON — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'CSV ↔ JSON — Xenco Tools',
+    description: 'Free, client-side CSV ↔ JSON — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/csv-json/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>CSV ↔ JSON</h1><div class="small">Convert CSV to JSON array and back</div></header>
+<section class="grid">
+<label class="small">Input</label>
+<textarea id="input" placeholder="name,age\nAlice,30\nBob,25"></textarea>
+<div class="btns">
+  <button class="primary" id="c2j">CSV → JSON</button>
+  <button id="j2c">JSON → CSV</button>
+  <button id="copy">Copy Output</button>
+</div>
+<div class="grid two">
+  <div><div class="small">Output</div><textarea id="output" class="out" readonly></textarea></div>
+  <div><div class="small">Notes</div><div id="notes" class="out" style="min-height:140px"></div></div>
+</div>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function parseCSV(text){
+  const rows=[]; let i=0, field='', row=[], q=false;
+  while(i<text.length){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){ field+='"'; i+=2; continue; } q=false; i++; continue; }
+      field+=c; i++; continue;
+    }
+    if(c==='"'){ q=true; i++; continue; }
+    if(c===','){ row.push(field); field=''; i++; continue; }
+    if(c==='\n' || c==='\r'){ row.push(field); field=''; rows.push(row); row=[]; while(text[i+1]==='\n' || text[i+1]==='\r') i++; i++; continue; }
+    field+=c; i++;
+  }
+  row.push(field); rows.push(row);
+  return rows;
+}
+function csvToJson(s){
+  const rows=parseCSV(s.trim()); if(rows.length===0) return '[]';
+  const headers=rows[0]; const out=rows.slice(1).filter(r=>r.length&&r.join('').length>0).map(r=>{
+    const obj={}; headers.forEach((h,idx)=>obj[h]=r[idx]||''); return obj;
+  });
+  return JSON.stringify(out,null,2);
+}
+function jsonToCsv(s){
+  const arr=JSON.parse(s); if(!Array.isArray(arr)||!arr.length) return '';
+  const headers=Object.keys(arr[0]); const esc=v=>(''+(v??'')).includes(',')||(''+(v??'')).includes('"')||(''+(v??'')).includes('\n')? '"'+(''+v).replace(/"/g,'""')+'"' : (''+v);
+  const lines=[headers.join(',')];
+  arr.forEach(o=>{ lines.push(headers.map(h=>esc(o[h])).join(',')); });
+  return lines.join('\n');
+}
+document.getElementById('c2j').onclick=()=>{ $('output').value=csvToJson($('input').value); $('notes').textContent='Assumes first row as headers. Supports quoted fields and doubled quotes.'; };
+document.getElementById('j2c').onclick=()=>{ try{$('output').value=jsonToCsv($('input').value); $('notes').textContent='Headers inferred from first object keys.';}catch(e){$('output').value=''; $('notes').textContent='JSON parse error: '+e.message;} };
+document.getElementById('copy').onclick=()=>navigator.clipboard.writeText($('output').value);
+</script>
+</body></html>

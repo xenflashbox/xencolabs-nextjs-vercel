@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Text Diff — Dev Maestro Tools</title>
+<meta name="description" content="Side-by-side diff in your browser. Paste two texts and see line differences.">
+<link rel="canonical" href="https://xencolabs.com/tools/text-diff">
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: "Text Diff — Dev Maestro Tools",
+    description: "Side-by-side diff in your browser. Paste two texts and see line differences.",
+    canonical: "https://xencolabs.com/tools/text-diff/"
+  };
+</script>
+<style>
+.grid{display:grid;gap:12px}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+textarea,button,select{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px}
+.btns{display:flex;gap:10px;margin:12px 0}
+pre{white-space:pre-wrap;word-break:break-word}
+.line{display:flex;gap:6px}
+.add{background:#0b3a1f} .del{background:#3a0b0b} .ctx{background:#111822}
+.badge{font-size:12px;color:#8fa1b5}
+</style>
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Text Diff — Dev Maestro Tools',
+    description: 'Side-by-side diff in your browser. Paste two texts and see line differences.',
+    canonical: 'https://xencolabs.com/tools/text-diff/'
+  };
+</script>
+<!-- DM-SHELL-END -->
+
+</head><body>
+<h1 class="dm-title">Text Diff</h1>
+<div class="dm-sub">Side-by-side line diff. All in your browser.</div>
+<div class="grid two">
+  <div><label>Left</label><textarea id="left" placeholder="old text..."></textarea></div>
+  <div><label>Right</label><textarea id="right" placeholder="new text..."></textarea></div>
+</div>
+<div class="btns">
+  <button id="run">Diff</button>
+  <select id="context">
+    <option value="9999">Show all lines</option>
+    <option value="3">Context: 3</option>
+    <option value="5">Context: 5</option>
+  </select>
+</div>
+<div class="grid two">
+  <div><div class="badge">Left (−)</div><pre id="outL" class="dm-card dm-pad"></pre></div>
+  <div><div class="badge">Right (+)</div><pre id="outR" class="dm-card dm-pad"></pre></div>
+</div>
+<script>
+// tiny line diff (LCS-based)
+function diffLines(a, b){
+  const A=a.split(/\r?\n/), B=b.split(/\r?\n/);
+  const m=A.length, n=B.length;
+  const dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=m-1;i>=0;i--) for(let j=n-1;j>=0;j--) dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const out=[]; let i=0,j=0;
+  while(i<m && j<n){
+    if(A[i]===B[j]) { out.push(['=',A[i]]); i++; j++; }
+    else if(dp[i+1][j]>=dp[i][j+1]) { out.push(['-',A[i]]); i++; }
+    else { out.push(['+',B[j]]); j++; }
+  }
+  while(i<m) out.push(['-',A[i++]]); while(j<n) out.push(['+',B[j++]]);
+  return out;
+}
+function render(a,b,ctx){
+  const hunks=diffLines(a,b);
+  const L=[], R=[];
+  let windowed=[];
+  if(ctx>=9999){ windowed=hunks; }
+  else {
+    // collapse unchanged blocks to context
+    let buf=[]; const flush=()=>{ if(buf.length) windowed.push(...buf), buf=[]; };
+    let idx=0;
+    while(idx<hunks.length){
+      if(hunks[idx][0]!== '='){ // change block
+        // include ctx lines of surrounding '='
+        let start=idx-1, pre=0; while(start>=0 && pre<ctx && hunks[start][0]==='='){ start--; pre++; }
+        start++; const head=hunks.slice(start, idx);
+        let k=idx; while(k<hunks.length && hunks[k][0]!=='=') k++;
+        let end=k, post=0; while(end<hunks.length && post<ctx && hunks[end][0]==='='){ end++; post++; }
+        windowed.push(...head, ...hunks.slice(idx,k), ...hunks.slice(k, end));
+        idx=end;
+      } else idx++;
+    }
+    if(!windowed.length) windowed=hunks.slice(0,Math.min(hunks.length, 50)); // small fallback
+  }
+  for(const [tag,line] of windowed){
+    if(tag==='='){ L.push(`<div class="line ctx">${escapeHtml(line)}</div>`); R.push(`<div class="line ctx">${escapeHtml(line)}</div>`); }
+    if(tag==='-'){ L.push(`<div class="line del">− ${escapeHtml(line)}</div>`); R.push(`<div class="line"></div>`); }
+    if(tag==='+'){ L.push(`<div class="line"></div>`); R.push(`<div class="line add">+ ${escapeHtml(line)}</div>`); }
+  }
+  document.getElementById('outL').innerHTML=L.join('\n');
+  document.getElementById('outR').innerHTML=R.join('\n');
+}
+function escapeHtml(s){return (s||'').replace(/[&<>"]/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]))}
+
+document.getElementById('run').onclick=()=>{
+  const a=document.getElementById('left').value;
+  const b=document.getElementById('right').value;
+  const ctx=parseInt(document.getElementById('context').value,10);
+  render(a,b,ctx);
+};
+</script>
+<div style="max-width:980px;margin:24px auto 40px;padding:0 16px"><a href="/tools" style="color:#69d3f5;text-decoration:none">&larr; All tools</a></div>
+</body></html>

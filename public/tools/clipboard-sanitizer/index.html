@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clipboard Sanitizer — Dev Maestro Tools</title>
+<meta name="description" content="Paste text and remove smart quotes, zero-width chars, HTML, and weird whitespace — all in your browser.">
+<link rel="canonical" href="https://xencolabs.com/tools/clipboard-sanitizer">
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: "Clipboard Sanitizer — Dev Maestro Tools",
+    description: "Paste text and remove smart quotes, zero-width chars, HTML, and weird whitespace — all in your browser.",
+    canonical: "https://xencolabs.com/tools/clipboard-sanitizer/"
+  };
+</script>
+<style>
+.grid{display:grid;gap:12px}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+textarea,button{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+</style>
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Clipboard Sanitizer — Dev Maestro Tools',
+    description: 'Paste text and remove smart quotes, zero-width chars, HTML, and weird whitespace — all in your browser.',
+    canonical: 'https://xencolabs.com/tools/clipboard-sanitizer/'
+  };
+</script>
+<!-- DM-SHELL-END -->
+
+</head><body>
+<h1 class="dm-title">Clipboard Sanitizer</h1>
+<div class="dm-sub">Fix copy-pasted text: quotes, zero-width, HTML, extra spaces.</div>
+<div class="grid two">
+  <div><label>Input</label><textarea id="input" placeholder="Paste here…"></textarea></div>
+  <div><label>Output</label><textarea id="output" readonly></textarea></div>
+</div>
+<div class="btns">
+  <button id="sanitize">Sanitize</button>
+  <button id="copy">Copy Output</button>
+  <button id="clear">Clear</button>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function sanitize(s){
+  return (s||'')
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g,'')                    // zero width
+    .replace(/[“”]/g,'"').replace(/[‘’]/g,"'")                      // smart quotes
+    .replace(/\r\n?/g,'\n')                                         // normalize newlines
+    .replace(/<[^>]+>/g,'')                                         // strip HTML tags
+    .replace(/[ \t]+\n/g,'\n')                                      // trailing spaces
+    .replace(/\n{3,}/g,'\n\n')                                      // collapse many blank lines
+    .trim();
+}
+$('sanitize').onclick=()=>{$('output').value=sanitize($('input').value);};
+$('copy').onclick=()=>navigator.clipboard.writeText($('output').value||'');
+$('clear').onclick=()=>{$('input').value='';$('output').value='';};
+</script>
+<div style="max-width:980px;margin:24px auto 40px;padding:0 16px"><a href="/tools" style="color:#69d3f5;text-decoration:none">&larr; All tools</a></div>
+</body></html>

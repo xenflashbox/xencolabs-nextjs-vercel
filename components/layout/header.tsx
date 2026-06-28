@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Apps', href: '/#products' as Route },
   { label: 'Services', href: '/#services' as Route },
   { label: 'Growth', href: '/growth' as Route },
+  { label: 'Tools', href: '/tools' as Route },
   { label: 'About', href: '/#founder' as Route },
   { label: 'Blog', href: '/blog' as Route },
 ]

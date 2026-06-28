@@ -24,6 +24,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/growth-audit',
   '/sitemap.xml',
   '/robots.txt',
+  '/tools',
+  '/tools/(.*)',
 ])
 
 // Primary domain middleware configuration
