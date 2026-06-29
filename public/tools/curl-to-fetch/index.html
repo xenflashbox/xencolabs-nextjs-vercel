@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cURL → fetch() — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'cURL → fetch() — Xenco Tools',
+    description: 'Free, client-side cURL → fetch() — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/curl-to-fetch/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>cURL → fetch()</h1><div class="small">Convert a cURL command into a modern fetch() snippet (client-side only)</div></header>
+<section class="grid">
+<label class="small">Input cURL</label>
+<textarea id="input" placeholder="curl -X POST https://api.example.com/items -H 'Content-Type: application/json' -d '{\"name\":\"Widget\"}'"></textarea>
+<div class="btns">
+  <button class="primary" id="convert">Convert</button>
+  <button id="copy">Copy JS</button>
+</div>
+<div class="grid two">
+  <div><div class="small">fetch() Output</div><textarea id="output" class="out" readonly></textarea></div>
+  <div><div class="small">Detected</div><div id="det" class="out" style="min-height:140px"></div></div>
+</div>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function dequote(s){if((s.startsWith('"')&&s.endsWith('"'))||(s.startsWith("'")&&s.endsWith("'"))) return s.slice(1,-1); return s;}
+function splitArgs(cmd){
+  const out=[]; let i=0, q=null, buf='';
+  while(i<cmd.length){
+    const c=cmd[i];
+    if(q){
+      if(c===q && cmd[i-1] !== '\\'){ buf+=c; out.push(buf); buf=''; q=null; i++; continue; }
+      buf+=c; i++; continue;
+    }
+    if(c==='"' || c==="'"){ q=c; buf+=c; i++; continue; }
+    if(/\s/.test(c)){ if(buf){ out.push(buf); buf=''; } i++; continue; }
+    buf+=c; i++;
+  }
+  if(buf) out.push(buf);
+  return out;
+}
+function parseCurl(raw){
+  let s=raw.replace(/\r\n?/g,'\n').replace(/\\\s*\n\s*/g,' ');
+  s=s.replace(/^```[\s\S]*?\n([\s\s]*?)\n```\s*$/m,'$1');
+  s=s.replace(/^\s*[$#>]?\s*/mg,'');
+  s=s.replace(/[“”]/g,'"').replace(/[‘’]/g,"'"); 
+  if(!/^curl\b/.test(s)) s='curl '+s;
+  const tokens=splitArgs(s);
+  const out={method:'GET', url:'', headers:{}, body:null, isForm:false};
+  for(let i=0;i<tokens.length;i++){
+    const t=tokens[i];
+    if(i===0 && t==='curl') continue;
+    if(t==='-X'||t==='--request'){ out.method=(tokens[++i]||'GET').toUpperCase(); continue; }
+    if(t==='-H'||t==='--header'){ const hv=dequote(tokens[++i]||''); const idx=hv.indexOf(':'); if(idx>-1){ const k=hv.slice(0,idx).trim(); const v=hv.slice(idx+1).trim(); out.headers[k]=v; } continue; }
+    if(/^https?:/i.test(t) || /^"https?:/i.test(t) || /^'https?:/i.test(t)){ out.url=dequote(t); continue; }
+    if(t==='-d'||t==='--data'||t==='--data-raw'||t==='--data-binary'){ out.body=dequote(tokens[++i]||''); if(out.method==='GET') out.method='POST'; continue; }
+    if(t==='-F'||t==='--form'){ out.isForm=true; continue; }
+  }
+  return out;
+}
+function toFetch(p){
+  const headers = Object.keys(p.headers).length ? JSON.stringify(p.headers, null, 2) : '{}';
+  let bodyLine = '';
+  if(p.body!=null){ 
+    let b=p.body; let parsed=null; 
+    try{ parsed=JSON.parse(b); }catch(e){}
+    if(parsed){ bodyLine = '  body: ' + JSON.stringify(parsed, null, 2).split('\n').join('\n  ') + ',\n'; }
+    else{ bodyLine = '  body: ' + JSON.stringify(p.body) + ',\n'; }
+  } else if(p.isForm){
+    bodyLine = '  // TODO: handle multipart form (-F) manually\n';
+  }
+  const opts = (p.method!=='GET' || bodyLine || headers!=='{}') 
+    ? `, {\n  method: ${JSON.stringify(p.method)},\n  headers: ${headers},\n${bodyLine}}`
+    : '';
+  return `fetch(${JSON.stringify(p.url)}${opts})\n  .then(r => r.json())\n  .then(console.log)\n  .catch(console.error);`;
+}
+$('convert').onclick=()=>{
+  const parsed=parseCurl($('input').value);
+  $('det').textContent = `• Method: ${parsed.method}\n• URL: ${parsed.url}\n• Headers: ${Object.keys(parsed.headers).join(', ')||'(none)'}\n• Body: ${parsed.body!=null?'yes':'no'}\n• Form: ${parsed.isForm?'yes':'no'}`;
+  $('output').value = toFetch(parsed);
+};
+$('copy').onclick=()=> navigator.clipboard.writeText($('output').value);
+</script>
+</body></html>

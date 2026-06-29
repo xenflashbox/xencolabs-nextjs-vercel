@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON Formatter — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'JSON Formatter — Xenco Tools',
+    description: 'Free, client-side JSON Formatter — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/json-formatter/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>JSON Formatter</h1><div class="small">Pretty, minify, validate — all in your browser</div></header>
+<section class="grid">
+<label class="small">Input JSON</label>
+<textarea id="input" placeholder='{"name":"Xenco","tools":3}'></textarea>
+<div class="btns">
+<button class="primary" id="pretty">Pretty (2 spaces)</button>
+<button id="pretty4">Pretty (4)</button>
+<button id="minify">Minify</button>
+<button id="copy">Copy Output</button>
+</div>
+<div class="grid two">
+<div><div class="small">Output</div><textarea id="output" class="out" readonly></textarea></div>
+<div><div class="small">Status</div><div id="status" class="out" style="min-height:140px"></div></div>
+</div>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function tryParse(s){try{return [JSON.parse(s),null];}catch(e){return [null,e];}}
+function fmt(sp){const [obj,err]=tryParse($('input').value);if(err){$('status').textContent='Error: '+err.message;return;}$('status').textContent='OK';$('output').value=JSON.stringify(obj,null,sp);}
+document.getElementById('pretty').onclick=()=>fmt(2);
+document.getElementById('pretty4').onclick=()=>fmt(4);
+document.getElementById('minify').onclick=()=>fmt(0);
+document.getElementById('copy').onclick=()=>navigator.clipboard.writeText(document.getElementById('output').value);
+</script>
+</body></html>

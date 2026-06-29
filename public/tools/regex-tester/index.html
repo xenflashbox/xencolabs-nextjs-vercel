@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regex Tester (JS) — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Regex Tester (JS) — Xenco Tools',
+    description: 'Free, client-side Regex Tester (JS) — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/regex-tester/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>Regex Tester (JavaScript)</h1><div class="small">Live matches & groups using the browser's RegExp engine</div></header>
+<section class="grid">
+<div class="grid two">
+  <div>
+    <div class="small">Pattern</div>
+    <input type="text" id="pat" placeholder="\b\w+@\w+\.\w+">
+  </div>
+  <div>
+    <div class="small">Flags</div>
+    <input type="text" id="flg" placeholder="gim">
+  </div>
+</div>
+<div class="small">Input text</div>
+<textarea id="input" placeholder="Emails: [email protected], [email protected]"></textarea>
+<div class="btns"><button class="primary" id="run">Run</button><button id="copy">Copy Matches</button></div>
+<div class="grid two">
+  <div><div class="small">Matches</div><textarea id="matches" class="out" readonly></textarea></div>
+  <div><div class="small">Groups (first 10)</div><textarea id="groups" class="out" readonly></textarea></div>
+</div>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+document.getElementById('run').onclick=()=>{
+  let re=null; try{ re=new RegExp(document.getElementById('pat').value, document.getElementById('flg').value); }catch(e){ $('matches').value='Regex error: '+e.message; $('groups').value=''; return; }
+  const text=document.getElementById('input').value;
+  const ms=[...text.matchAll(re)];
+  $('matches').value = ms.map(m=>m[0]).join('\n');
+  const gs = ms.slice(0,10).map(m=>JSON.stringify(m.groups||Array.from(m).slice(1))).join('\n');
+  $('groups').value = gs || '(no capture groups)';
+};
+document.getElementById('copy').onclick=()=>navigator.clipboard.writeText(document.getElementById('matches').value);
+</script>
+</body></html>

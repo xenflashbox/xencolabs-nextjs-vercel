@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UUID Generator — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'UUID Generator — Xenco Tools',
+    description: 'Free, client-side UUID Generator — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/uuid/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>UUID Generator</h1><div class="small">Generate v4 UUIDs using Web Crypto</div></header>
+<section class="grid">
+<div class="btns">
+  <label class="small">Count: <input type="number" id="count" value="10" min="1" max="1000" style="width:120px"></label>
+  <button class="primary" id="gen">Generate</button>
+  <button id="copy">Copy</button>
+</div>
+<textarea id="output" class="out" readonly></textarea>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function uuidv4(){
+  const b=new Uint8Array(16); crypto.getRandomValues(b);
+  b[6]=(b[6]&0x0f)|0x40; b[8]=(b[8]&0x3f)|0x80;
+  const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+}
+$('gen').onclick=()=>{const n=Math.max(1,Math.min(1000,parseInt($('count').value||'10',10))); const arr=[]; for(let i=0;i<n;i++) arr.push(uuidv4()); $('output').value=arr.join('\n');};
+$('copy').onclick=()=>navigator.clipboard.writeText($('output').value);
+</script>
+</body></html>

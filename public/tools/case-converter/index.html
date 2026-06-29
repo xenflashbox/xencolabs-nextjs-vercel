@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case Converter & Slugify — Dev Maestro Tools</title>
+<meta name="description" content="Convert text between UPPER, lower, Title, camelCase, snake_case, kebab-case, and create slugs. 100% client-side.">
+<link rel="canonical" href="https://xencolabs.com/tools/case-converter">
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: "Case Converter & Slugify — Dev Maestro Tools",
+    description: "Convert text between many cases and create SEO-friendly slugs. Client-side.",
+    canonical: "https://xencolabs.com/tools/case-converter/"
+  };
+</script>
+<style>
+/* keep your existing tool styling (if any) lightweight; shell.css provides the frame */
+textarea,input,button,select{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.out{white-space:pre;min-height:120px}
+.grid{display:grid;gap:12px}
+@media(min-width:900px){ .two{grid-template-columns:1fr 1fr} }
+</style>
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Case Converter & Slugify — Dev Maestro Tools',
+    description: 'Convert text between UPPER, lower, Title, camelCase, snake_case, kebab-case, and create slugs. 100% client-side.',
+    canonical: 'https://xencolabs.com/tools/case-converter/'
+  };
+</script>
+<!-- DM-SHELL-END -->
+
+</head>
+<body>
+  <h1 class="dm-title">Case Converter & Slugify</h1>
+  <div class="dm-sub">Convert text to UPPER, lower, Title, camelCase, PascalCase, snake_case, kebab-case, and SEO slugs.</div>
+  <div class="grid two">
+    <div>
+      <label>Input</label>
+      <textarea id="input" placeholder="The_quick brown-fox  jumpedOver the_lazyDOG."></textarea>
+      <div class="btns">
+        <button id="copy">Copy Output</button>
+        <button id="clear">Clear</button>
+      </div>
+    </div>
+    <div>
+      <label>Output</label>
+      <textarea id="output" class="out" readonly></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:12px">
+    <button data-mode="UPPER">UPPER CASE</button>
+    <button data-mode="lower">lower case</button>
+    <button data-mode="Title">Title Case</button>
+    <button data-mode="camel">camelCase</button>
+    <button data-mode="pascal">PascalCase</button>
+    <button data-mode="snake">snake_case</button>
+    <button data-mode="kebab">kebab-case</button>
+    <button data-mode="slug">slug (SEO)</button>
+  </div>
+  <p class="dm-sub">Tip: Slugify normalizes diacritics and strips punctuation for clean URLs.</p>
+
+<script>
+const $ = id => document.getElementById(id);
+const sepSplit = s => (s||'')
+  .normalize('NFKD').replace(/[\u0300-\u036f]/g,'')      // strip diacritics
+  .replace(/[_\-]+/g,' ')                                 // unify separators
+  .replace(/([a-z])([A-Z])/g,'$1 $2')                     // split camel
+  .replace(/[^A-Za-z0-9]+/g,' ')                          // strip punct
+  .trim().split(/\s+/);
+
+const lower = a => a.map(x=>x.toLowerCase());
+const upper = a => a.map(x=>x.toUpperCase());
+const cap   = s => s.slice(0,1).toUpperCase()+s.slice(1).toLowerCase();
+
+function convert(mode, text){
+  const words = sepSplit(text);
+  if(!words.length) return '';
+  switch(mode){
+    case 'UPPER': return upper(words).join(' ');
+    case 'lower': return lower(words).join(' ');
+    case 'Title': return words.map(cap).join(' ');
+    case 'camel': { const [h,...t]=words; return h.toLowerCase()+t.map(w=>cap(w)).join(''); }
+    case 'pascal': return words.map(w=>cap(w)).join('');
+    case 'snake': return lower(words).join('_');
+    case 'kebab': return lower(words).join('-');
+    case 'slug':  return lower(words).join('-').replace(/^-+|-+$/g,'');
+  }
+  return text;
+}
+function show(mode){ $('output').value = convert(mode, $('input').value); }
+
+document.querySelectorAll('button[data-mode]').forEach(b =>
+  b.addEventListener('click', ()=> show(b.dataset.mode))
+);
+$('copy').onclick = () => navigator.clipboard.writeText($('output').value||'');
+$('clear').onclick = () => { $('input').value=''; $('output').value=''; };
+</script>
+<div style="max-width:980px;margin:24px auto 40px;padding:0 16px"><a href="/tools" style="color:#69d3f5;text-decoration:none">&larr; All tools</a></div>
+</body></html>

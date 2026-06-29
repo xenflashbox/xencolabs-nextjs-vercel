@@ -1,0 +1,41 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hash Generator</title><style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:#0b0f14}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:#111822;border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622;color:#e8eef6;text-decoration:none}
+.small{font-size:12px;color:#8391a2}
+textarea, input, select{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px;min-height:120px;resize:vertical}
+.btns{display:flex;gap:10px;margin-top:12px}
+button{border:1px solid #1f2a39;background:#0f1620;color:#e8eef6;padding:10px 14px;border-radius:12px;cursor:pointer}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:#8391a2;font-size:12px;display:flex;justify-content:space-between}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Hash Generator',
+    description: 'Free, client-side Hash Generator by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/hash/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>Hash Generator</h1><div class="small">SHA-256 / SHA-512 and HMAC</div></header>
+<section><textarea id="msg" placeholder="hello"></textarea>
+<div class="btns"><select id="algo"><option>SHA-256</option><option>SHA-512</option></select><select id="mode"><option>Hash</option><option>HMAC</option></select><input id="key" placeholder="key (for HMAC)"><button id="go">Compute</button></div>
+<textarea id="out" class="out" readonly></textarea></section>
+<div class="footer"><a href="/tools" class="small">All tools</a></div></div></div>
+<script>
+const enc=new TextEncoder();const $=i=>document.getElementById(i);const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function run(){const m=enc.encode($('msg').value||'');const algo=$('algo').value.replace('-','');if($('mode').value==='Hash'){const d=await crypto.subtle.digest(algo,m);$('out').value=hex(d);}else{const key=await crypto.subtle.importKey('raw',enc.encode($('key').value||''),{name:'HMAC',hash:{name:algo}},false,['sign']);const sig=await crypto.subtle.sign('HMAC',key,m);$('out').value=hex(sig);}}
+$('go').onclick=run;
+</script></body></html>

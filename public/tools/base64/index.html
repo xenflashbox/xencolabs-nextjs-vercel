@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Base64 Encode/Decode — Xenco Tools</title>
+<style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5;--ok:#7dfcac;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);background:linear-gradient(180deg,#0b0f14,#0b0f14 50%,#0e141d)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+textarea, input[type=text], input[type=number]{width:100%;background:#0a1017;border:1px solid #1c2533;color:var(--text);border-radius:12px;padding:12px 14px;min-height:140px;resize:vertical}
+input[type=text], input[type=number]{min-height:auto}
+textarea:focus, input:focus{outline:none;border-color:#2e8ddc;box-shadow:0 0 0 3px rgba(46,141,220,.2)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{appearance:none;border:1px solid #1f2a39;background:#0f1620;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#2e8ddc}button.primary{background:#152234;border-color:#2e8ddc}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1fr 1fr}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;flex:1}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'Base64 Encode/Decode — Xenco Tools',
+    description: 'Free, client-side Base64 Encode/Decode — Xenco Tools by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/base64/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>Base64 Encode / Decode</h1><div class="small">Text & files, with Base64URL option</div></header>
+<section class="grid">
+<label class="small">Text</label>
+<textarea id="input" placeholder="Hello, world!"></textarea>
+<div class="btns">
+  <button class="primary" id="enc">Encode</button>
+  <button id="encurl">Encode (URL)</button>
+  <button id="dec">Decode</button>
+  <button id="decurl">Decode (URL)</button>
+  <button id="copy">Copy Output</button>
+</div>
+<div class="grid two">
+  <div><div class="small">Output</div><textarea id="output" class="out" readonly></textarea></div>
+  <div>
+    <div class="small">File</div>
+    <input id="file" type="file" style="background:none;border:none;padding:0">
+    <div class="btns"><button id="fileenc">Encode File</button><button id="filedec">Decode to File</button></div>
+  </div>
+</div>
+</section>
+<div class="footer"><div>Runs locally — no uploads.</div><a href="/tools">All tools</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function enc(s){return btoa(unescape(encodeURIComponent(s)));}
+function dec(s){return decodeURIComponent(escape(atob(s)));}
+function toUrl(b64){return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function fromUrl(u){let s=u.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return s;}
+$('enc').onclick=()=>{$('output').value=enc($('input').value);};
+$('encurl').onclick=()=>{$('output').value=toUrl(enc($('input').value));};
+$('dec').onclick=()=>{$('output').value=dec($('input').value);};
+$('decurl').onclick=()=>{$('output').value=dec(fromUrl($('input').value));};
+$('copy').onclick=()=>navigator.clipboard.writeText($('output').value);
+$('fileenc').onclick=()=>{const f=$('file').files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{$('output').value=r.result.split(',')[1]||'';}; r.readAsDataURL(f);};
+$('filedec').onclick=()=>{const b=$('input').value.trim(); if(!b) return; const byteStr=atob(b); const arr=new Uint8Array(byteStr.length); for(let i=0;i<byteStr.length;i++) arr[i]=byteStr.charCodeAt(i); const blob=new Blob([arr]); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='decoded.bin'; a.click();};
+</script>
+</body></html>

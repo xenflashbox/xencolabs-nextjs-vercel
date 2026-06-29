@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cURL ↔ HTTPie</title><style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:#0b0f14}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:#111822;border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622;color:#e8eef6;text-decoration:none}
+.small{font-size:12px;color:#8391a2}
+textarea, input, select{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px;min-height:120px;resize:vertical}
+.btns{display:flex;gap:10px;margin-top:12px}
+button{border:1px solid #1f2a39;background:#0f1620;color:#e8eef6;padding:10px 14px;border-radius:12px;cursor:pointer}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:#8391a2;font-size:12px;display:flex;justify-content:space-between}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'cURL ↔ HTTPie',
+    description: 'Free, client-side cURL ↔ HTTPie by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/curl-httpie/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>cURL ↔ HTTPie</h1><div class="small">Basic flag conversion</div></header>
+<section class="nav">
+<div><div class="small">cURL → HTTPie</div><textarea id="cin"></textarea><div class="btns"><button id="c2h">Convert</button></div><textarea id="hout" class="out" readonly></textarea></div>
+<div><div class="small">HTTPie → cURL</div><textarea id="hin"></textarea><div class="btns"><button id="h2c">Convert</button></div><textarea id="cout" class="out" readonly></textarea></div>
+</section>
+<div class="footer"><a href="/tools" class="small">All tools</a></div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+function deq(s){if((s.startsWith('"')&&s.endsWith('"'))||(s.startsWith("'")&&s.endsWith("'")))return s.slice(1,-1);return s;}
+function toks(s){s=s.replace(/\\\s*\n\s*/g,' ');const o=[];let i=0,q=null,b='';while(i<s.length){const c=s[i];if(q){if(c===q&&s[i-1]!=='\\'){b+=c;o.push(b);b='';q=null;i++;continue;}b+=c;i++;continue;}if(c=='"'||c=="'"){q=c;b+=c;i++;continue;}if(/\s/.test(c)){if(b){o.push(b);b='';}i++;continue;}b+=c;i++;}if(b)o.push(b);return o;}
+function c2h(raw){const t=toks(raw);let url='',m='GET',H=[],d=null;for(let i=0;i<t.length;i++){const x=t[i];if(i===0&&x==='curl')continue;if(/^https?:/.test(x)||/^"https?:/.test(x)||/^'https?:/.test(x)){url=deq(x);continue;}if(x==='-X'||x==='--request'){m=(t[++i]||'GET').toUpperCase();continue;}if(x==='-H'||x==='--header'){H.push(deq(t[++i]||''));continue;}if(x==='-d'||x==='--data'||x==='--data-raw'||x==='--data-binary'){d=deq(t[++i]||'');if(m==='GET')m='POST';continue;}}let parts=['http',m,url].filter(Boolean);H.forEach(h=>parts.push(h.replace(': ',':')));if(d!=null){try{parts.push(JSON.stringify(JSON.parse(d)));}catch(e){parts.push(d);}}return parts.join(' ');}
+function h2c(raw){const t=toks(raw);let m='GET',url='',H=[],b=null;for(let i=0;i<t.length;i++){const x=t[i];if(i===0&&(x==='http'||x==='https'))continue;if(['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'].includes(x.toUpperCase())){m=x.toUpperCase();continue;}if(/^https?:/.test(x)){url=x;continue;}if(x.includes(':')&&!x.includes('://')&&!x.includes(':=')&&!x.includes('=='))H.push(x);else b=x;}const parts=['curl','-i'];if(m!=='GET')parts.push('-X',m);parts.push(url);H.forEach(h=>parts.push('-H',h.replace(':',': ')));if(b!=null)parts.push('--data',b);return parts.join(' ');}
+$('c2h').onclick=()=>{$('hout').value=c2h($('cin').value);};$('h2c').onclick=()=>{$('cout').value=h2c($('hin').value);};
+</script></body></html>

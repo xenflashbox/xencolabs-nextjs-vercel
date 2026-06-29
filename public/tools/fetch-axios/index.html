@@ -1,0 +1,41 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fetch() → Axios</title><style>
+:root{--bg:#0b0f14;--card:#111822;--muted:#8391a2;--text:#e8eef6;--accent:#69d3f5}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:#0b0f14}
+.wrap{max-width:980px;margin:40px auto;padding:0 16px}
+.card{background:#111822;border:1px solid #1d2633;border-radius:18px;box-shadow:0 6px 30px rgba(0,0,0,.35);overflow:hidden}
+header{padding:18px 20px;border-bottom:1px solid #1d2633;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:650}
+section{padding:18px}
+.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.badge{display:block;text-align:center;font-size:14px;padding:10px 12px;border:1px solid #2a3546;border-radius:12px;background:#0e1622;color:#e8eef6;text-decoration:none}
+.small{font-size:12px;color:#8391a2}
+textarea, input, select{width:100%;background:#0a1017;border:1px solid #1c2533;color:#e8eef6;border-radius:12px;padding:12px 14px;min-height:120px;resize:vertical}
+.btns{display:flex;gap:10px;margin-top:12px}
+button{border:1px solid #1f2a39;background:#0f1620;color:#e8eef6;padding:10px 14px;border-radius:12px;cursor:pointer}
+.out{white-space:pre;min-height:140px}
+.footer{padding:14px 20px;border-top:1px solid #1d2633;color:#8391a2;font-size:12px;display:flex;justify-content:space-between}
+
+<!-- DM-SHELL-START -->
+<link rel="stylesheet" href="/tools/assets/shell.css">
+<script>
+  window.TOOL_META = {
+    title: 'fetch() → Axios',
+    description: 'Free, client-side fetch() → Axios by Dev Maestro. Runs locally in your browser.',
+    canonical: 'https://xencolabs.com/tools/fetch-axios/'
+  };
+</script>
+<script src="/tools/assets/shell.js" defer></script>
+<!-- DM-SHELL-END -->
+
+</style></head><body><div class="wrap"><div class="card">
+<header><h1>fetch() → Axios</h1><div class="small">Paste fetch(), get Axios</div></header>
+<section><textarea id="in" placeholder="fetch('https://api.example.com', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name:'Widget'}) })"></textarea>
+<div class="btns"><button id="go">Convert</button></div><textarea id="out" class="out" readonly></textarea></section>
+<div class="footer"><a href="/tools" class="small">All tools</a></div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+function parseFetch(s){const m=s.match(/fetch\s*\(\s*(['\"])(.*?)\1\s*(?:,\s*([\s\S]*))?\)\s*;?/);if(!m)return null;const url=m[2];const opts=(m[3]||'').trim().replace(/\)\s*;?$/,'');let method='GET',headers={},body=null;if(opts){const mm=opts.match(/method\s*:\s*(['\"])(.*?)\1/i);if(mm)method=mm[2].toUpperCase();const mh=opts.match(/headers\s*:\s*({[\s\S]*?})/i);if(mh){try{headers=(new Function('return '+mh[1]))();}catch(e){}}const mb=opts.match(/body\s*:\s*([\s\S]*)/i);if(mb){let b=mb[1].trim();b=b.replace(/,$/,'');body=b;}}return {url,method,headers,body};}
+function toAxios(p){const h=Object.keys(p.headers||{}).length?JSON.stringify(p.headers,null,2):'{}';const body=p.body?('  data: '+p.body+',\n'):'';const cfg=`{{\n  method: ${JSON.stringify(p.method)},\n  url: ${JSON.stringify(p.url)},\n  headers: ${h},\n${body}}}`;return "import axios from 'axios'\n\naxios("+cfg+")\n  .then(r => console.log(r.data))\n  .catch(console.error)";}
+$('go').onclick=()=>{const p=parseFetch($('in').value);$('out').value=p?toAxios(p):'Could not parse fetch()';};
+</script></body></html>
