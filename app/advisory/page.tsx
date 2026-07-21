@@ -153,7 +153,7 @@ export default function AdvisoryPage() {
               title: 'Site Origination',
               per: 'We source and pre-screen off-market opportunities matched to your acquisition criteria.',
               body: '',
-              highlight: 'Success-fee only: nothing due unless you acquire.',
+              timeline: 'Available within an active advisory engagement.',
             },
           ].map((c) => (
             <div
@@ -174,15 +174,9 @@ export default function AdvisoryPage() {
                   {c.body}
                 </p>
               )}
-              {c.highlight ? (
-                <p className="mt-4 rounded-lg bg-[#E8A33D]/15 px-4 py-3 text-sm font-semibold text-[#E8A33D]">
-                  {c.highlight}
-                </p>
-              ) : (
-                <p className="mt-4 text-sm font-medium text-[#D9E2F3]">
-                  {c.timeline}
-                </p>
-              )}
+              <p className="mt-4 text-sm font-medium text-[#D9E2F3]">
+                {c.timeline}
+              </p>
             </div>
           ))}
         </div>
