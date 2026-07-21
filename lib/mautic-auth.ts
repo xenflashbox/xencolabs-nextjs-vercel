@@ -9,21 +9,23 @@
  * runs this exact transport in production against mautic.xencolabs.com. Uses a
  * SEPARATE XL credential pair — never ResumeCoach's (one-channel-one-key).
  *
- * Env contract:
- *   MAUTIC_URL                  e.g. https://mautic.xencolabs.com
- *   MAUTIC_OAUTH_TOKEN_URL      e.g. https://mautic.xencolabs.com/oauth/v2/token
- *   MAUTIC_OAUTH_CLIENT_ID
- *   MAUTIC_OAUTH_CLIENT_SECRET
+ * Env contract (names match the Infisical xencolabs-fe-site vault):
+ *   MAUTIC_URL                    e.g. https://mautic.xencolabs.com
+ *   MAUTIC_OAUTH_TOKEN_URL        e.g. https://mautic.xencolabs.com/oauth/v2/token
+ *   XENCOLABS_MAUTIC_PUBLIC_KEY   OAuth2 client_id
+ *   XENCOLABS_MAUTIC_SECRET_KEY   OAuth2 client_secret
  */
 
 let cachedToken: { value: string; expiresAt: number } | null = null;
 
 async function fetchMauticToken(): Promise<string> {
   const tokenUrl = process.env.MAUTIC_OAUTH_TOKEN_URL;
-  const clientId = process.env.MAUTIC_OAUTH_CLIENT_ID;
-  const clientSecret = process.env.MAUTIC_OAUTH_CLIENT_SECRET;
+  const clientId = process.env.XENCOLABS_MAUTIC_PUBLIC_KEY;
+  const clientSecret = process.env.XENCOLABS_MAUTIC_SECRET_KEY;
   if (!tokenUrl || !clientId || !clientSecret) {
-    throw new Error('Mautic OAuth env missing (TOKEN_URL / CLIENT_ID / CLIENT_SECRET)');
+    throw new Error(
+      'Mautic OAuth env missing (MAUTIC_OAUTH_TOKEN_URL / XENCOLABS_MAUTIC_PUBLIC_KEY / XENCOLABS_MAUTIC_SECRET_KEY)'
+    );
   }
   const res = await fetch(tokenUrl, {
     method: 'POST',
