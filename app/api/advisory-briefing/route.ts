@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
 import nodemailer from 'nodemailer';
+import { syncXlAdvisoryInquiryToMautic } from '@/lib/mautic';
 
 /**
  * Executive briefing requests from /advisory.
  *
- * Capture-and-notify only (no drip): persist to Neon, notify both principals,
- * and best-effort enroll the contact in Mautic. Mirrors the proven
- * /api/growth-audit transport. Never throws to the visitor if at least one
- * channel succeeds — the CTA must not dead-end.
+ * Persist to Neon, notify both principals, and enroll the contact in Mautic
+ * (OAuth2, mautic.xencolabs.com) which fires the Notify + Escalate campaign.
+ * Every leg is best-effort and independent — the request never dead-ends if at
+ * least one of DB/email succeeds.
  */
 
 const briefingSchema = z.object({
@@ -22,7 +23,6 @@ type BriefingData = z.infer<typeof briefingSchema>;
 
 const NOTIFY = ['xen@xencolabs.com', 'laurie@xencolabs.com'];
 const SOURCE_TAG = 'advisory-page';
-const MAUTIC_SEGMENT_ALIAS = 'advisory-briefing-requests';
 
 async function saveToDatabase(data: BriefingData) {
   const sql = neon(process.env.DATABASE_URL!);
@@ -98,59 +98,21 @@ async function sendNotificationEmail(data: BriefingData) {
 }
 
 /**
- * Best-effort Mautic enrollment: create/update the contact, tag it, and add it
- * to the advisory-briefing-requests segment (capture-and-notify only — attach
- * no campaigns). Skips cleanly when Mautic is unreachable/unconfigured (the
- * instance is currently LAN-only), so the primary capture path is never blocked.
+ * Enroll the contact in Mautic via the shared OAuth2 transport. The atomic
+ * create carries xl_source='xl-advisory' + xl_advisory_status='new', which the
+ * segment filter + campaign 13 (Notify + Escalate) pick up cron-side.
+ * Best-effort: syncXlAdvisoryInquiryToMautic never throws; a null return means
+ * enrollment didn't land (already captured in Neon + notified by email).
  */
 async function enrollInMautic(data: BriefingData) {
-  const base = process.env.MAUTIC_API_URL; // e.g. https://mautic.example.com/api
-  const user = process.env.MAUTIC_USER;
-  const pass = process.env.MAUTIC_PASS;
-
-  if (!base || !user || !pass) {
-    console.warn(
-      '[advisory-briefing] Mautic not configured — skipping enrollment. Set MAUTIC_API_URL, MAUTIC_USER, MAUTIC_PASS (needs a publicly reachable Mautic).'
-    );
-    return;
-  }
-
-  const auth = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
   const [firstname, ...rest] = data.name.trim().split(/\s+/);
   const lastname = rest.join(' ');
-
-  const createRes = await fetch(`${base.replace(/\/$/, '')}/contacts/new`, {
-    method: 'POST',
-    headers: { Authorization: auth, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: data.email,
-      firstname,
-      lastname,
-      company: data.company || undefined,
-      tags: [SOURCE_TAG],
-    }),
+  await syncXlAdvisoryInquiryToMautic({
+    email: data.email,
+    firstname,
+    lastname: lastname || undefined,
+    company: data.company || undefined,
   });
-  if (!createRes.ok) {
-    throw new Error(
-      `Mautic contact create failed: ${createRes.status} ${await createRes.text()}`
-    );
-  }
-  const contact = await createRes.json();
-  const contactId = contact?.contact?.id;
-  if (!contactId) {
-    throw new Error('Mautic contact create returned no id');
-  }
-
-  const segRes = await fetch(
-    `${base.replace(/\/$/, '')}/segments/${MAUTIC_SEGMENT_ALIAS}/contact/${contactId}/add`,
-    { method: 'POST', headers: { Authorization: auth } }
-  );
-  if (!segRes.ok) {
-    throw new Error(
-      `Mautic segment add failed: ${segRes.status} ${await segRes.text()}`
-    );
-  }
-  console.log(`[advisory-briefing] Enrolled ${data.email} in Mautic segment`);
 }
 
 export async function POST(request: NextRequest) {
