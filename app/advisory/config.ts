@@ -10,10 +10,11 @@ export const OVERVIEW_VIDEO_POSTER = '/advisory/datacenter-density-map.png'; // 
 // Booking link shown on the briefing-request thank-you state.
 export const CALENDLY_URL = 'https://calendly.com/xencolabs/30min';
 
-// Principals — contact line under the final CTA.
+// Principals — contact line under the final CTA. Names + titles only; the
+// briefing form is the contact channel (no direct emails/phones on the page).
 export const PRINCIPALS = [
-  { name: 'Xenophon Giannis', email: 'xen@xencolabs.com', phone: '415-310-0860' },
-  { name: 'Laurie Shahin', email: 'laurie@xencolabs.com', phone: '530-368-7373' },
+  { name: 'Xenophon Giannis', title: 'Co-Founder & CEO' },
+  { name: 'Laurie Shahin', title: 'Co-Founder & Chief Partnerships Officer' },
 ] as const;
 
 // Downloadable sample assessment (ungated for launch; file is banner-labeled).

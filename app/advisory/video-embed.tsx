@@ -16,7 +16,10 @@ export function VideoEmbed() {
       <div className="relative w-full overflow-hidden rounded-xl border border-[#3B5C8F]/40 bg-black aspect-video">
         <iframe
           className="absolute inset-0 h-full w-full"
-          src={`https://www.youtube-nocookie.com/embed/${OVERVIEW_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`}
+          // Burned-in captions: no caption-forcing param in the query (YouTube
+          // offers no force-off, so we never force-on). autoplay=1 because the
+          // facade is click-initiated.
+          src={`https://www.youtube-nocookie.com/embed/${OVERVIEW_VIDEO_ID}?rel=0&playsinline=1&autoplay=1`}
           title="Xenco Labs — 60-Second Overview"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen

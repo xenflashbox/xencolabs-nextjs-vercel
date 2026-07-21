@@ -17,6 +17,16 @@ export const metadata: Metadata = {
   description:
     "Xenco Labs is a founder-led product studio building AI-powered tools. BlogCraft, ResumeCoach, ImageCrafter, and more.",
   metadataBase: new URL("https://xencolabs.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     type: "website",
     locale: "en_US",

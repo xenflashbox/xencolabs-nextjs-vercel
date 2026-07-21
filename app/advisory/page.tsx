@@ -90,7 +90,7 @@ export default function AdvisoryPage() {
       <section className="relative bg-[#F2F5FB] text-[#1F3864]">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[url('/advisory/datacenter-density-map-clean.png')] bg-cover bg-center opacity-[0.06]"
+          className="pointer-events-none absolute inset-0 bg-[url('/advisory/datacenter-density-map-clean.png')] bg-cover bg-right opacity-[0.10]"
         />
         <div className="relative mx-auto max-w-6xl px-6 py-20">
           <h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
@@ -384,16 +384,12 @@ export default function AdvisoryPage() {
           </div>
           <p className="mt-8 text-sm leading-relaxed text-[#94A3B8]">
             {PRINCIPALS.map((p, i) => (
-              <span key={p.email}>
+              <span key={p.name}>
                 {i > 0 && (
                   <span className="mx-2 hidden text-[#3B5C8F] sm:inline">|</span>
                 )}
                 {i > 0 && <br className="sm:hidden" />}
-                <span className="text-[#D9E2F3]">{p.name}</span> ·{' '}
-                <a href={`mailto:${p.email}`} className="hover:text-white">
-                  {p.email}
-                </a>{' '}
-                · {p.phone}
+                <span className="text-[#D9E2F3]">{p.name}</span> · {p.title}
               </span>
             ))}
           </p>
