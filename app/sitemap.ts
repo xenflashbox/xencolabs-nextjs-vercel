@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/agencies",
     "/enterprise",
     "/consulting",
+    "/advisory",
     "/apps/blogcraft",
     "/apps/landingcraft",
     "/apps/resumecoach",
