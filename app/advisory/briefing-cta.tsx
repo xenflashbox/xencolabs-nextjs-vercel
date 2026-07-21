@@ -147,7 +147,7 @@ export function BriefingCta({ id }: { id?: string }) {
         {status === 'submitting' ? 'Sending…' : 'Request Executive Briefing'}
       </button>
       <p className="mt-3 text-center text-xs text-[#94A3B8]">
-        Two fields. No sales sequence. A principal replies.
+        Two required fields. No sales sequence. A principal replies.
       </p>
     </form>
   );

@@ -90,7 +90,7 @@ export default function AdvisoryPage() {
       <section className="relative bg-[#F2F5FB] text-[#1F3864]">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[url('/advisory/datacenter-density-map.png')] bg-cover bg-center opacity-[0.06]"
+          className="pointer-events-none absolute inset-0 bg-[url('/advisory/datacenter-density-map-clean.png')] bg-cover bg-center opacity-[0.06]"
         />
         <div className="relative mx-auto max-w-6xl px-6 py-20">
           <h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
