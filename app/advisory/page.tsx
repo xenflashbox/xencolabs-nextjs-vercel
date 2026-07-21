@@ -87,12 +87,12 @@ export default function AdvisoryPage() {
       </section>
 
       {/* ── SECTION 2 — THE PROBLEM (light) ── */}
-      <section className="relative bg-[#F2F5FB] text-[#1F3864]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[url('/advisory/datacenter-density-map-clean.png')] bg-cover bg-right opacity-[0.10]"
-        />
-        <div className="relative mx-auto max-w-6xl px-6 py-20">
+      {/* Density-map background removed per brief: the provided asset has a
+          baked-in navy fill, so object-fit:contain renders a hard rectangle on
+          this light section at every breakpoint. "Visible or absent, never
+          smeared" → absent. A transparent-background map could be reintroduced. */}
+      <section className="bg-[#F2F5FB] text-[#1F3864]">
+        <div className="mx-auto max-w-6xl px-6 py-20">
           <h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
             The wall every developer hits
           </h2>
