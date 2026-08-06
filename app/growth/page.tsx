@@ -527,10 +527,10 @@ export default function GrowthPage() {
                 <li>Recorded walkthrough for your team</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                $12,500
+                By consultation
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)] mb-6">
-                Fixed fee. No retainer required.
+                Fixed-fee engagement · No retainer required
               </p>
               <a
                 href="#audit-form"
@@ -561,10 +561,10 @@ export default function GrowthPage() {
                 <li>Dedicated account management</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                $10,000 – $20,000
+                By consultation
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)]">
-                /month · 3-month minimum
+                Monthly engagement · 3-month minimum
               </p>
               <p className="text-xs font-body text-[var(--text-tertiary)] mt-4 mb-6">
                 Cybersecurity · IT Asset Management · SaaS · Manufacturing
@@ -598,7 +598,7 @@ export default function GrowthPage() {
                 <li>Ongoing feature development</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                $0 upfront
+                No upfront cost
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)]">
                 Revenue share on web-generated leads
