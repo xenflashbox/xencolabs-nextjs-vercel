@@ -21,6 +21,12 @@ export interface XlAdvisoryInquiry {
   company?: string;
   /** Free-text qualifier, stamped to xl_advisory_message (field 76). */
   message?: string;
+  /**
+   * Site-side bot protection passed (Turnstile + honeypot + timing). Stamped to
+   * the Mautic `form_verified` field; the admin gates segments on it so any
+   * unprotected/regressed form is stored but never notifies a human.
+   */
+  formVerified?: boolean;
 }
 
 /**
@@ -38,6 +44,8 @@ export async function syncXlAdvisoryInquiryToMautic(
     // Routing fields — both carried in the single create call.
     xl_source: 'xl-advisory',
     xl_advisory_status: 'new',
+    // Cross-system contract: 1 only when the site's bot protection passed.
+    form_verified: payload.formVerified ? 1 : 0,
     ...(payload.message ? { xl_advisory_message: payload.message } : {}),
     tags: ['xl-advisory'],
   };

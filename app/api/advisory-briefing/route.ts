@@ -3,14 +3,25 @@ import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
 import nodemailer from 'nodemailer';
 import { syncXlAdvisoryInquiryToMautic } from '@/lib/mautic';
+import {
+  MIN_SUBMIT_MS,
+  normalizeEmail,
+  verifyFormToken,
+  verifyTurnstile,
+} from '@/lib/form-hardening';
 
 /**
  * Executive briefing requests from /advisory.
  *
- * Persist to Neon, notify both principals, and enroll the contact in Mautic
- * (OAuth2, mautic.xencolabs.com) which fires the Notify + Escalate campaign.
- * Every leg is best-effort and independent — the request never dead-ends if at
- * least one of DB/email succeeds.
+ * Bot-hardened per FORM_BOT_HARDENING_BRIEF: honeypot (silent drop), signed-
+ * timestamp timing floor, server-side Turnstile, and Gmail-normalised rate
+ * limiting all run BEFORE any Mautic contact is created. Anything that fails an
+ * enforced layer is rejected/dropped at the site, so every contact that IS
+ * created is attested with form_verified=1 — the Mautic-side gate on that field
+ * then catches any future unprotected/regressed form as defence in depth.
+ *
+ * Surviving submissions persist to Neon, notify both principals, and enroll in
+ * Mautic (campaign 13 Notify + Escalate). Each leg is best-effort.
  */
 
 const briefingSchema = z.object({
@@ -23,8 +34,9 @@ type BriefingData = z.infer<typeof briefingSchema>;
 
 const NOTIFY = ['xen@xencolabs.com', 'laurie@xencolabs.com'];
 const SOURCE_TAG = 'advisory-page';
+const HONEYPOT_FIELD = 'company_url'; // must match the CSS-hidden input in the form
 
-async function saveToDatabase(data: BriefingData) {
+async function ensureTable() {
   const sql = neon(process.env.DATABASE_URL!);
   await sql`
     CREATE TABLE IF NOT EXISTS xl_advisory_briefing_requests (
@@ -37,11 +49,42 @@ async function saveToDatabase(data: BriefingData) {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
+  // Additive columns for hardening (idempotent).
+  await sql`ALTER TABLE xl_advisory_briefing_requests ADD COLUMN IF NOT EXISTS normalized_email TEXT`;
+  await sql`ALTER TABLE xl_advisory_briefing_requests ADD COLUMN IF NOT EXISTS form_verified BOOLEAN NOT NULL DEFAULT FALSE`;
+}
+
+/** Layer 4: ≤1 accepted submission per normalised identity per hour. */
+async function recentlySubmitted(normalized: string): Promise<boolean> {
+  try {
+    await ensureTable();
+    const sql = neon(process.env.DATABASE_URL!);
+    const rows = await sql`
+      SELECT 1 FROM xl_advisory_briefing_requests
+      WHERE normalized_email = ${normalized}
+        AND created_at > NOW() - INTERVAL '1 hour'
+      LIMIT 1
+    `;
+    return rows.length > 0;
+  } catch (error) {
+    // Fail open — a DB blip must not block a legitimate lead.
+    console.error('[advisory-briefing] rate-limit check failed (allowing):', error);
+    return false;
+  }
+}
+
+async function saveToDatabase(
+  data: BriefingData,
+  normalized: string,
+  formVerified: boolean
+) {
+  await ensureTable();
+  const sql = neon(process.env.DATABASE_URL!);
   await sql`
-    INSERT INTO xl_advisory_briefing_requests (name, email, company, source)
-    VALUES (${data.name}, ${data.email}, ${data.company || null}, ${SOURCE_TAG})
+    INSERT INTO xl_advisory_briefing_requests (name, email, company, source, normalized_email, form_verified)
+    VALUES (${data.name}, ${data.email}, ${data.company || null}, ${SOURCE_TAG}, ${normalized}, ${formVerified})
   `;
-  console.log(`[advisory-briefing] Saved to database: ${data.email}`);
+  console.log(`[advisory-briefing] Saved to database: ${data.email} (form_verified=${formVerified})`);
 }
 
 async function sendNotificationEmail(data: BriefingData) {
@@ -98,13 +141,11 @@ async function sendNotificationEmail(data: BriefingData) {
 }
 
 /**
- * Enroll the contact in Mautic via the shared OAuth2 transport. The atomic
- * create carries xl_source='xl-advisory' + xl_advisory_status='new', which the
- * segment filter + campaign 13 (Notify + Escalate) pick up cron-side.
- * Best-effort: syncXlAdvisoryInquiryToMautic never throws; a null return means
- * enrollment didn't land (already captured in Neon + notified by email).
+ * Enroll the contact in Mautic. The atomic create carries xl_source='xl-advisory',
+ * xl_advisory_status='new', and form_verified (1 for a site-protected submission),
+ * which segment 21 + campaign 13 pick up cron-side. Best-effort.
  */
-async function enrollInMautic(data: BriefingData) {
+async function enrollInMautic(data: BriefingData, formVerified: boolean) {
   const [firstname, ...rest] = data.name.trim().split(/\s+/);
   const lastname = rest.join(' ');
   await syncXlAdvisoryInquiryToMautic({
@@ -112,14 +153,25 @@ async function enrollInMautic(data: BriefingData) {
     firstname,
     lastname: lastname || undefined,
     company: data.company || undefined,
+    formVerified,
   });
 }
 
+const OK = { success: true, message: 'Briefing request received' };
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const result = briefingSchema.safeParse(body);
+    const body = await request.json().catch(() => ({}));
 
+    // ── Layer 2: honeypot ── a field only a bot fills. Silent success so the
+    // bot never learns it was caught; no contact created.
+    const hp = body?.[HONEYPOT_FIELD];
+    if (typeof hp === 'string' && hp.trim() !== '') {
+      console.warn('[advisory-briefing] honeypot tripped — silent drop');
+      return NextResponse.json(OK, { status: 201 });
+    }
+
+    const result = briefingSchema.safeParse(body);
     if (!result.success) {
       const details = result.error.issues.map((e) => ({
         field: e.path.join('.'),
@@ -131,13 +183,57 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     const data = result.data;
 
+    // ── Layer 3: timing floor ── requires a valid signed token (only issued on
+    // page load) and ≥3s elapsed. The current attack — bare API POSTs with no
+    // page session — has no token and is rejected right here. Enforced only when
+    // FORM_TOKEN_SECRET is provisioned (fail-open on misconfig, logged loudly).
+    if (process.env.FORM_TOKEN_SECRET) {
+      const age = verifyFormToken(body?.formToken);
+      if (age === null || age < MIN_SUBMIT_MS) {
+        console.warn(`[advisory-briefing] timing/token rejected (age=${age})`);
+        return NextResponse.json(
+          { error: 'Could not verify your submission. Please reload the page and try again.' },
+          { status: 400 }
+        );
+      }
+    } else {
+      console.warn('[advisory-briefing] FORM_TOKEN_SECRET unset — timing layer INACTIVE');
+    }
+
+    // ── Layer 1: Turnstile (server-side) ── enforced once TURNSTILE_SECRET_KEY
+    // is set. Missing/invalid token → reject (this is the acceptance-critical
+    // direct-POST bypass).
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+    const turnstile = await verifyTurnstile(body?.turnstileToken, ip);
+    if (turnstile.configured && !turnstile.success) {
+      console.warn('[advisory-briefing] Turnstile failed — rejected');
+      return NextResponse.json(
+        { error: 'Verification failed. Please try again.' },
+        { status: 400 }
+      );
+    }
+    if (!turnstile.configured) {
+      console.warn('[advisory-briefing] TURNSTILE_SECRET_KEY unset — Turnstile layer INACTIVE');
+    }
+
+    // ── Layer 4: Gmail-normalised rate limit ── collapses dot-insertion to one
+    // identity. Duplicate within the hour → stealth success, no new contact.
+    const normalized = normalizeEmail(data.email);
+    if (await recentlySubmitted(normalized)) {
+      console.warn(`[advisory-briefing] rate-limited (normalised=${normalized})`);
+      return NextResponse.json(OK, { status: 201 });
+    }
+
+    // Reached here ⇒ passed every enforced layer ⇒ attest form_verified=1.
+    const formVerified = true;
+
     const [dbResult, emailResult, mauticResult] = await Promise.allSettled([
-      saveToDatabase(data),
+      saveToDatabase(data, normalized, formVerified),
       sendNotificationEmail(data),
-      enrollInMautic(data),
+      enrollInMautic(data, formVerified),
     ]);
 
     if (dbResult.status === 'rejected') {
@@ -147,13 +243,9 @@ export async function POST(request: NextRequest) {
       console.error('[advisory-briefing] Email send failed:', emailResult.reason);
     }
     if (mauticResult.status === 'rejected') {
-      console.error(
-        '[advisory-briefing] Mautic enrollment failed:',
-        mauticResult.reason
-      );
+      console.error('[advisory-briefing] Mautic enrollment failed:', mauticResult.reason);
     }
 
-    // The capture is only lost if BOTH the database and the notification fail.
     if (dbResult.status === 'rejected' && emailResult.status === 'rejected') {
       return NextResponse.json(
         { error: 'We could not record your request. Please email us directly.' },
@@ -161,15 +253,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: true, message: 'Briefing request received' },
-      { status: 201 }
-    );
+    return NextResponse.json(OK, { status: 201 });
   } catch (error) {
     console.error('[advisory-briefing] Internal error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
