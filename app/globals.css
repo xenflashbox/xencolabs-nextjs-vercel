@@ -1,3 +1,11 @@
+/* @xenco/editorial-blocks ships its CSS variable contract + block styles.
+   This import must come BEFORE @tailwind. The package declares the contract
+   on bare :root (including --border-subtle / --border-strong); the site's own
+   :root block below re-asserts those two so the light marketing chrome is
+   unaffected. The dark editorial register is scoped to `.editorial-scope`
+   (the blog) further down, so it never leaks into the rest of the site. */
+@import '@xenco/editorial-blocks/styles';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -204,4 +212,60 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   @xenco/editorial-blocks — Xenco Labs brand register (blog scope)
+
+   The blog renders on a dark slate chrome (mirrors the reference property),
+   so the block CSS variable contract is skinned to a coordinated dark
+   register built from the existing Xenco brand tokens:
+     --brand-primary  ← Xenco purple  (#7B6BA6 / light #9B8EC0 for dark bg)
+     --brand-accent   ← Xenco CTA violet (#8B5CF6)
+     --brand-navy     ← #1B2A4A (callout accents)
+   Surfaces/text/borders use slate values that match the blog chrome so no
+   block renders black-on-black. Scoped to `.editorial-scope` so the light
+   marketing site (which uses --border-subtle/--border-strong globally) is
+   untouched. Every locked variable in the contract is defined here.
+   ───────────────────────────────────────────────────────────────────────── */
+.editorial-scope {
+  /* Brand */
+  --brand-primary:          #9B8EC0;  /* Xenco brand purple, lightened for dark surfaces */
+  --brand-accent:           #8B5CF6;  /* Xenco CTA violet */
+
+  /* Surfaces (match slate-950 / slate-900 blog chrome) */
+  --surface-base:           #020617;
+  --surface-elevated:       #0F172A;
+
+  /* Text */
+  --text-headline:          #F8FAFC;
+  --text-body:              #CBD5E1;
+  --text-secondary:         #94A3B8;
+
+  /* Borders */
+  --border-subtle:          #1E293B;
+  --border-strong:          #9B8EC0;
+
+  /* State / risk */
+  --risk-best-green:        #4ADE80;
+  --risk-amber:             #FBBF24;
+  --risk-red:               #F87171;
+
+  /* Callout variants */
+  --callout-info-bg:        #16213A;  /* Xenco navy tint */
+  --callout-info-border:    #9B8EC0;  /* brand purple */
+  --callout-warning-bg:     #2A2010;
+  --callout-warning-border: #FBBF24;
+  --callout-note-bg:        #1A1A22;
+  --callout-note-border:    #94A3B8;
+
+  /* Typography — Xenco Labs type system */
+  --font-headline:          'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display:           var(--font-headline);
+  --font-body:              'DM Sans', system-ui, sans-serif;
+  --font-mono:              'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Derived link tokens (contrast on dark) */
+  --text-link:              #9B8EC0;
+  --text-link-hover:        #C9BDE0;
 }

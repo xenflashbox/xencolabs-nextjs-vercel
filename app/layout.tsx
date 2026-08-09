@@ -5,6 +5,7 @@ import { Route } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
 import AuthRedirectHandler from "@/components/AuthRedirectHandler";
+import { EditorialBlocksSetup } from "@/components/richtext/EditorialBlocksSetup";
 import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-459EY5MHDQ";
@@ -110,6 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           signUpUrl={primarySignUpUrl}
           allowedRedirectOrigins={satelliteUrls}
         >
+          <EditorialBlocksSetup />
           <Suspense fallback={null}>
             <AuthRedirectHandler />
           </Suspense>

@@ -3,6 +3,16 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: { typedRoutes: true },
 
+  // Payload CMS media hosts for the blog (featured images, hero images,
+  // author avatars, editorial image blocks). See the payload-blog-template
+  // next-config.remotePatterns snippet.
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cms.xencolabs.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'publish.xencolabs.com', pathname: '/**' },
+    ],
+  },
+
   // Static developer-tools site lives in public/tools/ (migrated from the
   // retired tools.devmaestro.io swarm container). Next.js does not auto-serve
   // index.html from a public/ subfolder, so map the clean SEO URLs to the
