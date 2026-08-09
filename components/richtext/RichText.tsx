@@ -17,6 +17,16 @@ function headingId(node: any): string | undefined {
   return text ? slugify(text) : undefined
 }
 
+// Flatten a Lexical rich-text value ({root}/{children}/array) to plain text.
+function richTextToPlain(value: any): string {
+  if (!value) return ""
+  if (typeof value === "string") return value
+  if (value.root?.children) return value.root.children.map(nodeText).join("")
+  if (Array.isArray(value.children)) return value.children.map(nodeText).join("")
+  if (Array.isArray(value)) return value.map(nodeText).join("")
+  return nodeText(value)
+}
+
 // Lexical node renderer
 function renderLexicalNode(node: any, index: number): React.ReactNode {
   if (!node) return null
@@ -110,8 +120,22 @@ function renderLexicalNode(node: any, index: number): React.ReactNode {
 
     // Payload editorial blocks (Lexical BlocksFeature) — routed to the
     // shared @xenco/editorial-blocks renderer by fields.blockType.
-    case "block":
-      return <EditorialBlock key={index} node={node} />
+    case "block": {
+      let blockNode = node
+      // Divergence: this Payload defines pull-quote `quote` as a rich-text
+      // field ({root}), but the package's PullQuote renders `quote` as a raw
+      // React child (string). Coerce so it doesn't throw "Objects are not
+      // valid as a React child". (Callout body / FAQ answer are fine — the
+      // package renders those through renderLexicalChildren.)
+      if (
+        node.fields?.blockType === "pull-quote" &&
+        node.fields?.quote &&
+        typeof node.fields.quote === "object"
+      ) {
+        blockNode = { ...node, fields: { ...node.fields, quote: richTextToPlain(node.fields.quote) } }
+      }
+      return <EditorialBlock key={index} node={blockNode} />
+    }
 
     default:
       // For unknown types, try to render children or text
