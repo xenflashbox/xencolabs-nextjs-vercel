@@ -52,6 +52,10 @@ export async function POST(req: NextRequest) {
   // Build Stripe Checkout line items from server-side price IDs only.
   const form = new URLSearchParams();
   form.append('mode', 'subscription'); // hosting is recurring; one-time items bill on the first invoice
+  // Standard Stripe Checkout (not Managed Payments / merchant-of-record): web-design
+  // tax codes are ineligible for Managed Payments, and MoR isn't the intended posture
+  // for this store. Xenco handles its own tax (add Stripe Tax later if desired).
+  form.append('managed_payments[enabled]', 'false');
   // NOTE: never set payment_method_types — dynamic payment methods maximize conversion.
   form.append('success_url', `${SITE_URL}/websites/thank-you?session_id={CHECKOUT_SESSION_ID}`);
   form.append('cancel_url', `${SITE_URL}/websites`);
