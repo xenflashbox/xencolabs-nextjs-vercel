@@ -24,6 +24,7 @@ const isPublicRoute = createRouteMatcher([
   '/privacy',
   '/api-integrations',
   '/growth',
+  '/growth/(.*)',
   '/api/growth-audit',
   '/advisory',
   '/api/advisory-briefing',
