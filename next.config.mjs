@@ -26,6 +26,14 @@ const nextConfig = {
     ];
   },
 
+  // The small-business web-build offer was briefly published under
+  // /growth/ai-growth-system before being repositioned to /websites.
+  async redirects() {
+    return [
+      { source: '/growth/ai-growth-system', destination: '/websites', permanent: true },
+    ];
+  },
+
   webpack: (config, { isServer }) => {
     // These aliases were needed for C1 SDK compatibility
     // Keeping them commented out in case we need to restore the SDK later

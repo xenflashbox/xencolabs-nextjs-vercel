@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/enterprise",
     "/consulting",
     "/advisory",
-    "/growth/ai-growth-system",
+    "/websites",
     "/apps/blogcraft",
     "/apps/landingcraft",
     "/apps/resumecoach",
