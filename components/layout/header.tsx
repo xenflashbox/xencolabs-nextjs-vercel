@@ -22,13 +22,15 @@ export function Header() {
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
       <div className="max-w-content mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo — X monogram (navy tile, white X, amber underline) + wordmark */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center">
-              <span className="text-white font-display font-bold text-lg">X</span>
+            <div className="relative w-9 h-9 rounded-lg bg-[#0B1F3A] flex flex-col items-center justify-center">
+              <span className="text-white font-bold text-base leading-none">X</span>
+              <span className="mt-[3px] h-[2px] w-3.5 rounded-full bg-[var(--accent-amber)]" />
             </div>
-            <span className="text-xl font-display font-bold text-[var(--text-primary)]">
-              Xenco Labs
+            <span className="text-xl text-[var(--text-primary)]">
+              <span className="font-bold">Xenco</span>{' '}
+              <span className="font-normal">Labs</span>
             </span>
           </Link>
 

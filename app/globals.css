@@ -12,57 +12,63 @@
 
 /* Xenco Labs Design System — Light Mode (01-DESIGN-SYSTEM.md) */
 :root {
-  /* Brand Colors */
-  --brand-primary: #7B6BA6;
-  --brand-primary-light: #9B8EC0;
-  --brand-primary-dark: #5C4F82;
-  --brand-primary-50: #F3F0F8;
-  --brand-primary-100: #E6E0F0;
-  --brand-primary-200: #C9BDE0;
-  --brand-primary-500: #7B6BA6;
-  --brand-primary-600: #6558A0;
-  --brand-primary-700: #5C4F82;
-  --brand-primary-900: #2D2445;
+  /* Brand Colors — Xenco Labs system (navy grounds, amber accent). The
+     structural "brand-primary" role maps to Document Navy; the accent/CTA role
+     ("cta-primary") maps to Amber. See docs/site-update/xencolabs-branding. */
+  --brand-primary: #1F3864;        /* Document Navy — headings, eyebrows, links, structure */
+  --brand-primary-light: #3B5C8F;  /* Slate Blue — line work */
+  --brand-primary-dark: #0B1F3A;   /* Deep Navy */
+  --brand-primary-50: #F2F5FB;
+  --brand-primary-100: #E3EAF5;
+  --brand-primary-200: #C3D0E4;
+  --brand-primary-500: #1F3864;
+  --brand-primary-600: #1A2F55;
+  --brand-primary-700: #152643;
+  --brand-primary-900: #0B1F3A;
 
-  --brand-navy: #1B2A4A;
-  --brand-navy-light: #2A3F6B;
+  --brand-navy: #0B1F3A;
+  --brand-navy-light: #1F3864;
 
-  --cta-primary: #8B5CF6;
-  --cta-primary-hover: #7C3AED;
+  /* Amber = the single accent (CTAs, highlights, the "solution" side) */
+  --cta-primary: #E8A33D;
+  --cta-primary-hover: #F0B45F;
+  --accent-amber: #E8A33D;
+  --accent-amber-hover: #F0B45F;
+  --accent-amber-ink: #0B1F3A;     /* text color that sits on amber */
 
   /* Surfaces */
   --surface-primary: #FFFFFF;
-  --surface-secondary: #F9F8FC;
-  --surface-tertiary: #F3F0F8;
+  --surface-secondary: #F2F5FB;
+  --surface-tertiary: #E3EAF5;
 
   /* Text */
-  --text-primary: #1A1A2E;
-  --text-secondary: #4A4A68;
-  --text-tertiary: #8585A3;
+  --text-primary: #16233F;         /* deep navy ink */
+  --text-secondary: #3A4A63;
+  --text-tertiary: #8593A8;         /* slate */
   --text-inverse: #FFFFFF;
 
   /* Borders */
-  --border-default: #E6E0F0;
-  --border-subtle: #F0ECF5;
-  --border-strong: #C9BDE0;
+  --border-default: #DCE3EF;
+  --border-subtle: #EDF1F7;
+  --border-strong: #C3D0E4;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(123, 107, 166, 0.06);
-  --shadow-md: 0 4px 12px rgba(123, 107, 166, 0.08);
-  --shadow-lg: 0 12px 32px rgba(123, 107, 166, 0.12);
-  --shadow-xl: 0 24px 48px rgba(27, 42, 74, 0.14);
+  /* Shadows (navy-tinted) */
+  --shadow-sm: 0 1px 2px rgba(15, 31, 58, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 31, 58, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 31, 58, 0.12);
+  --shadow-xl: 0 24px 48px rgba(11, 31, 58, 0.16);
 
   /* Status */
   --status-success: #059669;
   --status-warning: #D97706;
   --status-error: #DC2626;
 
-  /* Legacy compat for shadcn/ui */
-  --primary: 263 25% 54%;
-  --secondary: 263 20% 96%;
-  --accent: 263 25% 54%;
+  /* Legacy compat for shadcn/ui — primary=navy, accent=amber */
+  --primary: 219 53% 26%;
+  --secondary: 219 30% 96%;
+  --accent: 36 79% 57%;
   --background: 0 0% 100%;
-  --foreground: 240 20% 14%;
+  --foreground: 219 45% 17%;
   --radius: 0.75rem;
 }
 
@@ -78,13 +84,13 @@ html {
 body {
   background: var(--surface-primary);
   color: var(--text-primary);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
   min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 /* Legacy classes for backward compatibility */
@@ -118,15 +124,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary {
   background: var(--cta-primary);
-  color: white;
+  color: var(--accent-amber-ink);
+  font-weight: 600;
   border: none;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(232, 163, 61, 0.35);
   transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   background: var(--cta-primary-hover);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 16px rgba(232, 163, 61, 0.45);
   transform: translateY(-1px);
 }
 
@@ -154,7 +161,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Utility classes */
 .gradient-text {
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--cta-primary) 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-amber) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -163,14 +170,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .section-light { background: var(--surface-primary); }
 .section-tinted { background: var(--surface-secondary); }
+/* Deep-navy feature/CTA sections (class name kept for compatibility) */
 .section-purple {
-  background: linear-gradient(135deg, var(--brand-primary-900) 0%, var(--brand-navy) 100%);
+  background: linear-gradient(135deg, #0B1F3A 0%, #12294A 100%);
   color: var(--text-inverse);
 }
 
 /* Typography utility classes matching the design system */
 .hero-headline {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-weight: 800;
   font-size: 3.5rem;
   line-height: 1.1;
@@ -178,7 +186,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-headline {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-weight: 700;
   font-size: 2.25rem;
   line-height: 1.2;
@@ -186,7 +194,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .label-text {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-weight: 500;
   font-size: 0.75rem;
   line-height: 1.4;
@@ -230,8 +238,8 @@ h1, h2, h3, h4, h5, h6 {
    ───────────────────────────────────────────────────────────────────────── */
 .editorial-scope {
   /* Brand */
-  --brand-primary:          #9B8EC0;  /* Xenco brand purple, lightened for dark surfaces */
-  --brand-accent:           #8B5CF6;  /* Xenco CTA violet */
+  --brand-primary:          #E8A33D;  /* Xenco amber accent (reads on dark) */
+  --brand-accent:           #F0B45F;  /* amber, lightened */
 
   /* Surfaces (match slate-950 / slate-900 blog chrome) */
   --surface-base:           #020617;
@@ -244,7 +252,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Borders */
   --border-subtle:          #1E293B;
-  --border-strong:          #9B8EC0;
+  --border-strong:          #3B5C8F;  /* slate blue */
 
   /* State / risk */
   --risk-best-green:        #4ADE80;
@@ -253,19 +261,19 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Callout variants */
   --callout-info-bg:        #16213A;  /* Xenco navy tint */
-  --callout-info-border:    #9B8EC0;  /* brand purple */
+  --callout-info-border:    #5B7CB0;  /* slate blue */
   --callout-warning-bg:     #2A2010;
   --callout-warning-border: #FBBF24;
   --callout-note-bg:        #1A1A22;
   --callout-note-border:    #94A3B8;
 
   /* Typography — Xenco Labs type system */
-  --font-headline:          'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-headline:          'Inter', system-ui, sans-serif;
   --font-display:           var(--font-headline);
-  --font-body:              'DM Sans', system-ui, sans-serif;
+  --font-body:              'Inter', system-ui, sans-serif;
   --font-mono:              'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
 
   /* Derived link tokens (contrast on dark) */
-  --text-link:              #9B8EC0;
-  --text-link-hover:        #C9BDE0;
+  --text-link:              #E8A33D;
+  --text-link-hover:        #F0B45F;
 }
