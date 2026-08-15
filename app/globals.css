@@ -276,4 +276,18 @@ h1, h2, h3, h4, h5, h6 {
   /* Derived link tokens (contrast on dark) */
   --text-link:              #E8A33D;
   --text-link-hover:        #F0B45F;
+
+  /* Highlight-column tint — the comparison-table block references
+     --brand-accent-soft (undefined here previously, which left the highlighted
+     column with no/broken background). Keep it a faint warm wash so light body
+     text stays legible over it. */
+  --brand-accent-soft:      rgba(232, 163, 61, 0.16);
+}
+
+/* Comparison-table header: guarantee navy-on-amber contrast in EVERY header
+   cell — including the highlighted column, where the package applies a light
+   !important background that otherwise left the header text near-invisible. */
+.editorial-scope .xb-comparison-table thead th {
+  background: var(--brand-primary) !important;
+  color: #0B1F3A !important;
 }

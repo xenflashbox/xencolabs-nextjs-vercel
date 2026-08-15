@@ -180,11 +180,11 @@ export default function Page() {
         <div className="max-w-content mx-auto">
           <div className="text-center mb-14">
             <h2 className="section-headline text-[var(--text-primary)] mb-3">
-              Three ways to work with us.
+              Four ways to work with us.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {/* Self-Serve */}
             <div className="card">
               <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
@@ -206,6 +206,30 @@ export default function Page() {
                 className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
               >
                 Explore Apps <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Websites & Landing Pages */}
+            <div className="card">
+              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
+                Websites &amp; Landing Pages
+              </h3>
+              <p className="text-[var(--text-secondary)] font-body mb-4">
+                A modern website or landing page, built in days and hosted by us. Fixed price, and you own it.
+              </p>
+              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
+                From $900 one-time
+              </p>
+              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
+                <li>&bull; Local &amp; small businesses</li>
+                <li>&bull; Facelifts &amp; new builds</li>
+                <li>&bull; Buy online, add-ons included</li>
+              </ul>
+              <Link
+                href="/websites"
+                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
+              >
+                Build Your Site <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
@@ -291,19 +315,17 @@ export default function Page() {
             </blockquote>
           </div>
           <div className="flex flex-wrap gap-4 mt-8">
-            <a
-              href="https://www.upwork.com/freelancers/~01fd29e6c782080051"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link font-medium inline-flex items-center gap-1.5 text-sm"
+            <Link
+              href="/about"
+              className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
             >
-              View our work on Upwork <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+              Meet the Founders <ArrowRight className="w-4 h-4" />
+            </Link>
             <a
               href="https://github.com/xenflashbox"
               target="_blank"
               rel="noopener noreferrer"
-              className="link font-medium inline-flex items-center gap-1.5 text-sm"
+              className="link font-medium inline-flex items-center gap-1.5 text-sm self-center"
             >
               View on GitHub <ArrowRight className="w-3.5 h-3.5" />
             </a>

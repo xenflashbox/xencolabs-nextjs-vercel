@@ -98,9 +98,9 @@ export function BlogPostClient({
           variant="blurred"
         />
 
-        <div className="container mx-auto mt-12 px-4">
-          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-10 xl:grid-cols-[minmax(0,760px)_280px]">
-            <div className="min-w-0">
+        <div className="mx-auto mt-12 w-full max-w-[1240px] px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,760px)_minmax(280px,320px)] lg:justify-center">
+            <div className="min-w-0 mx-auto w-full max-w-[760px] lg:mx-0">
               <div className="mb-8 flex items-center justify-between border-b border-slate-800 pb-8">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-slate-500">Share:</span>
@@ -172,9 +172,28 @@ export function BlogPostClient({
               )}
             </div>
 
-            <aside className="hidden xl:block">
-              <div className="sticky top-24 space-y-4">
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 space-y-6">
                 <ArticleTOC content={post.content} />
+                {transformedRelatedPosts.length > 0 && (
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      More from the blog
+                    </p>
+                    <ul className="space-y-3">
+                      {transformedRelatedPosts.slice(0, 5).map((p) => (
+                        <li key={p.id}>
+                          <Link
+                            href={`/blog/${p.slug}` as Route}
+                            className="block text-sm leading-snug text-slate-300 transition-colors hover:text-white"
+                          >
+                            {p.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </aside>
           </div>

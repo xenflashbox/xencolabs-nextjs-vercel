@@ -7,12 +7,12 @@ import { Menu, X, ArrowRight } from 'lucide-react'
 
 const navItems = [
   { label: 'Apps', href: '/#products' as Route },
-  { label: 'Services', href: '/#services' as Route },
-  { label: 'Advisory', href: '/advisory' as Route },
+  { label: 'Websites', href: '/websites' as Route },
   { label: 'Growth', href: '/growth' as Route },
+  { label: 'Advisory', href: '/advisory' as Route },
   { label: 'Tools', href: '/tools' as Route },
-  { label: 'About', href: '/#founder' as Route },
   { label: 'Blog', href: '/blog' as Route },
+  { label: 'About', href: '/about' as Route },
 ]
 
 export function Header() {

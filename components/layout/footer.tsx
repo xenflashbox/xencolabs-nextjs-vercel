@@ -54,18 +54,23 @@ export function Footer() {
             <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Services</h4>
             <ul className="space-y-2.5">
               <li>
-                <a href="https://blogcraft.app/managed" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
-                  Managed Content
-                </a>
-              </li>
-              <li>
-                <Link href="/contact" className="text-white/70 hover:text-white transition-colors text-sm">
-                  Consulting
+                <Link href="/websites" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Websites &amp; Landing Pages
                 </Link>
               </li>
               <li>
                 <Link href="/growth" className="text-white/70 hover:text-white transition-colors text-sm">
                   Growth Strategy
+                </Link>
+              </li>
+              <li>
+                <Link href="/advisory" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Infrastructure Advisory
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-white/70 hover:text-white transition-colors text-sm">
+                  About Us
                 </Link>
               </li>
               <li>
