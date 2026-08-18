@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { GrowthAuditForm } from './audit-form';
 import { PitchShowcase } from './pitch-showcase';
+import { PitchDeckBuyButton } from './pitch-deck-cta';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -637,6 +638,38 @@ export default function GrowthPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 8b. Buy-now sales tool: Pitch Deck ─── */}
+      <section className="section-tinted py-20 px-6">
+        <div className="max-w-content mx-auto">
+          <p className="label-text text-[var(--brand-primary)] mb-4 text-center">BUY A SALES TOOL TODAY</p>
+          <h2 className="section-headline text-[var(--text-primary)] mb-4 text-center">
+            Need a pitch deck for your sales team? Get one this week.
+          </h2>
+          <p className="text-lg text-[var(--text-secondary)] font-body max-w-2xl mx-auto mb-12 text-center leading-relaxed">
+            No engagement required. A customized, professionally designed sales deck — your story, your
+            numbers, your audience — built fast with our AI production stack.
+          </p>
+          <div className="max-w-3xl mx-auto card border-t-2 border-t-[var(--brand-primary)]">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-center">
+              <div>
+                <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-2">Sales Pitch Deck</p>
+                <p className="font-display font-bold text-3xl text-[var(--text-primary)] mb-3">$500 <span className="text-base font-medium text-[var(--text-tertiary)]">one-time</span></p>
+                <ul className="text-sm text-[var(--text-secondary)] font-body space-y-1.5">
+                  <li>&bull; Narrative + design, tailored to your offer</li>
+                  <li>&bull; Built for selling to a team or a buyer</li>
+                  <li>&bull; Delivered in days, one revision round</li>
+                  <li>&bull; Yours to keep and edit</li>
+                </ul>
+              </div>
+              <div className="md:text-right">
+                <PitchDeckBuyButton className="btn-primary px-6 py-3 rounded-lg font-semibold inline-flex items-center justify-center gap-2 disabled:opacity-60" />
+                <p className="text-xs text-[var(--text-tertiary)] font-body mt-3">Secure checkout by Stripe</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

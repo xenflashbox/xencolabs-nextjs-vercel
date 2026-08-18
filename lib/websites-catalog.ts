@@ -21,6 +21,8 @@ export const PRICE_MAP: Record<string, PriceEntry> = {
   xl_hosting: { id: 'price_1U2c8V5py4lpWzXOlfGpYiYy', amount: 5000, recurring: true },
   xl_care_plus: { id: 'price_1U3lir5py4lpWzXO6NZc0lE2', amount: 15000, recurring: true },
   xl_chatbot_monthly: { id: 'price_1U3lir5py4lpWzXOi3BBTZ1x', amount: 5000, recurring: true },
+  // Standalone transactional item sold on /growth (one-time, no hosting).
+  xl_pitch_deck: { id: 'price_1U5ti55py4lpWzXOn6ZV40Vb', amount: 50000, recurring: false },
 };
 
 // ── UI metadata (the store, in display order) ──
@@ -59,14 +61,18 @@ export const HOSTING: HostingOpt[] = [
 ];
 
 // An add-on can map to one or more catalog keys (e.g. chatbot = setup + monthly).
-export type Addon = { id: string; name: string; pain: string; priceLabel: string; keys: string[]; qty?: boolean };
+// `tiers` (optional) restricts an add-on to specific package keys; absent = all.
+export type Addon = { id: string; name: string; pain: string; priceLabel: string; keys: string[]; qty?: boolean; tiers?: string[] };
+
+const MULTI_PAGE = ['xl_web_starter', 'xl_web_business', 'xl_web_facelift'];
+
 export const ADDONS: Addon[] = [
   { id: 'chatbot', name: 'AI chat window (24/7 support)', pain: 'Can’t answer customers around the clock?', priceLabel: '$750 + $50/mo', keys: ['xl_addon_chatbot_setup', 'xl_chatbot_monthly'] },
   { id: 'form_crm', name: 'Lead form → your CRM', pain: 'Leads land in an inbox and go cold?', priceLabel: '$350', keys: ['xl_addon_form_crm'] },
-  { id: 'blog', name: 'Blog setup (SEO content engine)', pain: 'Invisible on Google?', priceLabel: '$500', keys: ['xl_addon_blog_setup'] },
+  { id: 'blog', name: 'Blog setup (SEO content engine)', pain: 'Invisible on Google?', priceLabel: '$500', keys: ['xl_addon_blog_setup'], tiers: MULTI_PAGE },
   { id: 'imagery', name: 'AI imagery pack', pain: 'Stuck with stock photos everyone else uses?', priceLabel: '$300', keys: ['xl_addon_imagery'] },
   { id: 'copywriting', name: 'Copywriting (per page)', pain: 'Don’t know what to write?', priceLabel: '$150', keys: ['xl_addon_copywriting'], qty: true },
-  { id: 'extra_page', name: 'Extra page', pain: 'Need more than the package includes?', priceLabel: '$250', keys: ['xl_addon_extra_page'], qty: true },
+  { id: 'extra_page', name: 'Extra page', pain: 'Need more than the package includes?', priceLabel: '$250', keys: ['xl_addon_extra_page'], qty: true, tiers: MULTI_PAGE },
   { id: 'domain_email', name: 'Domain + business email setup', pain: 'No domain or a @gmail address?', priceLabel: '$150', keys: ['xl_addon_domain_email'] },
 ];
 

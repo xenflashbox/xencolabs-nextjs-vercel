@@ -29,6 +29,7 @@ const isPublicRoute = createRouteMatcher([
   '/websites',
   '/websites/(.*)',
   '/api/checkout/websites',
+  '/api/checkout/pitch-deck',
   '/api/website-intake',
   '/advisory',
   '/api/advisory-briefing',
