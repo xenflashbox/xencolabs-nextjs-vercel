@@ -1,0 +1,111 @@
+/* tools/assets/tools-brand.css — Xenco Labs brand skin for the dev tools.
+   Loaded AFTER each tool's inline <style>; uses !important so one file rebrands
+   all 17 tools + the index from the legacy DevMaestro dark theme to the Xenco
+   navy + amber + Inter light system. */
+
+:root {
+  --bg: #F2F5FB;
+  --card: #FFFFFF;
+  --text: #16233F;
+  --muted: #5A6B84;
+  --accent: #1F3864;   /* navy — links / structure */
+  --amber: #E8A33D;    /* the accent pop */
+  --border: #DCE3EF;
+  --ok: #0F7A52;
+  --warn: #B45309;
+}
+
+body {
+  background: #F2F5FB !important;
+  color: #16233F !important;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+}
+body, .dm-shell, button, textarea, input, select, .badge, .dm-title {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+a { color: #1F3864; }
+a:hover { color: #B4791F; }
+
+/* Tool card + chrome */
+.wrap { max-width: 980px; margin: 32px auto; }
+.card {
+  background: #FFFFFF !important;
+  border: 1px solid #DCE3EF !important;
+  box-shadow: 0 8px 30px rgba(15, 31, 58, 0.08) !important;
+  border-radius: 16px !important;
+}
+header {
+  border-bottom: 1px solid #DCE3EF !important;
+}
+header h1, .card h1, .dm-title { color: #16233F !important; font-weight: 700 !important; }
+.small, .dm-sub, .footer { color: #5A6B84 !important; }
+
+/* Inputs */
+textarea, input[type=text], input[type=number], input[type=search], select, .out {
+  background: #F7F9FC !important;
+  border: 1px solid #DCE3EF !important;
+  color: #16233F !important;
+  border-radius: 10px !important;
+}
+textarea:focus, input:focus, select:focus {
+  outline: none !important;
+  border-color: #E8A33D !important;
+  box-shadow: 0 0 0 3px rgba(232, 163, 61, 0.22) !important;
+}
+
+/* Buttons */
+button {
+  background: #FFFFFF !important;
+  border: 1px solid #DCE3EF !important;
+  color: #1F3864 !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  transition: border-color .15s ease, background .15s ease;
+}
+button:hover { border-color: #E8A33D !important; }
+button.primary {
+  background: #E8A33D !important;
+  border: 1px solid #E8A33D !important;
+  color: #0B1F3A !important;
+  font-weight: 600 !important;
+}
+button.primary:hover { background: #F0B45F !important; }
+
+.footer { border-top: 1px solid #DCE3EF !important; }
+
+/* Index page badges (tool links) */
+.badge {
+  background: #FFFFFF !important;
+  border: 1px solid #DCE3EF !important;
+  color: #1F3864 !important;
+  font-weight: 500 !important;
+  transition: border-color .15s ease, transform .1s ease;
+}
+.badge:hover { border-color: #E8A33D !important; transform: translateY(-1px); text-decoration: none !important; }
+
+/* ── Injected top bar (Xenco brand) ── */
+.xeno-topbar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 20px;
+  background: #0B1F3A; color: #fff;
+  position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.xeno-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.xeno-mark {
+  position: relative; width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(255,255,255,.10);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 15px;
+}
+.xeno-mark::after {
+  content: ""; position: absolute; bottom: 6px; height: 2px; width: 12px;
+  border-radius: 2px; background: #E8A33D;
+}
+.xeno-word { color: #fff; font-size: 16px; }
+.xeno-word b { font-weight: 700; }
+.xeno-nav { margin-left: auto; display: flex; gap: 18px; }
+.xeno-nav a { color: #C7D3E6; text-decoration: none; font-size: 14px; font-weight: 500; }
+.xeno-nav a:hover { color: #E8A33D; }
+@media (max-width: 560px) { .xeno-nav { gap: 12px; } .xeno-nav a:nth-child(n+2) { display: none; } }
