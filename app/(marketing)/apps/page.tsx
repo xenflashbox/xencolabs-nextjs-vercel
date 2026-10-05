@@ -1,8 +1,15 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { APPS } from '@/lib/apps';
+
+export const metadata: Metadata = {
+  title: 'Products',
+  description:
+    'Explore Xenco Labs production software and platforms, including ScoreCraft, BlogCraft, ImageCrafter, Image Forge, LaunchCraft, RexResume, MCP Forge, and CompareITAD.',
+};
 
 export default function Page() {
   return (
