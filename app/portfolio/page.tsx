@@ -212,6 +212,63 @@ const groups = [
   },
 ];
 
+const featuredVisuals = [
+  {
+    name: 'ScoreCraft',
+    label: 'SEO + GEO diagnostics',
+    href: 'https://scorecraft.io',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/efc0427c-7d39-49bf-9237-7dbdde9e4616.png',
+  },
+  {
+    name: 'BlogCraft',
+    label: 'Managed content operating system',
+    href: 'https://blogcraft.app',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/634fed74-92c9-41de-b474-1ee526bc3547.png',
+  },
+  {
+    name: 'CompareITAD',
+    label: 'Live data-center ITAD platform',
+    href: 'https://compareitad.com',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/5ac2929d-ecb1-464d-90b3-f368110c3357.png',
+  },
+  {
+    name: 'Vision Battery US',
+    label: 'Technical-market growth system',
+    href: 'https://visionbattery.us',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/c19f1bcc-8337-4c83-a024-3d20734c1f0b.png',
+  },
+  {
+    name: 'ImageCrafter',
+    label: 'Live consumer AI image product',
+    href: 'https://imagecrafter.app',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/e86e5cca-ddc1-4ed7-99b3-96f1469085b1.png',
+  },
+  {
+    name: 'Sonoma Grove Suites',
+    label: 'Vacation rental + custom MCP integration',
+    href: 'https://sonomagrovesuites.com',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/6c95ad20-cf4c-4813-a260-ee02cf335ec2.png',
+  },
+  {
+    name: 'Wine Country Corner',
+    label: 'Owned search + commerce',
+    href: 'https://winecountrycorner.com',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/83b436fa-907e-4c28-9dda-e543cdfd05ab.png',
+  },
+  {
+    name: 'European Wholesale Parts',
+    label: 'Automotive search + commerce',
+    href: 'https://europeanwholesaleparts.com',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/b5abaa37-ab7b-4483-8f76-2f2ea1bb04eb.png',
+  },
+  {
+    name: 'Basement Wines',
+    label: 'Wine ecommerce + SEO',
+    href: 'https://basementwines.net',
+    image: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/e7dd9529-f359-4fe7-ad8e-086cc7cd82d8.png',
+  },
+];
+
 function ItemCard({ item }: { item: PortfolioItem }) {
   const inner = (
     <div className="card h-full flex flex-col group">
@@ -261,6 +318,38 @@ export default function PortfolioPage() {
             <Link href="/growth" className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center">
               Explore Growth Strategy
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-tinted py-20 px-6">
+        <div className="max-w-content mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div className="max-w-3xl">
+              <p className="label-text text-[var(--brand-primary)] mb-4">SELECTED LIVE WORK</p>
+              <h2 className="section-headline text-[var(--text-primary)] mb-4">
+                Real products. Real sites. Real operating systems.
+              </h2>
+              <p className="text-lg text-[var(--text-secondary)] leading-relaxed">
+                These are current captures of live Xenco Labs products and properties — not presentation mockups.
+              </p>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredVisuals.map((item) => (
+              <a key={item.name} href={item.href} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-[var(--border-default)] bg-white shadow-sm hover:shadow-lg transition-shadow">
+                <div className="aspect-[16/10] overflow-hidden bg-[var(--surface-secondary)] border-b border-[var(--border-subtle)]">
+                  <img src={item.image} alt={`${item.name} website screenshot`} className="w-full h-full object-cover object-top group-hover:scale-[1.01] transition-transform duration-300" loading="lazy" />
+                </div>
+                <div className="p-5">
+                  <p className="text-xs font-mono text-[var(--brand-primary)] uppercase tracking-wide mb-1">{item.label}</p>
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">{item.name}</h3>
+                    <ExternalLink className="w-4 h-4 text-[var(--text-tertiary)] flex-none" />
+                  </div>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
