@@ -4,17 +4,6 @@ import { ArrowRight, ExternalLink } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { APPS } from '@/lib/apps';
 
-const status: Record<string, string> = {
-  ScoreCraft: 'Live',
-  BlogCraft: 'Managed',
-  ImageCrafter: 'Launch-ready',
-  LaunchCraft: 'In build',
-  RexResume: 'Live',
-  'MCP Forge': 'In build',
-  'Vision Battery US': 'Live demo',
-  CompareITAD: 'In build',
-};
-
 export default function Page() {
   return (
     <MarketingLayout>
@@ -43,32 +32,33 @@ export default function Page() {
       <section className="section-tinted py-20 px-6">
         <div className="max-w-content mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {APPS.map((app) => (
-              <a
-                key={app.name}
-                href={app.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card group flex flex-col"
-              >
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h2 className="text-2xl font-display font-bold text-[var(--text-primary)]">{app.name}</h2>
-                    <p className="text-sm text-[var(--text-tertiary)]">{app.subtitle}</p>
+            {APPS.map((app) => {
+              const inner = (
+                <div className="card group flex flex-col h-full">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <h2 className="text-2xl font-display font-bold text-[var(--text-primary)]">{app.name}</h2>
+                      <p className="text-sm text-[var(--text-tertiary)]">{app.subtitle}</p>
+                    </div>
+                    <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
+                      {app.status}
+                    </span>
                   </div>
-                  <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
-                    {status[app.name] || 'Portfolio'}
-                  </span>
+                  <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{app.description}</p>
+                  <div className="mt-5 flex items-center justify-between gap-4">
+                    <span className="text-xs font-mono text-[var(--text-tertiary)]">{app.subdomain}</span>
+                    <span className="text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                      {'internal' in app && app.internal ? 'Discuss' : 'Visit'} <ExternalLink className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
-                <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{app.description}</p>
-                <div className="mt-5 flex items-center justify-between gap-4">
-                  <span className="text-xs font-mono text-[var(--text-tertiary)]">{app.subdomain}</span>
-                  <span className="text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Visit <ExternalLink className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </a>
-            ))}
+              );
+              return 'internal' in app && app.internal ? (
+                <Link key={app.name} href="/contact" className="block h-full">{inner}</Link>
+              ) : (
+                <a key={app.name} href={app.href} target="_blank" rel="noopener noreferrer" className="block h-full">{inner}</a>
+              );
+            })}
           </div>
         </div>
       </section>
