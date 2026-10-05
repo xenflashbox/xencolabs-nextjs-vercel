@@ -26,8 +26,8 @@ export const APPS = [
   {
     name: 'LaunchCraft',
     subtitle: 'Launch and growth workflows',
-    subdomain: 'launchcraft.ai',
-    href: 'https://launchcraft.ai',
+    subdomain: 'launchcraft.me',
+    href: 'https://launchcraft.me',
     description:
       'Launch support for messaging, landing pages, content, conversion paths, and campaign operations.',
   },
@@ -42,8 +42,8 @@ export const APPS = [
   {
     name: 'MCP Forge',
     subtitle: 'MCP infrastructure',
-    subdomain: 'mcpforge.dev',
-    href: 'https://mcpforge.dev',
+    subdomain: 'mcpforge.org',
+    href: 'https://mcpforge.org',
     description:
       'Directory and tooling for MCP servers, integrations, and AI workflow infrastructure.',
   },
