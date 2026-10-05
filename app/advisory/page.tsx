@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { BriefingCta } from './briefing-cta';
 import { VideoEmbed } from './video-embed';
-import { PRINCIPALS, SAMPLE_PDF } from './config';
+import { SAMPLE_PDF } from './config';
+import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 // Brand palette (xencolabs-branding): navy grounds, amber = the single accent.
 // Applied via Tailwind arbitrary values inline so the route stays scoped and
@@ -20,35 +21,10 @@ function StatCard({ value, label }: { value: string; label: string }) {
 
 export default function AdvisoryPage() {
   return (
-    <main className="bg-[#0B1F3A] text-white antialiased">
-      {/* ── Header: Advisory lockup + two-item nav (cul-de-sac) ── */}
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Image
-          src="/advisory/advisory-lockup-white.png"
-          alt="Xenco Labs — Infrastructure Advisory"
-          width={230}
-          height={44}
-          priority
-          className="h-8 w-auto shrink-0 sm:h-10"
-        />
-        <nav className="flex items-center gap-4 sm:gap-6">
-          <a
-            href="#sample-work"
-            className="hidden text-sm font-medium text-[#D9E2F3] transition-colors hover:text-white sm:inline"
-          >
-            Sample Work
-          </a>
-          <a
-            href="#request-briefing"
-            className="rounded-lg bg-[#E8A33D] px-4 py-2 text-sm font-semibold text-[#0B1F3A] transition-colors hover:bg-[#f0b45f]"
-          >
-            Request Briefing
-          </a>
-        </nav>
-      </header>
-
+    <MarketingLayout>
+      <div className="bg-[#0B1F3A] text-white antialiased">
       {/* ── SECTION 1 — HERO (navy) ── */}
-      <section className="mx-auto max-w-6xl px-6 pb-20 pt-10 sm:pt-16">
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-32 lg:pt-40">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
@@ -291,55 +267,6 @@ export default function AdvisoryPage() {
         </p>
       </section>
 
-      {/* ── SECTION 6 — PRINCIPALS (light) ── */}
-      <section className="bg-[#F2F5FB] text-[#1F3864]">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Principal-led. No handoffs.
-          </h2>
-          <div className="mt-12 grid gap-10 md:grid-cols-2">
-            {[
-              {
-                photo: '/advisory/xenophon-giannis.webp',
-                name: 'Xenophon Giannis',
-                role: 'Co-Founder & CEO',
-                bio: 'Two decades in network infrastructure sales and operations. Executive Director of Sales, AboveNet Pacific Region — built a $22M+ regional business across metro Ethernet, long-haul, IP transit, wavelengths, and colocation. Direct partnership history with Equinix, Digital Realty, CoreSite, DuPont Fabros, and Vantage.',
-              },
-              {
-                photo: '/advisory/laurie-shahin.webp',
-                name: 'Laurie Shahin',
-                role: 'Co-Founder & Chief Partnerships Officer',
-                bio: 'Fifteen-plus years leading data center channel sales: AboveNet, Telx, INAP, Evoque, QuadraNet, and ValorC3 Data Centers (VP, Channel & Alliances). Direct responsibility for AI infrastructure requirements and enterprise colocation.',
-              },
-            ].map((person) => (
-              <div key={person.name} className="flex gap-5">
-                <Image
-                  src={person.photo}
-                  alt={person.name}
-                  width={112}
-                  height={112}
-                  className="h-24 w-24 flex-shrink-0 rounded-xl object-cover object-top sm:h-28 sm:w-28"
-                />
-                <div>
-                  <h3 className="text-xl font-semibold">{person.name}</h3>
-                  <p className="text-sm font-medium text-[#3B5C8F]">
-                    {person.role}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-[#3A4A63]">
-                    {person.bio}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-10 max-w-3xl border-l-2 border-[#E8A33D] pl-5 text-sm leading-relaxed text-[#3A4A63]">
-            Our principals worked together at AboveNet Communications — one of
-            the premier fiber infrastructure companies of its era, later acquired
-            by Zayo Group.
-          </p>
-        </div>
-      </section>
-
       {/* ── SECTION 7 — HOW WE WORK (navy) ── */}
       <section className="mx-auto max-w-4xl px-6 py-20">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -377,40 +304,19 @@ export default function AdvisoryPage() {
             <BriefingCta />
           </div>
           <p className="mt-8 text-sm leading-relaxed text-[#94A3B8]">
-            {PRINCIPALS.map((p, i) => (
-              <span key={p.name}>
-                {i > 0 && (
-                  <span className="mx-2 hidden text-[#3B5C8F] sm:inline">|</span>
-                )}
-                {i > 0 && <br className="sm:hidden" />}
-                <span className="text-[#D9E2F3]">{p.name}</span> · {p.title}
-              </span>
-            ))}
+            Infrastructure Advisory is a Xenco Labs practice.{' '}
+            <a href="/about" className="text-[#D9E2F3] underline underline-offset-4 hover:text-white">
+              Meet the principals
+            </a>
+            {' '}or explore the broader{' '}
+            <a href="/services" className="text-[#D9E2F3] underline underline-offset-4 hover:text-white">
+              Xenco Labs services portfolio
+            </a>.
           </p>
         </div>
       </section>
 
-      {/* ── Footer (minimal) ── */}
-      <footer className="border-t border-[#3B5C8F]/25">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-          <Image
-            src="/advisory/wordmark-white.png"
-            alt="Xenco Labs"
-            width={120}
-            height={24}
-            className="h-5 w-auto"
-          />
-          <div className="flex items-center gap-6 text-sm text-[#94A3B8]">
-            <span>© {new Date().getFullYear()} Xenco Labs, Inc.</span>
-            <a href="/privacy" className="hover:text-white">
-              Privacy
-            </a>
-            <a href="/terms" className="hover:text-white">
-              Terms
-            </a>
-          </div>
-        </div>
-      </footer>
-    </main>
+      </div>
+    </MarketingLayout>
   );
 }
