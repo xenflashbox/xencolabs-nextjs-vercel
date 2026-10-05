@@ -1,14 +1,13 @@
 import React from 'react';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Route } from 'next';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
   title: 'Portfolio | Xenco Labs',
   description:
-    'Production apps, managed content properties, enterprise demos, and industry platforms built and operated by Xenco Labs.',
+    'Production AI products, owned search properties, enterprise platforms, ecommerce builds, and operational websites built and operated by Xenco Labs.',
 };
 
 type PortfolioItem = {
@@ -20,164 +19,213 @@ type PortfolioItem = {
   proof: string;
 };
 
-const aiProducts: PortfolioItem[] = [
+const products: PortfolioItem[] = [
   {
     name: 'ScoreCraft',
-    category: 'SEO/GEO diagnostic platform',
+    category: 'SEO / GEO platform',
     status: 'Live',
     href: 'https://scorecraft.io',
-    description: 'Scores pages for traditional SEO and AI-search readiness, then identifies remediation opportunities that can feed directly into BlogCraft.',
-    proof: 'Turns page audits into qualified rewrite, content-strategy, and managed-service leads.',
+    description: 'Production scoring and diagnostic platform for traditional SEO, AI-search readiness, content structure, source quality, and prioritized remediation.',
+    proof: 'The diagnostic and QA layer behind Xenco Labs managed search and content programs.',
   },
   {
     name: 'BlogCraft',
-    category: 'Managed content operating system',
-    status: 'Live / Managed service',
+    category: 'Content operating system',
+    status: 'Live',
     href: 'https://blogcraft.app',
-    description: 'Corpus-grounded content engine for research, outlines, SEO/GEO scoring, rewriting, visual production, validation, and publishing.',
-    proof: 'Powers owned niche sites and forms the production layer for enterprise managed search programs.',
+    description: 'Corpus-grounded content engine covering research, briefs, drafting, rewrites, scoring, imagery, validation, publishing, and refresh workflows.',
+    proof: 'The production layer behind the Xenco Labs owned search network and managed client content.',
   },
   {
     name: 'ImageCrafter',
-    category: 'AI image generation',
-    status: 'Launch-ready',
+    category: 'Consumer AI image product',
+    status: 'Live',
     href: 'https://imagecrafter.app',
-    description: 'Multi-provider image generation and creative workflow for article visuals, campaign assets, infographics, and brand content.',
-    proof: 'Supports customized, section-specific visuals instead of generic blog-card art.',
+    description: 'Fully functional customer-facing image application for family, pet, and personal creative generation.',
+    proof: 'A live frontend built on the same image-generation infrastructure used throughout the Xenco Labs platform.',
+  },
+  {
+    name: 'Image Forge',
+    category: 'Image infrastructure',
+    status: 'Production platform',
+    description: 'The underlying multi-model image API and orchestration engine used by ImageCrafter, BlogCraft, and managed content workflows.',
+    proof: 'Lets Xenco Labs route different creative jobs through the right image model and reuse the engine across products.',
   },
   {
     name: 'LaunchCraft',
-    category: 'Launch and growth workflows',
-    status: 'In market',
-    description: 'Launch support for campaigns, landing pages, positioning assets, and marketing operations tied to Xenco Labs growth engagements.',
-    proof: 'Connects product launches to content, conversion, and outbound motion.',
+    category: 'AI app-building platform',
+    status: 'Live',
+    href: 'https://launchcraft.me',
+    description: 'Production platform for turning an application idea into a build plan, development workflow, and launch path.',
+    proof: 'Demonstrates the product-studio side of Xenco Labs beyond marketing automation.',
   },
   {
     name: 'RexResume',
-    category: 'AI resume optimization',
+    category: 'Consumer SaaS',
     status: 'Live',
     href: 'https://rexresume.com',
-    description: 'AI-assisted resume improvement, ATS optimization, and job-search product built from the ResumeCoach relaunch.',
-    proof: 'Live commercial app with payment gating and organic acquisition motion.',
+    description: 'AI resume optimization product with ATS workflows, payments, automated customer journeys, and organic acquisition.',
+    proof: 'A commercial production application operating independently inside the Xenco Labs portfolio.',
   },
   {
     name: 'MCP Forge',
-    category: 'Developer infrastructure',
-    status: 'In development',
-    description: 'Directory and tooling for MCP servers, integrations, and AI workflow infrastructure.',
-    proof: 'Supports the custom-agent and integration layer behind Xenco Labs services.',
-  },
-  {
-    name: 'LedgerCraft',
-    category: 'Finance automation',
-    status: 'In development',
-    description: 'Bookkeeping and reconciliation product designed around QuickBooks, Plaid, and local-file matching workflows.',
-    proof: 'Expands Xenco Labs into operational AI for finance and small-business administration.',
+    category: 'MCP directory',
+    status: 'Live directory',
+    href: 'https://mcpforge.org',
+    description: 'Live MCP discovery directory supporting integrations, custom agents, and the broader Xenco Labs automation ecosystem.',
+    proof: 'The directory is live today and continues to be improved as the MCP ecosystem evolves.',
   },
 ];
 
 const enterpriseBuilds: PortfolioItem[] = [
   {
-    name: 'Vision Battery US',
-    category: 'Technical-market repositioning',
-    status: 'Live demo',
-    href: 'https://visionbattery.us',
-    description: 'Rebuilt a translated Chinese battery-manufacturer presence into a U.S.-market site with problem-first messaging, data-center pages, workload calculator, chatbot, and content hub.',
-    proof: 'Demonstrates how Xenco Labs converts complex technical products into buyer-intent architecture and interactive conversion tools.',
+    name: 'CompareITAD',
+    category: 'Data-center ITAD platform',
+    status: 'Live',
+    href: 'https://compareitad.com',
+    description: 'Launched ITAD comparison and lead platform for vendor validation, chain of custody, disposition records, secondary-market recovery, and data-center refresh strategy.',
+    proof: 'Already signing up agents and generating leads in a market directly adjacent to the Xenco Labs infrastructure network.',
   },
   {
-    name: 'NexusGuard growth demo',
-    category: 'B2B growth strategy',
-    status: 'Private strategy demo',
-    description: 'Created before/after messaging, form, blog, and conversion-path concepts for an enterprise security provider.',
-    proof: 'Shows the proof-before-proposal strategy behind the Growth offering.',
+    name: 'Vision Battery US',
+    category: 'Technical-market growth system',
+    status: 'Live demonstration',
+    href: 'https://visionbattery.us',
+    description: 'Problem-first U.S. market experience with data-center pages, a battery selector, AI assistant, search-led content clusters, and conversion architecture.',
+    proof: 'Shows how Xenco Labs translates complex technical products into buyer-intent journeys rather than a brochure site.',
+  },
+  {
+    name: 'Sonoma Grove Suites',
+    category: 'Vacation rental platform',
+    status: 'Live',
+    href: 'https://sonomagrovesuites.com',
+    description: 'Operational direct-booking property with a custom MCP server connecting the site to Lodgify and the underlying rental workflow.',
+    proof: 'Demonstrates custom MCP integration against a real operating business rather than a prototype.',
+  },
+  {
+    name: 'Basement Wines',
+    category: 'Wine ecommerce',
+    status: 'Live',
+    href: 'https://basementwines.net',
+    description: 'Full wine-shopping experience with product catalog, commerce engine, winery storytelling, and an SEO/content strategy.',
+    proof: 'A production ecommerce build combining transaction infrastructure with owned content and search strategy.',
   },
 ];
 
-const contentNetwork: PortfolioItem[] = [
-  {
-    name: 'European Wholesale Parts',
-    category: 'Automotive content and commerce',
-    status: 'Live',
-    description: 'Owned content and affiliate-commerce property for European automotive parts, product pages, and research-led publishing.',
-    proof: 'A BlogCraft-operated property for niche SEO, commerce, and content-cluster development.',
-  },
+const searchNetwork: PortfolioItem[] = [
   {
     name: 'Wine Country Corner',
-    category: 'Wine commerce and content',
-    status: 'Live',
-    description: 'Wine and merchandise property supporting content, ecommerce, winery storytelling, and product launches.',
-    proof: 'Combines owned commerce, editorial content, and operational learning for managed-content clients.',
+    category: 'Wine commerce + editorial',
+    status: 'Built',
+    href: 'https://winecountrycorner.com',
+    description: 'Owned wine content and commerce property supporting product launches, editorial strategy, ecommerce, and search acquisition.',
+    proof: 'A live test bed for BlogCraft publishing, product content, internal linking, and conversion.',
   },
   {
-    name: 'Get a Boyfriend',
-    category: 'Relationship niche strategy',
-    status: 'In build',
-    href: 'https://getaboyfriend.net',
-    description: 'Relationship-content property structured around pain points, owned products, coaching concepts, and search clusters.',
-    proof: 'Shows how BlogCraft builds from corpus to clusters to landing pages.',
+    name: 'European Wholesale Parts',
+    category: 'Automotive content + commerce',
+    status: 'Built',
+    href: 'https://europeanwholesaleparts.com',
+    description: 'European automotive parts property combining product pages, affiliate relationships, hands-on testing, and research-led publishing.',
+    proof: 'Used to test commercial-intent keyword strategy, product content, and pillar/spoke architecture.',
   },
   {
     name: 'Find a Vibrator',
-    category: 'Search-driven commerce content',
-    status: 'Live portfolio property',
-    description: 'Owned niche property used to test content architecture, search-led product discovery, editorial workflows, and affiliate conversion paths.',
-    proof: 'Part of the BlogCraft-operated content network and a live environment for content operations.',
+    category: 'Search-led affiliate property',
+    status: 'Built',
+    href: 'https://findavibrator.com',
+    description: 'Owned niche site for search-led product discovery, editorial workflows, structured comparison content, and affiliate conversion.',
+    proof: 'A deliberately distinct niche used to test the repeatability of the same content and SEO operating system.',
   },
   {
-    name: 'License4.com',
-    category: 'Compliance and licensing content',
-    status: 'Portfolio property',
-    description: 'Niche content asset for licensing-related search opportunities.',
-    proof: 'Part of the owned SEO content network.',
+    name: 'Home Beauty Spa',
+    category: 'Beauty content network',
+    status: 'Built',
+    href: 'https://homebeautyspa.com',
+    description: 'Owned beauty and self-care property built around topical clusters, editorial content, structured publishing, and organic discovery.',
+    proof: 'Part of the live BlogCraft / ScoreCraft operating network.',
   },
   {
-    name: 'FightMyBank.com',
-    category: 'Consumer finance content',
-    status: 'Portfolio property',
-    description: 'Search-driven content property focused on consumer banking problems and resolution paths.',
-    proof: 'Part of the owned SEO content network.',
+    name: 'Diabetes Compass',
+    category: 'Health information property',
+    status: 'Built',
+    href: 'https://diabetescompass.com',
+    description: 'Health-information property structured around pain points, topic taxonomy, educational content, and search-led landing experiences.',
+    proof: 'A higher-editorial-standard environment for testing content structure, authority, imagery, authorship, and QA.',
   },
   {
-    name: 'TestosteroneBoost.com',
-    category: 'Health/wellness content',
-    status: 'Portfolio property',
-    description: 'Niche content property for search strategy, affiliate opportunities, and editorial testing.',
-    proof: 'Part of the owned SEO content network.',
+    name: 'Get a Boyfriend',
+    category: 'Relationship content property',
+    status: 'Built / expanding',
+    href: 'https://getaboyfriend.net',
+    description: 'Pain-point-led relationship property with a search corpus, topic clusters, owned-service concepts, and structured editorial operations.',
+    proof: 'Demonstrates corpus-first content planning across an entirely different consumer niche.',
   },
-];
-
-const industryPlatforms: PortfolioItem[] = [
   {
-    name: 'CompareITAD',
-    category: 'Data-center ITAD platform',
-    status: 'In build / channel development',
-    description: 'Platform for IT asset disposition strategy, vendor validation, chain of custody, disposition records, secondary-market resale, and GPU refresh/buyback strategy.',
-    proof: 'Directly aligned to the data-center ecosystem and the compliance needs of enterprise infrastructure buyers.',
+    name: 'Fight My Bank',
+    category: 'Consumer finance',
+    status: 'Built / launching',
+    href: 'https://fightmybank.com',
+    description: 'Consumer banking problem-resolution property designed around high-intent questions, community discovery, and lead capture.',
+    proof: 'Extends the search operating system into financial problem-solving content.',
+  },
+  {
+    name: 'License4',
+    category: 'Licensing / compliance',
+    status: 'Built / launching',
+    href: 'https://license4.com',
+    description: 'Search-led licensing and compliance property designed around practical user questions and structured answer content.',
+    proof: 'Part of the next wave of the owned search network.',
+  },
+  {
+    name: 'Plan Ahead Daily',
+    category: 'Financial advisory content',
+    status: 'Built / launching',
+    description: 'Financial advisory and planning content property built as part of the next wave of the Xenco Labs search network.',
+    proof: 'Adds another high-consideration content category to the operating test bed.',
+  },
+  {
+    name: 'Fiber Insider',
+    category: 'Telecom infrastructure content',
+    status: 'Built · rebuild planned',
+    href: 'https://fiberinsider.com',
+    description: 'Telecom and fiber-industry content property with an existing search footprint and a planned rebuild on the current Xenco Labs content stack.',
+    proof: 'Connects the owned search network directly to the founders’ enterprise network-infrastructure domain expertise.',
   },
 ];
 
 const groups = [
-  { title: 'AI Products', body: 'Software and platforms we build, operate, and use inside client delivery.', items: aiProducts },
-  { title: 'Enterprise Builds', body: 'Proof-of-execution projects, demos, and conversion systems for technical markets.', items: enterpriseBuilds },
-  { title: 'Owned Content Network', body: 'Search-driven properties used to operate and improve the BlogCraft content system.', items: contentNetwork },
-  { title: 'Industry Platforms', body: 'Vertical platforms where Xenco Labs combines domain expertise with software and channel strategy.', items: industryPlatforms },
+  {
+    title: 'AI Products & Infrastructure',
+    body: 'Production software Xenco Labs builds, operates, and reuses across the rest of the portfolio.',
+    items: products,
+  },
+  {
+    title: 'Enterprise & Operational Builds',
+    body: 'Live platforms and operating businesses that demonstrate custom integrations, complex buyer journeys, commerce, and technical-market execution.',
+    items: enterpriseBuilds,
+  },
+  {
+    title: 'Owned Search Network',
+    body: 'A cross-industry portfolio used to test keyword strategy, topical authority, content production, SEO/GEO QA, refreshes, internal linking, and conversion in real environments.',
+    items: searchNetwork,
+  },
 ];
 
 function ItemCard({ item }: { item: PortfolioItem }) {
   const inner = (
-    <div className="card h-full flex flex-col">
-      <div className="flex items-start justify-between gap-4 mb-3">
+    <div className="card h-full flex flex-col group">
+      <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="text-xs font-mono text-[var(--brand-primary)] uppercase tracking-wide mb-1">{item.category}</p>
           <h3 className="text-xl font-display font-bold text-[var(--text-primary)]">{item.name}</h3>
         </div>
         <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">{item.status}</span>
       </div>
-      <p className="text-[var(--text-secondary)] font-body leading-relaxed mb-4 flex-1">{item.description}</p>
+      <p className="text-[var(--text-secondary)] font-body leading-relaxed mb-5 flex-1">{item.description}</p>
       <p className="text-sm text-[var(--text-tertiary)] font-body border-t border-[var(--border-subtle)] pt-4">{item.proof}</p>
       {item.href && (
-        <span className="mt-4 text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1">
+        <span className="mt-5 text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
           Visit <ExternalLink className="w-3.5 h-3.5" />
         </span>
       )}
@@ -199,19 +247,19 @@ export default function PortfolioPage() {
         <div className="max-w-4xl mx-auto text-center">
           <p className="label-text text-[var(--brand-primary)] mb-6">PORTFOLIO</p>
           <h1 className="font-display font-bold text-5xl lg:text-6xl text-[var(--text-primary)] mb-6 leading-tight">
-            We build the products, then use them to operate real businesses.
+            The portfolio is where we prove the operating system.
           </h1>
           <p className="text-lg text-[var(--text-secondary)] font-body max-w-3xl mx-auto mb-10 leading-relaxed">
-            Xenco Labs is not a slide-deck agency. Our portfolio includes production AI apps,
-            owned content properties, enterprise demo builds, and data-center industry platforms.
-            The same software and operating methods used here become the delivery stack for client work.
+            Production AI products, enterprise platforms, ecommerce builds, custom MCP integrations,
+            and an owned search network across very different industries. We use the same machinery
+            we sell to clients on businesses we operate ourselves.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/services/managed-search-content" className="btn-primary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2">
-              See Managed Search <ArrowRight className="w-4 h-4" />
+              See Managed Search &amp; Content <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/contact" className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center">
-              Talk to Us
+            <Link href="/growth" className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center">
+              Explore Growth Strategy
             </Link>
           </div>
         </div>
@@ -226,9 +274,7 @@ export default function PortfolioPage() {
               <p className="text-lg text-[var(--text-secondary)] font-body leading-relaxed">{group.body}</p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {group.items.map((item) => (
-                <ItemCard key={item.name} item={item} />
-              ))}
+              {group.items.map((item) => <ItemCard key={item.name} item={item} />)}
             </div>
           </div>
         </section>
@@ -237,15 +283,14 @@ export default function PortfolioPage() {
       <section className="section-purple py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-4">
-            The portfolio is the proof.
+            We build the tools. Then we use them.
           </h2>
           <p className="text-white/80 font-body mb-8 leading-relaxed">
-            We sell the same operating systems we use: ScoreCraft for diagnosis,
-            BlogCraft for content operations, ImageCrafter for creative production,
-            and Xenco Labs for strategy and execution.
+            ScoreCraft diagnoses. BlogCraft operates content. Image Forge supplies the visual
+            engine. Our agents, integrations, and principal-led strategy connect the system.
           </p>
-          <Link href="/growth" className="bg-white text-[#0B1F3A] px-8 py-3.5 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition-colors">
-            Explore Growth Strategy <ArrowRight className="w-4 h-4" />
+          <Link href="/services" className="bg-white text-[#0B1F3A] px-8 py-3.5 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition-colors">
+            See Xenco Labs Services <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
