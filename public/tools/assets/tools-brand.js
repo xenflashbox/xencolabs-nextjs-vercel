@@ -44,10 +44,9 @@
     const el = document.createElement('div');
     el.className = 'xeno-topbar';
     el.innerHTML =
-      '<a class="xeno-brand" href="/"><span class="xeno-mark">X</span>' +
-      '<span class="xeno-word"><b>Xenco</b> Labs</span></a>' +
+      '<a class="xeno-brand" href="/"><img class="xeno-logo" src="/brand/xencolabs-on-light.svg" alt="Xenco Labs"></a>' +
       '<nav class="xeno-nav">' +
-      '<a href="/tools">All Tools</a><a href="/websites">Websites</a><a href="/blog">Blog</a>' +
+      '<a href="/tools">Free Tools</a><a href="/apps">Products</a><a href="/services">Services</a><a href="/growth">Growth</a>' +
       '</nav>';
     document.body.insertBefore(el, document.body.firstChild);
   }
