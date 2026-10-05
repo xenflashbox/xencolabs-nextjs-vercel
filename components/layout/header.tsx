@@ -22,15 +22,12 @@ export function Header() {
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
       <div className="max-w-content mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative w-9 h-9 rounded-lg bg-[#0B1F3A] flex flex-col items-center justify-center">
-              <span className="text-white font-bold text-base leading-none">X</span>
-              <span className="mt-[3px] h-[2px] w-3.5 rounded-full bg-[var(--accent-amber)]" />
-            </div>
-            <span className="text-xl text-[var(--text-primary)]">
-              <span className="font-bold">Xenco</span>{' '}
-              <span className="font-normal">Labs</span>
-            </span>
+          <Link href="/" className="flex items-center" aria-label="Xenco Labs home">
+            <img
+              src="/brand/xencolabs-on-light.svg"
+              alt="Xenco Labs"
+              className="h-10 w-auto"
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-7">
