@@ -21,7 +21,6 @@ const nextConfig = {
   // /tools/ and /tools/:slug/ get 308'd to these by Next automatically.
   async rewrites() {
     return [
-      { source: '/tools', destination: '/tools/index.html' },
       { source: '/tools/:slug', destination: '/tools/:slug/index.html' },
     ];
   },
