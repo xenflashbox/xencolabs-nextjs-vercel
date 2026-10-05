@@ -4,63 +4,72 @@ export const APPS = [
     subtitle: 'SEO/GEO scoring platform',
     subdomain: 'scorecraft.io',
     href: 'https://scorecraft.io',
+    status: 'Live',
     description:
-      'Scores pages for traditional SEO and AI-search readiness, then turns findings into remediation opportunities.',
+      'Production SEO and GEO diagnostic platform for traditional search, AI-search readiness, source quality, content structure, and prioritized remediation.',
   },
   {
     name: 'BlogCraft',
     subtitle: 'Managed content operating system',
     subdomain: 'blogcraft.app',
     href: 'https://blogcraft.app',
+    status: 'Live',
     description:
-      'Corpus-grounded content pipeline for research, outlines, rewrites, scoring, image production, validation, and publishing.',
+      'Production content system for corpus-grounded research, briefs, drafting, rewriting, scoring, custom imagery, validation, and publishing.',
   },
   {
     name: 'ImageCrafter',
-    subtitle: 'AI image generation',
+    subtitle: 'Consumer AI image experience',
     subdomain: 'imagecrafter.app',
     href: 'https://imagecrafter.app',
+    status: 'Live',
     description:
-      'Multi-provider AI image generation for articles, campaigns, product visuals, and brand assets.',
+      'Production customer-facing image product for family, pet, and personal creative generation, powered by the same image infrastructure used across Xenco Labs.',
+  },
+  {
+    name: 'Image Forge',
+    subtitle: 'Multi-model image generation engine',
+    subdomain: 'Xenco Labs platform service',
+    href: '/contact',
+    status: 'Production infrastructure',
+    description:
+      'The underlying multi-provider image API and orchestration layer used by ImageCrafter, BlogCraft, and managed client workflows for custom visual production.',
+    internal: true,
   },
   {
     name: 'LaunchCraft',
-    subtitle: 'Launch and growth workflows',
+    subtitle: 'AI app-building and launch platform',
     subdomain: 'launchcraft.me',
     href: 'https://launchcraft.me',
+    status: 'Live',
     description:
-      'Launch support for messaging, landing pages, content, conversion paths, and campaign operations.',
+      'Production platform that helps users turn an idea into an application plan, build workflow, and launch path.',
   },
   {
     name: 'RexResume',
     subtitle: 'AI resume optimization',
     subdomain: 'rexresume.com',
     href: 'https://rexresume.com',
+    status: 'Live',
     description:
-      'AI-assisted resume improvement and ATS optimization built from the ResumeCoach relaunch.',
+      'Production consumer SaaS for AI-assisted resume improvement, ATS optimization, payment gating, and automated customer acquisition.',
   },
   {
     name: 'MCP Forge',
-    subtitle: 'MCP infrastructure',
+    subtitle: 'MCP directory and integration infrastructure',
     subdomain: 'mcpforge.org',
     href: 'https://mcpforge.org',
+    status: 'Live directory',
     description:
-      'Directory and tooling for MCP servers, integrations, and AI workflow infrastructure.',
-  },
-  {
-    name: 'Vision Battery US',
-    subtitle: 'Technical-market demo build',
-    subdomain: 'visionbattery.us',
-    href: 'https://visionbattery.us',
-    description:
-      'Problem-first U.S. market rebuild with calculator, chatbot, content hub, and data-center buyer paths.',
+      'Live MCP directory and discovery layer supporting custom integrations, agent workflows, and the broader Xenco Labs automation stack.',
   },
   {
     name: 'CompareITAD',
     subtitle: 'Data-center ITAD platform',
     subdomain: 'compareitad.com',
     href: 'https://compareitad.com',
+    status: 'Live',
     description:
-      'ITAD strategy, vendor validation, chain of custody, disposition records, and secondary-market infrastructure.',
+      'Launched ITAD comparison and lead platform for vendor validation, chain of custody, asset disposition, secondary-market recovery, and data-center refresh strategy.',
   },
 ] as const;
