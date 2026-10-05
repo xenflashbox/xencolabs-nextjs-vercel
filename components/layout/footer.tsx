@@ -8,17 +8,15 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-10 mb-12">
           {/* Brand Column */}
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-9 h-9 rounded-lg bg-white/10 flex flex-col items-center justify-center">
-                <span className="text-white font-bold text-base leading-none">X</span>
-                <span className="mt-[3px] h-[2px] w-3.5 rounded-full bg-[var(--accent-amber)]" />
-              </div>
-              <span className="text-xl text-white">
-                <span className="font-bold">Xenco</span> <span className="font-normal">Labs</span>
-              </span>
-            </div>
+            <Link href="/" className="inline-flex mb-4" aria-label="Xenco Labs home">
+              <img
+                src="/brand/xencolabs-on-dark.svg"
+                alt="Xenco Labs"
+                className="h-12 w-auto"
+              />
+            </Link>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">
-              Building AI-powered tools that scale businesses without scaling teams.
+              We build the tools and operate the systems behind search, content, AI visibility, and digital growth.
             </p>
           </div>
 
@@ -32,8 +30,8 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://resumecoach.me" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
-                  ResumeCoach
+                <a href="https://rexresume.com" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  RexResume
                 </a>
               </li>
               <li>
@@ -42,9 +40,14 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <span className="text-white/40 text-sm">
-                  MCP Forge <span className="text-xs text-white/30">(Coming Soon)</span>
-                </span>
+                <a href="https://scorecraft.io" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  ScoreCraft
+                </a>
+              </li>
+              <li>
+                <a href="https://mcpforge.org" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
+                  MCP Forge
+                </a>
               </li>
             </ul>
           </div>
@@ -53,6 +56,11 @@ export function Footer() {
           <div>
             <h4 className="font-display font-semibold text-white mb-4 text-sm tracking-wide uppercase">Services</h4>
             <ul className="space-y-2.5">
+              <li>
+                <Link href="/services/managed-search-content" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Managed Search &amp; Content
+                </Link>
+              </li>
               <li>
                 <Link href="/websites" className="text-white/70 hover:text-white transition-colors text-sm">
                   Websites &amp; Landing Pages
@@ -89,6 +97,11 @@ export function Footer() {
                 <a href="https://www.upwork.com/freelancers/~01fd29e6c782080051" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   Upwork
                 </a>
+              </li>
+              <li>
+                <Link href="/tools" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Free Developer Tools
+                </Link>
               </li>
               <li>
                 <a href="https://github.com/xenflashbox" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">

@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { GrowthAuditForm } from './audit-form';
 import { PitchShowcase } from './pitch-showcase';
-import { PitchDeckBuyButton } from './pitch-deck-cta';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -94,9 +93,9 @@ const deliverables = [
   'Complete demo site with conversion-optimized messaging',
   'A/B testing framework with GA4 tracking per variant',
   'Self-assessment quiz funnel replacing the 8-field form',
-  'SEO-driven blog content targeting buyer search queries',
+  'Buyer-intent content architecture targeting real search demand',
   'AI sales assistant trained on product-specific knowledge',
-  'AI-generated 60-second brand video ($0 production cost)',
+  'AI-generated visual and video assets matched to the content strategy',
   'Revenue calculator for channel partner pages',
   'Narrated strategy presentation with token-gated access',
 ];
@@ -106,9 +105,9 @@ const includedColumns = [
     label: 'STRATEGY',
     items: [
       'Competitive landscape analysis',
-      'Search visibility audit',
-      'Buyer persona mapping',
-      'Content gap identification',
+      'Search + AI visibility audit',
+      'Buyer persona and pain-point mapping',
+      'Keyword, competitor, and content-gap intelligence',
       'Conversion funnel redesign',
     ],
   },
@@ -118,27 +117,27 @@ const includedColumns = [
       'Demo site — live, deployed, yours to review',
       'Narrated strategy presentation',
       'AI-generated video and imagery',
-      'Blog content targeting buyer searches',
-      'Landing page and form optimization',
+      'Corpus-grounded BlogCraft content production',
+      'Landing page, CTA, and form optimization',
     ],
   },
   {
     label: 'TECHNOLOGY',
     items: [
       'A/B testing with GA4 tracking',
-      'AI assistant trained on your product',
+      'ScoreCraft SEO/GEO QA',
+      'AI assistant trained on approved knowledge',
       'Self-assessment and quiz funnels',
       'Lead capture with intent scoring',
-      'CRM-ready lead notifications',
     ],
   },
   {
     label: 'ACCOUNTABILITY',
     items: [
-      'Monthly KPI reporting',
-      'Search ranking tracking',
+      'Monthly executive KPI reporting',
+      'Search + AI visibility tracking',
       'Conversion rate optimization',
-      'Content performance reviews',
+      'Content performance and refresh reviews',
       'Strategy adjustment based on data',
     ],
   },
@@ -146,24 +145,24 @@ const includedColumns = [
 
 const whyItems = [
   {
-    title: 'We built the tools.',
-    body: "BlogCraft, our proprietary content engine, powers every engagement. This isn't ChatGPT with a wrapper.",
+    title: 'We built the operating stack.',
+    body: 'ScoreCraft diagnoses SEO and GEO gaps. BlogCraft grounds, produces, validates, and publishes content. ImageCrafter handles the visual layer. Our agents connect the workflow.',
   },
   {
-    title: 'We use them on ourselves.',
-    body: 'WineCountryCorner.com and ResumeCoach.me run on the same pipeline we deploy for clients.',
+    title: 'We operate it on real properties.',
+    body: 'Vision Battery, CompareITAD, RexResume, Wine Country Corner, and our owned content network give us live environments for testing search, messaging, conversion, and content operations.',
   },
   {
-    title: 'We know your industry.',
-    body: '20+ years in enterprise tech — AboveNet, NexusGuard, Black Lotus (acquired by Level 3). We speak your language.',
+    title: 'We understand complex B2B markets.',
+    body: 'The principals bring decades of enterprise technology, data-center, network, security, channel, and go-to-market experience. The work starts with business context, not prompts.',
   },
   {
-    title: "AI is a tool, not a magic word.",
-    body: 'We use AI for production — content, video, imagery, automation. But strategy comes from experience, not algorithms.',
+    title: 'Search now includes AI discovery.',
+    body: 'We plan for Google rankings, AI Overviews, answer engines, source authority, citation readiness, and the buyer journeys that connect visibility to pipeline.',
   },
   {
-    title: 'You see results before you commit.',
-    body: "The demo site is live. The presentation is ready. You evaluate real work, not slide decks with promises.",
+    title: 'You see proof before commitment.',
+    body: 'We can show a live demo, an account-specific search analysis, a ScoreCraft diagnostic, and the operating plan before the engagement becomes a long-term program.',
   },
 ];
 
@@ -528,10 +527,10 @@ export default function GrowthPage() {
                 <li>Recorded walkthrough for your team</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                By consultation
+                From $12,500
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)] mb-6">
-                Fixed-fee engagement · No retainer required
+                One-time 30-day sprint · No retainer required
               </p>
               <a
                 href="#audit-form"
@@ -544,37 +543,37 @@ export default function GrowthPage() {
             {/* Enterprise */}
             <div className="card flex flex-col">
               <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-3">
-                ENTERPRISE
+                MANAGED SEARCH &amp; CONTENT
               </p>
               <p className="text-[var(--text-secondary)] font-body mb-6">
-                Companies doing $20M+ that need ongoing growth operations —
-                strategy, execution, optimization, and reporting every month.
+                B2B companies that need an ongoing SEO, GEO/AEO, content, technical-search,
+                conversion, and measurement function rather than another disconnected vendor.
               </p>
               <p className="font-display font-semibold text-[var(--text-primary)] mb-2">
-                Everything in the Sprint, plus:
+                Ongoing operating program:
               </p>
               <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6 list-disc list-inside">
-                <li>Ongoing content production via BlogCraft</li>
-                <li>Monthly SEO and conversion optimization</li>
-                <li>Automated narrated pitch presentations</li>
-                <li>AI-generated brand video featuring your executives</li>
-                <li>Monthly KPI reporting and strategy adjustment</li>
-                <li>Dedicated account management</li>
+                <li>Managed content operations via BlogCraft</li>
+                <li>ScoreCraft SEO/GEO diagnostics and remediation</li>
+                <li>Monthly SEO, AI-visibility, and conversion optimization</li>
+                <li>AI-generated visual, video, and interactive assets</li>
+                <li>Monthly executive KPI reporting and strategy adjustment</li>
+                <li>Principal-led account strategy</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                By consultation
+                $20,000/month
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)]">
-                Monthly engagement · 3-month minimum
+                Principal-led managed function · 3-month initial term
               </p>
               <p className="text-xs font-body text-[var(--text-tertiary)] mt-4 mb-6">
                 Cybersecurity · IT Asset Management · SaaS · Manufacturing
               </p>
               <Link
-                href="/contact"
+                href="/services/managed-search-content"
                 className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center justify-center gap-2 mt-auto"
               >
-                Schedule a Consultation <ArrowRight className="w-4 h-4" />
+                View Managed Program <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
@@ -638,38 +637,6 @@ export default function GrowthPage() {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 8b. Buy-now sales tool: Pitch Deck ─── */}
-      <section className="section-tinted py-20 px-6">
-        <div className="max-w-content mx-auto">
-          <p className="label-text text-[var(--brand-primary)] mb-4 text-center">BUY A SALES TOOL TODAY</p>
-          <h2 className="section-headline text-[var(--text-primary)] mb-4 text-center">
-            Need a pitch deck for your sales team? Get one this week.
-          </h2>
-          <p className="text-lg text-[var(--text-secondary)] font-body max-w-2xl mx-auto mb-12 text-center leading-relaxed">
-            No engagement required. A customized, professionally designed sales deck — your story, your
-            numbers, your audience — built fast with our AI production stack.
-          </p>
-          <div className="max-w-3xl mx-auto card border-t-2 border-t-[var(--brand-primary)]">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-center">
-              <div>
-                <p className="text-sm font-semibold text-[var(--brand-primary)] uppercase tracking-wide mb-2">Sales Pitch Deck</p>
-                <p className="font-display font-bold text-3xl text-[var(--text-primary)] mb-3">$500 <span className="text-base font-medium text-[var(--text-tertiary)]">one-time</span></p>
-                <ul className="text-sm text-[var(--text-secondary)] font-body space-y-1.5">
-                  <li>&bull; Narrative + design, tailored to your offer</li>
-                  <li>&bull; Built for selling to a team or a buyer</li>
-                  <li>&bull; Delivered in days, one revision round</li>
-                  <li>&bull; Yours to keep and edit</li>
-                </ul>
-              </div>
-              <div className="md:text-right">
-                <PitchDeckBuyButton className="btn-primary px-6 py-3 rounded-lg font-semibold inline-flex items-center justify-center gap-2 disabled:opacity-60" />
-                <p className="text-xs text-[var(--text-tertiary)] font-body mt-3">Secure checkout by Stripe</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>

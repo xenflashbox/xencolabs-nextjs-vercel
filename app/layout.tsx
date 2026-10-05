@@ -12,16 +12,16 @@ const GA_MEASUREMENT_ID = "G-459EY5MHDQ";
 
 export const metadata: Metadata = {
   title: {
-    default: "Xenco Labs - AI Product Studio",
+    default: "Xenco Labs — AI Products & Managed Growth Systems",
     template: "%s | Xenco Labs",
   },
   description:
-    "Xenco Labs is a founder-led product studio building AI-powered tools. BlogCraft, ResumeCoach, ImageCrafter, and more.",
+    "Xenco Labs builds production AI products and operates managed search, content, AI-visibility, conversion, and digital growth systems for B2B companies.",
   metadataBase: new URL("https://xencolabs.com"),
   icons: {
     icon: [
+      { url: "/brand/xl-favicon.svg", type: "image/svg+xml" },
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16.png", type: "image/png", sizes: "16x16" },
       { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
     ],
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://xencolabs.com",
     siteName: "Xenco Labs",
-    title: "Xenco Labs - AI Product Studio",
+    title: "Xenco Labs — AI Products & Managed Growth Systems",
     description:
-      "A founder-led product studio building AI-powered tools that ship to production.",
+      "Production AI products, managed search and content intelligence, digital growth systems, and enterprise technology expertise.",
   },
   twitter: {
     card: "summary_large_image",

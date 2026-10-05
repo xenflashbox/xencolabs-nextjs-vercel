@@ -15,10 +15,12 @@
   --warn: #B45309;
 }
 
+html, body { margin: 0 !important; min-height: 100%; }
 body {
   background: #F2F5FB !important;
   color: #16233F !important;
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+  line-height: 1.5;
 }
 body, .dm-shell, button, textarea, input, select, .badge, .dm-title {
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
@@ -28,7 +30,7 @@ a { color: #1F3864; }
 a:hover { color: #B4791F; }
 
 /* Tool card + chrome */
-.wrap { max-width: 980px; margin: 32px auto; }
+.wrap { max-width: 1100px; margin: 48px auto; padding: 0 24px 56px; box-sizing: border-box; }
 .card {
   background: #FFFFFF !important;
   border: 1px solid #DCE3EF !important;
@@ -87,25 +89,24 @@ button.primary:hover { background: #F0B45F !important; }
 /* ── Injected top bar (Xenco brand) ── */
 .xeno-topbar {
   display: flex; align-items: center; gap: 20px;
-  padding: 12px 20px;
-  background: #0B1F3A; color: #fff;
+  min-height: 72px; padding: 0 28px;
+  background: rgba(255,255,255,.96); color: #16233F;
   position: sticky; top: 0; z-index: 50;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid #DCE3EF;
+  backdrop-filter: blur(12px);
 }
-.xeno-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.xeno-mark {
-  position: relative; width: 30px; height: 30px; border-radius: 8px;
-  background: rgba(255,255,255,.10);
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 700; font-size: 15px;
-}
-.xeno-mark::after {
-  content: ""; position: absolute; bottom: 6px; height: 2px; width: 12px;
-  border-radius: 2px; background: #E8A33D;
-}
-.xeno-word { color: #fff; font-size: 16px; }
-.xeno-word b { font-weight: 700; }
-.xeno-nav { margin-left: auto; display: flex; gap: 18px; }
-.xeno-nav a { color: #C7D3E6; text-decoration: none; font-size: 14px; font-weight: 500; }
-.xeno-nav a:hover { color: #E8A33D; }
+.xeno-brand { display: inline-flex; align-items: center; text-decoration: none; }
+.xeno-logo { height: 38px; width: auto; display: block; }
+.xeno-nav { margin-left: auto; display: flex; gap: 22px; align-items: center; }
+.xeno-nav a { color: #4A5A6E; text-decoration: none; font-size: 14px; font-weight: 600; }
+.xeno-nav a:hover { color: #1F3864; }
 @media (max-width: 560px) { .xeno-nav { gap: 12px; } .xeno-nav a:nth-child(n+2) { display: none; } }
+
+/* Individual tool-page polish */
+body > .wrap:first-of-type, body > main.wrap { margin-top: 48px !important; }
+.card { padding: 24px !important; }
+.xeno-tools-context {
+  max-width: 1100px; margin: 28px auto 0; padding: 0 24px; box-sizing: border-box;
+  color: #5A6B84; font-size: 13px;
+}
+.xeno-tools-context a { font-weight: 600; text-decoration: none; }

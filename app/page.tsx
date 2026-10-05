@@ -1,376 +1,356 @@
 import React from 'react';
-import { ArrowRight, ExternalLink } from 'lucide-react';
-import { MarketingLayout } from '@/components/layout/marketing-layout';
 import Link from 'next/link';
 import { Route } from 'next';
+import { ArrowRight, CheckCircle2, ExternalLink } from 'lucide-react';
+import { MarketingLayout } from '@/components/layout/marketing-layout';
 
-const liveProducts = [
+const products = [
   {
-    name: 'BlogCraft',
-    subtitle: 'AI Content Engine',
-    description: 'End-to-end content pipeline from niche research to auto-publishing. Powers 6+ niche sites.',
-    url: 'https://blogcraft.app',
-    domain: 'blogcraft.app',
+    name: 'ScoreCraft',
+    label: 'SEO + GEO diagnostic platform',
+    status: 'Live',
+    href: 'https://scorecraft.io',
+    body: 'Production search-quality platform for traditional SEO, AI-search readiness, source quality, structure, and prioritized remediation.',
   },
   {
-    name: 'ResumeCoach',
-    subtitle: 'AI Resume Optimization',
-    description: 'ATS-optimized resumes using government O*NET data. Live with paying customers.',
-    url: 'https://resumecoach.me',
-    domain: 'resumecoach.me',
+    name: 'BlogCraft',
+    label: 'Managed content operating system',
+    status: 'Live',
+    href: 'https://blogcraft.app',
+    body: 'Corpus-grounded research, briefs, drafting, rewriting, visuals, QA, publishing, and continuous optimization.',
   },
   {
     name: 'ImageCrafter',
-    subtitle: 'AI Image Generation',
-    description: 'Multi-provider image generation with OpenAI, Google Gemini, and Stability AI.',
-    url: 'https://imagecrafter.app',
-    domain: 'imagecrafter.app',
+    label: 'Consumer AI image product',
+    status: 'Live',
+    href: 'https://imagecrafter.app',
+    body: 'Fully functional customer-facing creative product for family, pet, and personal image generation.',
   },
   {
-    name: 'Sonoma Grove Suites',
-    subtitle: 'Vacation Rental Platform',
-    description: 'Direct booking with Lodgify API, multi-channel distribution.',
-    url: 'https://sonomagrovesuites.com',
-    domain: 'sonomagrovesuites.com',
+    name: 'Image Forge',
+    label: 'Multi-model image infrastructure',
+    status: 'Production platform',
+    href: '/contact',
+    internal: true,
+    body: 'The reusable image-generation API and orchestration engine behind ImageCrafter, BlogCraft, and managed visual production.',
+  },
+  {
+    name: 'LaunchCraft',
+    label: 'AI app-building platform',
+    status: 'Live',
+    href: 'https://launchcraft.me',
+    body: 'Production platform that helps users move from app idea to structured build plan and launch workflow.',
+  },
+  {
+    name: 'CompareITAD',
+    label: 'Data-center ITAD platform',
+    status: 'Live',
+    href: 'https://compareitad.com',
+    body: 'Launched comparison and lead platform for ITAD vendor selection, chain of custody, disposition, and asset-value recovery.',
   },
 ];
 
-const inDevProducts = [
-  { name: 'MCP Forge', subtitle: 'API to MCP Server Builder' },
-  { name: 'PromptMarketer', subtitle: '40+ Marketing AI Tools' },
-  { name: 'LandingCraft', subtitle: 'AI Landing Pages' },
+const system = [
+  ['Diagnose', 'ScoreCraft identifies search, content, and AI-visibility gaps.'],
+  ['Ground', 'A client knowledge corpus captures products, claims, documentation, experts, and approved external sources.'],
+  ['Produce', 'BlogCraft turns the strategy into briefs, pages, articles, rewrites, and custom visual assets.'],
+  ['Validate', 'Quality gates, SEO/GEO scoring, source checks, and SME review protect quality before publishing.'],
+  ['Operate', 'Xenco Labs runs the feedback loop across rankings, AI visibility, conversion, and the next work queue.'],
 ];
 
-const techStack = [
-  'Next.js', 'React', 'TypeScript', 'Node.js', 'Python',
-  'PostgreSQL', 'Supabase', 'Docker', 'Tailwind CSS',
-  'Stripe', 'OpenAI', 'Anthropic',
+const proof = [
+  {
+    name: 'Vision Battery US',
+    href: 'https://visionbattery.us',
+    body: 'Technical-market repositioning with problem-first messaging, a battery selector, AI assistant, data-center pages, and a search-led content hub.',
+  },
+  {
+    name: 'CompareITAD',
+    href: 'https://compareitad.com',
+    body: 'A data-center platform that applies enterprise infrastructure knowledge to compliance, vendor selection, asset disposition, and secondary-market value.',
+  },
+  {
+    name: 'Owned Content Network',
+    href: '/portfolio',
+    body: 'A growing portfolio of niche sites gives BlogCraft a live operating environment for keyword strategy, clusters, publishing, conversion, and content refreshes.',
+    internal: true,
+  },
 ];
 
 export default function Page() {
   return (
     <MarketingLayout>
-      {/* ─── 1. Hero Section ─── */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        {/* Subtle grid background */}
+      <section className="pt-32 lg:pt-40 pb-24 px-6 relative overflow-hidden section-light">
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.035]"
           style={{
             backgroundImage: 'radial-gradient(circle, var(--brand-primary) 1px, transparent 1px)',
             backgroundSize: '24px 24px',
           }}
         />
-        <div className="max-w-4xl mx-auto text-center relative">
+        <div className="max-w-5xl mx-auto text-center relative">
           <p className="label-text text-[var(--brand-primary)] mb-6">
-            AI PRODUCT STUDIO &bull; PLEASANTON, CA
+            AI PRODUCTS · MANAGED GROWTH SYSTEMS · ENTERPRISE TECHNOLOGY
           </p>
-          <h1 className="hero-headline text-[var(--text-primary)] mb-6">
-            We Build AI-Powered Products
-            <br className="hidden sm:block" />
-            That Ship to Production
+          <h1 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl text-[var(--text-primary)] mb-7 leading-[1.03]">
+            We build the tools.
+            <br />
+            We operate the system.
           </h1>
-          <p className="text-lg md:text-xl text-[var(--text-secondary)] mb-10 max-w-2xl mx-auto leading-relaxed font-body">
-            Xenco Labs is a product studio founded on one principle:
-            build real tools, test them on our own businesses, then
-            offer them to everyone else. No prototypes. No demos.
-            Finished products with paying customers.
+          <p className="text-lg md:text-xl text-[var(--text-secondary)] mb-10 max-w-3xl mx-auto leading-relaxed font-body">
+            Xenco Labs is a principal-led AI product studio and operating partner.
+            We build production software, then use the same technology to run search,
+            content, AI visibility, conversion, and growth systems for clients.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href={"#products" as Route}
+              href="/services/managed-search-content"
               className="btn-primary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2"
             >
-              Explore Our Apps
-              <ArrowRight className="w-4 h-4" />
+              Managed Search &amp; Content <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href={"#services" as Route}
+              href="/portfolio"
               className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center"
             >
-              Managed Services
+              See What We&apos;ve Built
             </Link>
           </div>
-          <p className="text-sm text-[var(--text-tertiary)] font-body">
-            Founded by a 20-year technology executive &bull; UCSD &bull; Building since 2023
-          </p>
-        </div>
-      </section>
-
-      {/* ─── 2. Product Portfolio ─── */}
-      <section id="products" className="section-tinted py-20 px-6">
-        <div className="max-w-content mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="section-headline text-[var(--text-primary)] mb-3">
-              What We&apos;ve Built
-            </h2>
-            <p className="text-lg text-[var(--text-secondary)] font-body">
-              Live products generating revenue and serving real users.
-            </p>
-          </div>
-
-          {/* Live Products — 2x2 grid */}
-          <div className="grid md:grid-cols-2 gap-6 mb-14">
-            {liveProducts.map((product) => (
-              <a
-                key={product.name}
-                href={product.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card group flex flex-col"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-xl font-display font-bold text-[var(--text-primary)]">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-[var(--text-tertiary)] font-body">
-                      {product.subtitle}
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--status-success)]">
-                    <span className="w-2 h-2 bg-[var(--status-success)] rounded-full" />
-                    Live
-                  </span>
-                </div>
-                <p className="text-[var(--text-secondary)] font-body mb-4 flex-1">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-[var(--text-tertiary)] font-mono">
-                    {product.domain}
-                  </span>
-                  <span className="text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Visit App <ExternalLink className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* In Development */}
-          <div className="text-center mb-6">
-            <p className="label-text text-[var(--text-tertiary)]">In Development</p>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            {inDevProducts.map((product) => (
-              <div
-                key={product.name}
-                className="bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl p-5 opacity-70"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-display font-semibold text-[var(--text-secondary)]">
-                    {product.name}
-                  </h4>
-                  <span className="inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)]">
-                    <span className="w-1.5 h-1.5 bg-[var(--text-tertiary)] rounded-full" />
-                    In Dev
-                  </span>
-                </div>
-                <p className="text-sm text-[var(--text-tertiary)] font-body">
-                  {product.subtitle}
-                </p>
+          <div className="mt-14 grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
+            {[
+              ['Production products', 'Software we build and operate ourselves.'],
+              ['Managed functions', 'Systems we run for client teams.'],
+              ['Industry operators', 'Decades in enterprise technology and data-center markets.'],
+            ].map(([title, body]) => (
+              <div key={title} className="border-l-2 border-[var(--accent-amber)] pl-4">
+                <p className="font-display font-semibold text-[var(--text-primary)]">{title}</p>
+                <p className="text-sm text-[var(--text-tertiary)] mt-1">{body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 3. Services Section ─── */}
-      <section id="services" className="section-light py-20 px-6">
+      <section className="section-purple py-20 px-6">
         <div className="max-w-content mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="section-headline text-[var(--text-primary)] mb-3">
-              Four ways to work with us.
+          <div className="max-w-3xl mb-12">
+            <p className="label-text text-[var(--accent-amber)] mb-4">THE OPERATING MODEL</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-5">
+              Software is the leverage. The system is the product.
             </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {/* Self-Serve */}
-            <div className="card">
-              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
-                Self-Serve Apps
-              </h3>
-              <p className="text-[var(--text-secondary)] font-body mb-4">
-                Use our tools directly. Sign up, configure, and run your own workflows.
-              </p>
-              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
-                Starting at $29/mo
-              </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
-                <li>&bull; Solo creators</li>
-                <li>&bull; Small teams</li>
-                <li>&bull; Technical users who want control</li>
-              </ul>
-              <Link
-                href={"#products" as Route}
-                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
-              >
-                Explore Apps <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Websites & Landing Pages */}
-            <div className="card">
-              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
-                Websites &amp; Landing Pages
-              </h3>
-              <p className="text-[var(--text-secondary)] font-body mb-4">
-                A modern website or landing page, built in days and hosted by us. Fixed price, and you own it.
-              </p>
-              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
-                From $900 one-time
-              </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
-                <li>&bull; Local &amp; small businesses</li>
-                <li>&bull; Facelifts &amp; new builds</li>
-                <li>&bull; Buy online, add-ons included</li>
-              </ul>
-              <Link
-                href="/websites"
-                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
-              >
-                Build Your Site <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Managed */}
-            <div className="card">
-              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3">
-                Managed Services
-              </h3>
-              <p className="text-[var(--text-secondary)] font-body mb-4">
-                We do the work for you. Strategic planning, execution, optimization,
-                and reporting — powered by our AI tools with human oversight.
-              </p>
-              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
-                Starting at $3,500/mo
-              </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
-                <li>&bull; Mid-market companies</li>
-                <li>&bull; Agencies</li>
-                <li>&bull; Teams without in-house content ops</li>
-              </ul>
-              <Link
-                href="/contact"
-                className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
-              >
-                Schedule a Call <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Digital Growth Strategy */}
-            <div className="card relative border-[var(--brand-primary)] border-opacity-40">
-              <span className="absolute -top-3 left-4 bg-[var(--cta-primary)] text-white text-xs font-semibold px-3 py-1 rounded-full">
-                Most Impact
-              </span>
-              <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-3 mt-2">
-                Digital Growth Strategy
-              </h3>
-              <p className="text-[var(--text-secondary)] font-body mb-4">
-                We retool your entire digital sales funnel.
-              </p>
-              <p className="text-sm font-mono font-bold text-[var(--text-primary)] mb-4">
-                Starting at $10,000/mo
-              </p>
-              <ul className="text-sm text-[var(--text-secondary)] space-y-1.5 mb-6">
-                <li>&bull; Mid-market and enterprise companies</li>
-                <li>&bull; Underperforming digital presence</li>
-                <li>&bull; Full strategy, demo site, and execution</li>
-              </ul>
-              <Link
-                href="/growth"
-                className="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
-              >
-                See How It Works <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 4. Founder Section ─── */}
-      <section id="founder" className="section-tinted py-20 px-6">
-        <div className="max-w-narrow mx-auto">
-          <h2 className="section-headline text-[var(--text-primary)] mb-8 text-center">
-            Built by a Builder
-          </h2>
-          <div className="space-y-5 text-[var(--text-secondary)] font-body text-lg leading-relaxed">
-            <p>
-              Xenco Labs was founded by a technology executive with 20+ years
-              in enterprise tech — leading sales and engineering teams at
-              companies like AboveNet, NexusGuard, and Black Lotus (acquired
-              by Level 3). After two decades of building for other companies,
-              the mission became clear: build your own.
+            <p className="text-white/75 text-lg leading-relaxed">
+              ScoreCraft diagnoses. BlogCraft repairs and produces. Our research stack,
+              knowledge corpus, agents, creative tooling, and principal-led strategy turn
+              those products into a repeatable operating function.
             </p>
-            <p>
-              Since 2023, Xenco Labs has designed, built, and launched 10+
-              production web applications. Every product in our portfolio is
-              built with the same stack we use daily — Next.js, React,
-              TypeScript, Node.js, Python, PostgreSQL, Supabase, Docker — and
-              runs on our own infrastructure.
-            </p>
-            <blockquote className="border-l-4 border-[var(--brand-primary)] pl-6 py-2 my-8 text-[var(--text-primary)] font-display font-semibold text-xl italic">
-              &ldquo;We don&apos;t build prototypes. We don&apos;t ship demos.
-              We build production AI applications with paying customers.&rdquo;
-            </blockquote>
           </div>
-          <div className="flex flex-wrap gap-4 mt-8">
-            <Link
-              href="/about"
-              className="btn-secondary px-6 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2"
-            >
-              Meet the Founders <ArrowRight className="w-4 h-4" />
-            </Link>
-            <a
-              href="https://github.com/xenflashbox"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link font-medium inline-flex items-center gap-1.5 text-sm self-center"
-            >
-              View on GitHub <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 5. Tech Stack Strip ─── */}
-      <section className="section-light py-12 px-6">
-        <div className="max-w-content mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {techStack.map((tech) => (
-              <span
-                key={tech}
-                className="text-sm font-mono text-[var(--text-tertiary)] tracking-wide"
-              >
-                {tech}
-              </span>
+          <div className="grid md:grid-cols-5 gap-4">
+            {system.map(([title, body], index) => (
+              <div key={title} className="rounded-2xl border border-white/15 bg-white/[0.05] p-5">
+                <p className="text-xs font-mono text-[var(--accent-amber)] mb-3">0{index + 1}</p>
+                <h3 className="font-display font-bold text-xl text-white mb-2">{title}</h3>
+                <p className="text-sm text-white/65 leading-relaxed">{body}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 6. CTA Section ─── */}
+      <section className="section-light py-24 px-6">
+        <div className="max-w-content mx-auto grid lg:grid-cols-[1fr_0.9fr] gap-12 items-start">
+          <div>
+            <p className="label-text text-[var(--brand-primary)] mb-4">ENTERPRISE MANAGED SEARCH &amp; CONTENT</p>
+            <h2 className="section-headline text-[var(--text-primary)] mb-5">
+              Your SEO, content, and AI-visibility function — already built.
+            </h2>
+            <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
+              Modern organic growth is bigger than one SEO specialist. We combine technical
+              search, keyword intelligence, AEO/GEO, content architecture, managed production,
+              conversion paths, and executive reporting into one operating program.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                'Ahrefs + DataForSEO + Search Console',
+                'Technical SEO + AEO/GEO',
+                'Knowledge corpus + buyer-intent architecture',
+                'BlogCraft managed production',
+                'ScoreCraft QA and remediation',
+                'Principal-led reporting and strategy',
+              ].map((item) => (
+                <div key={item} className="flex gap-2.5 items-start">
+                  <CheckCircle2 className="w-5 h-5 text-[var(--brand-primary)] mt-0.5 flex-none" />
+                  <span className="text-sm text-[var(--text-secondary)]">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card border-[var(--brand-primary)] border-opacity-40">
+            <p className="label-text text-[var(--brand-primary)] mb-3">ENTERPRISE MANAGED PROGRAM</p>
+            <p className="font-display font-bold text-5xl text-[var(--text-primary)] mb-2">$20,000</p>
+            <p className="text-sm font-mono text-[var(--text-tertiary)] mb-6">PER MONTH · 3-MONTH INITIAL PROGRAM</p>
+            <p className="text-[var(--text-secondary)] leading-relaxed mb-7">
+              This is not priced as outsourced headcount. It is a principal-led operating
+              capability with software, research infrastructure, production capacity, QA,
+              technical support, and measurement already in place.
+            </p>
+            <Link
+              href="/services/managed-search-content"
+              className="btn-primary px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2"
+            >
+              See the Full Program <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-tinted py-24 px-6">
+        <div className="max-w-content mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="max-w-3xl">
+              <p className="label-text text-[var(--brand-primary)] mb-4">THE PRODUCT STACK</p>
+              <h2 className="section-headline text-[var(--text-primary)] mb-4">
+                We do not rent the strategy from somebody else&apos;s software.
+              </h2>
+              <p className="text-lg text-[var(--text-secondary)] leading-relaxed">
+                We build and operate the tools ourselves. The apps below are products,
+                proof, and infrastructure for the managed services we deliver.
+              </p>
+            </div>
+            <Link href="/portfolio" className="link font-semibold inline-flex items-center gap-2 flex-none">
+              Full portfolio <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((product) => {
+              const inner = (
+                <div className="card group flex flex-col h-full">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <h3 className="text-2xl font-display font-bold text-[var(--text-primary)]">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-[var(--text-tertiary)]">{product.label}</p>
+                    </div>
+                    <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
+                      {product.status}
+                    </span>
+                  </div>
+                  <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{product.body}</p>
+                  <span className="mt-5 text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    {'internal' in product && product.internal ? 'Discuss' : 'Visit'} <ExternalLink className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              );
+              return 'internal' in product && product.internal ? (
+                <Link key={product.name} href="/contact" className="block h-full">{inner}</Link>
+              ) : (
+                <a key={product.name} href={product.href} target="_blank" rel="noopener noreferrer" className="block h-full">{inner}</a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-light py-24 px-6">
+        <div className="max-w-content mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <p className="label-text text-[var(--brand-primary)] mb-4">PROOF OF EXECUTION</p>
+            <h2 className="section-headline text-[var(--text-primary)] mb-4">
+              We use the same system on real businesses and vertical platforms.
+            </h2>
+            <p className="text-lg text-[var(--text-secondary)] leading-relaxed">
+              The work is not hypothetical. These properties let us test messaging,
+              buyer journeys, content operations, AI tooling, and conversion architecture
+              in production environments.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {proof.map((item) => {
+              const content = (
+                <div className="card h-full group">
+                  <h3 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-3">{item.name}</h3>
+                  <p className="text-[var(--text-secondary)] leading-relaxed mb-5">{item.body}</p>
+                  <span className="text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Explore <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              );
+              return item.internal ? (
+                <Link key={item.name} href={item.href as Route}>{content}</Link>
+              ) : (
+                <a key={item.name} href={item.href} target="_blank" rel="noopener noreferrer">{content}</a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <section className="section-purple py-20 px-6">
+        <div className="max-w-content mx-auto grid lg:grid-cols-[1fr_0.85fr] gap-12 items-center">
+          <div>
+            <p className="label-text text-[var(--accent-amber)] mb-4">A NEW WAY TO BUY THE FUNCTION</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-5">
+              Hiring an SEO, GEO, or AI-search lead?
+            </h2>
+            <p className="text-white/75 text-lg leading-relaxed">
+              Before you put technical SEO, AI citations, content strategy, CRO, analytics,
+              and automation into one job description, send us the role. We&apos;ll show you
+              what belongs with a person, what belongs in software, and what can be operated
+              as a managed system.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-7">
+            <p className="text-white font-display font-bold text-2xl mb-3">Search Function Review</p>
+            <p className="text-white/65 text-sm leading-relaxed mb-6">
+              Company URL + job description → operating-model comparison, search-footprint review,
+              and recommended next step.
+            </p>
+            <Link href="/search-function-review" className="bg-white text-[#0B1F3A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition-colors">
+              Send Us the Role <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-tinted py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="label-text text-[var(--brand-primary)] mb-4">PRINCIPAL-LED</p>
+          <h2 className="section-headline text-[var(--text-primary)] mb-5">
+            Senior operators stay on the account.
+          </h2>
+          <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8 max-w-3xl mx-auto">
+            Xenco Labs is led by Xenophon Giannis and Laurie Shahin, combining decades
+            of enterprise technology, infrastructure, sales, partnerships, channel strategy,
+            product development, and now production AI systems. Client work is not handed
+            to a junior account team.
+          </p>
+          <Link href="/about" className="btn-secondary px-7 py-3 rounded-lg font-semibold inline-flex items-center gap-2">
+            Meet the Principals <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
+      <section className="section-purple py-24 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-4">
-            Let&apos;s Build Something
+            Need a tool, a build, or the whole operating function?
           </h2>
-          <p className="text-white/80 text-lg font-body mb-10 max-w-xl mx-auto leading-relaxed">
-            Whether you need a self-serve AI tool or a fully managed
-            service, we have the platform and the team.
+          <p className="text-white/80 text-lg mb-9 leading-relaxed">
+            Start with the business problem. We&apos;ll show you whether the right answer
+            is software, an implementation sprint, or a managed operating program.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href={"#products" as Route}
-              className="bg-white text-[var(--brand-primary-900)] px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
+              href="/contact"
+              className="bg-white text-[#0B1F3A] px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
             >
-              Explore Our Apps <ArrowRight className="w-4 h-4" />
+              Talk to Xenco Labs <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/contact"
+              href="/growth"
               className="border border-white/30 text-white px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center hover:bg-white/10 transition-colors"
             >
-              Schedule a Consultation
+              Explore Growth Strategy
             </Link>
           </div>
         </div>

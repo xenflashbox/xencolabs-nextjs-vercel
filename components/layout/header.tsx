@@ -6,12 +6,11 @@ import { Route } from 'next'
 import { Menu, X, ArrowRight } from 'lucide-react'
 
 const navItems = [
-  { label: 'Apps', href: '/#products' as Route },
-  { label: 'Websites', href: '/websites' as Route },
-  { label: 'Growth', href: '/growth' as Route },
+  { label: 'Products', href: '/apps' as Route },
+  { label: 'Portfolio', href: '/portfolio' as Route },
+  { label: 'Services', href: '/services' as Route },
+  { label: 'Growth Strategy', href: '/growth' as Route },
   { label: 'Advisory', href: '/advisory' as Route },
-  { label: 'Tools', href: '/tools' as Route },
-  { label: 'Blog', href: '/blog' as Route },
   { label: 'About', href: '/about' as Route },
 ]
 
@@ -22,20 +21,15 @@ export function Header() {
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
       <div className="max-w-content mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo — X monogram (navy tile, white X, amber underline) + wordmark */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative w-9 h-9 rounded-lg bg-[#0B1F3A] flex flex-col items-center justify-center">
-              <span className="text-white font-bold text-base leading-none">X</span>
-              <span className="mt-[3px] h-[2px] w-3.5 rounded-full bg-[var(--accent-amber)]" />
-            </div>
-            <span className="text-xl text-[var(--text-primary)]">
-              <span className="font-bold">Xenco</span>{' '}
-              <span className="font-normal">Labs</span>
-            </span>
+          <Link href="/" className="flex items-center" aria-label="Xenco Labs home">
+            <img
+              src="/brand/xencolabs-on-light.svg"
+              alt="Xenco Labs"
+              className="h-10 w-auto"
+            />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-7">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -47,7 +41,6 @@ export function Header() {
             ))}
           </div>
 
-          {/* Right side */}
           <div className="flex items-center gap-4">
             <Link
               href="/contact"
@@ -56,14 +49,13 @@ export function Header() {
               Contact
             </Link>
             <Link
-              href={"/#products" as Route}
+              href={"/services/managed-search-content" as Route}
               className="hidden sm:inline-flex items-center gap-2 btn-primary px-5 py-2.5 rounded-lg text-sm font-semibold"
             >
-              Get Started
+              Managed Search
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 rounded-lg hover:bg-[var(--surface-secondary)] transition-colors"
@@ -74,7 +66,6 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-[var(--border-subtle)]">
             <div className="flex flex-col gap-4 pt-4">
@@ -96,11 +87,11 @@ export function Header() {
                 Contact
               </Link>
               <Link
-                href={"/#products" as Route}
+                href={"/services/managed-search-content" as Route}
                 className="btn-primary px-5 py-2.5 rounded-lg text-sm font-semibold text-center"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Get Started
+                Managed Search
               </Link>
             </div>
           </div>
