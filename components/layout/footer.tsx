@@ -99,6 +99,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <Link href="/tools" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Free Developer Tools
+                </Link>
+              </li>
+              <li>
                 <a href="https://github.com/xenflashbox" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm">
                   GitHub
                 </a>
