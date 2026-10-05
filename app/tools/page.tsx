@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Route } from 'next';
 import {
   Braces, Binary, CaseUpper, Clipboard, Code2, FileJson2, Fingerprint,
   Hash, KeyRound, Network, Regex, RotateCcw, Split, Timer, Type,
@@ -55,7 +56,7 @@ export default function ToolsPage() {
             {tools.map((tool) => {
               const Icon = tool.icon;
               return (
-                <Link key={tool.href} href={tool.href} className="card group h-full">
+                <Link key={tool.href} href={tool.href as Route} className="card group h-full">
                   <div className="w-11 h-11 rounded-xl bg-[#0B1F3A] flex items-center justify-center mb-5">
                     <Icon className="w-5 h-5 text-[var(--accent-amber)]" />
                   </div>
