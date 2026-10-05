@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/apps",
     "/services",
     "/services/managed-search-content",
+    "/search-function-review",
     "/portfolio",
     "/growth",
     "/about",
