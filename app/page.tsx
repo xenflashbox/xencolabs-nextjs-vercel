@@ -7,45 +7,46 @@ import { MarketingLayout } from '@/components/layout/marketing-layout';
 const products = [
   {
     name: 'ScoreCraft',
-    label: 'SEO + GEO diagnostics',
+    label: 'SEO + GEO diagnostic platform',
     status: 'Live',
     href: 'https://scorecraft.io',
-    body: 'Scores pages for traditional SEO and AI-search readiness, then turns findings into a prioritized remediation plan.',
+    body: 'Production search-quality platform for traditional SEO, AI-search readiness, source quality, structure, and prioritized remediation.',
   },
   {
     name: 'BlogCraft',
     label: 'Managed content operating system',
-    status: 'Managed',
+    status: 'Live',
     href: 'https://blogcraft.app',
-    body: 'Corpus-grounded research, briefs, source validation, rewriting, visuals, QA, publishing, and continuous optimization.',
+    body: 'Corpus-grounded research, briefs, drafting, rewriting, visuals, QA, publishing, and continuous optimization.',
   },
   {
     name: 'ImageCrafter',
-    label: 'Multi-model creative production',
-    status: 'Launch-ready',
+    label: 'Consumer AI image product',
+    status: 'Live',
     href: 'https://imagecrafter.app',
-    body: 'Purpose-built visual production across multiple AI image models for articles, campaigns, infographics, and product content.',
+    body: 'Fully functional customer-facing creative product for family, pet, and personal image generation.',
   },
   {
-    name: 'RexResume',
-    label: 'AI resume optimization',
+    name: 'Image Forge',
+    label: 'Multi-model image infrastructure',
+    status: 'Production platform',
+    href: '/contact',
+    internal: true,
+    body: 'The reusable image-generation API and orchestration engine behind ImageCrafter, BlogCraft, and managed visual production.',
+  },
+  {
+    name: 'LaunchCraft',
+    label: 'AI app-building platform',
     status: 'Live',
-    href: 'https://rexresume.com',
-    body: 'A production consumer SaaS product with ATS optimization, payment gating, organic acquisition, and an automated customer journey.',
+    href: 'https://launchcraft.me',
+    body: 'Production platform that helps users move from app idea to structured build plan and launch workflow.',
   },
   {
     name: 'CompareITAD',
     label: 'Data-center ITAD platform',
-    status: 'In build',
+    status: 'Live',
     href: 'https://compareitad.com',
-    body: 'Vendor validation, chain of custody, disposition records, secondary-market strategy, and GPU refresh economics for enterprise IT assets.',
-  },
-  {
-    name: 'MCP Forge',
-    label: 'AI integration infrastructure',
-    status: 'In build',
-    href: 'https://mcpforge.org',
-    body: 'A directory and tooling layer for MCP servers, integrations, and agent workflows used across the Xenco Labs ecosystem.',
+    body: 'Launched comparison and lead platform for ITAD vendor selection, chain of custody, disposition, and asset-value recovery.',
   },
 ];
 
@@ -220,31 +221,32 @@ export default function Page() {
             </Link>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <a
-                key={product.name}
-                href={product.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card group flex flex-col"
-              >
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h3 className="text-2xl font-display font-bold text-[var(--text-primary)]">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-[var(--text-tertiary)]">{product.label}</p>
+            {products.map((product) => {
+              const inner = (
+                <div className="card group flex flex-col h-full">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <h3 className="text-2xl font-display font-bold text-[var(--text-primary)]">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-[var(--text-tertiary)]">{product.label}</p>
+                    </div>
+                    <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
+                      {product.status}
+                    </span>
                   </div>
-                  <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
-                    {product.status}
+                  <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{product.body}</p>
+                  <span className="mt-5 text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    {'internal' in product && product.internal ? 'Discuss' : 'Visit'} <ExternalLink className="w-3.5 h-3.5" />
                   </span>
                 </div>
-                <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{product.body}</p>
-                <span className="mt-5 text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                  Visit <ExternalLink className="w-3.5 h-3.5" />
-                </span>
-              </a>
-            ))}
+              );
+              return 'internal' in product && product.internal ? (
+                <Link key={product.name} href="/contact" className="block h-full">{inner}</Link>
+              ) : (
+                <a key={product.name} href={product.href} target="_blank" rel="noopener noreferrer" className="block h-full">{inner}</a>
+              );
+            })}
           </div>
         </div>
       </section>
