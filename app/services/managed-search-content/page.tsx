@@ -221,6 +221,31 @@ export default function ManagedSearchContentPage() {
         </div>
       </section>
 
+      <section className="section-light py-20 px-6">
+        <div className="max-w-content mx-auto grid lg:grid-cols-[1fr_0.9fr] gap-10 items-center">
+          <div>
+            <p className="label-text text-[var(--brand-primary)] mb-4">HIRING AN SEO/GEO LEAD?</p>
+            <h2 className="section-headline text-[var(--text-primary)] mb-4">
+              Send us the job description before you fill the seat.
+            </h2>
+            <p className="text-lg text-[var(--text-secondary)] font-body leading-relaxed">
+              We&apos;ll map the responsibilities to the actual operating disciplines,
+              review the search footprint behind the role, and show you where one hire is
+              enough — and where the business is really describing a managed function.
+            </p>
+          </div>
+          <div className="card border-[var(--brand-primary)] border-opacity-40">
+            <p className="text-sm text-[var(--text-secondary)] mb-5">
+              Paste the role, company URL, and posting. For qualified B2B companies, we&apos;ll
+              return an operating-model review instead of a recruiting pitch.
+            </p>
+            <Link href="/search-function-review" className="btn-primary px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2">
+              Review the Search Function <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="section-purple py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-4">
