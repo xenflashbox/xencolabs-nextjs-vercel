@@ -6,7 +6,7 @@ import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { SearchFunctionReviewForm } from './review-form';
 
 export const metadata: Metadata = {
-  title: 'SEO/GEO Search Function Review | Xenco Labs',
+  title: 'SEO/GEO Search Function Review',
   description:
     'Hiring an SEO, GEO, AEO, organic growth, or AI-search lead? Send Xenco Labs the job description and compare one hire with a managed search and content operating function.',
 };
