@@ -150,6 +150,54 @@ export default function ManagedSearchContentPage() {
 
       <section className="section-tinted py-20 px-6">
         <div className="max-w-content mx-auto">
+          <div className="max-w-3xl mb-12">
+            <p className="label-text text-[var(--brand-primary)] mb-4">THE FIRST 90 DAYS</p>
+            <h2 className="section-headline text-[var(--text-primary)] mb-4">
+              Establish the intelligence layer. Improve the asset. Operate the engine.
+            </h2>
+            <p className="text-lg text-[var(--text-secondary)] font-body leading-relaxed">
+              We start by measuring what already exists, prioritize the highest-value opportunities,
+              then install the recurring operating cadence. The goal is not a burst of activity.
+              It is a function that compounds.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                phase: 'Days 1–30',
+                title: 'Build the intelligence layer',
+                items: ['Technical baseline', 'Content inventory', 'Search opportunity map', 'AI-visibility baseline'],
+              },
+              {
+                phase: 'Days 31–60',
+                title: 'Improve the existing asset',
+                items: ['Refresh high-value pages', 'Fix structural gaps', 'Improve internal linking', 'Launch first optimization wave'],
+              },
+              {
+                phase: 'Days 61–90',
+                title: 'Operate the engine',
+                items: ['Ongoing content engine', 'GEO-ready production', 'Executive reporting cadence', 'Conversion feedback loop'],
+              },
+            ].map((phase) => (
+              <div key={phase.phase} className="card">
+                <p className="text-sm font-mono font-bold text-[var(--brand-primary)] mb-2">{phase.phase}</p>
+                <h3 className="text-xl font-display font-bold text-[var(--text-primary)] mb-5">{phase.title}</h3>
+                <ul className="space-y-3">
+                  {phase.items.map((item) => (
+                    <li key={item} className="flex gap-2.5 items-start text-sm text-[var(--text-secondary)]">
+                      <CheckCircle2 className="w-4 h-4 text-[var(--brand-primary)] mt-0.5 flex-none" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-light py-20 px-6">
+        <div className="max-w-content mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <p className="label-text text-[var(--brand-primary)] mb-4">WHY IT IS DIFFERENT</p>
             <h2 className="section-headline text-[var(--text-primary)] mb-4">
