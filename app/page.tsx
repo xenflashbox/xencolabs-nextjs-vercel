@@ -283,6 +283,33 @@ export default function Page() {
         </div>
       </section>
 
+      <section className="section-purple py-20 px-6">
+        <div className="max-w-content mx-auto grid lg:grid-cols-[1fr_0.85fr] gap-12 items-center">
+          <div>
+            <p className="label-text text-[var(--accent-amber)] mb-4">A NEW WAY TO BUY THE FUNCTION</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-5">
+              Hiring an SEO, GEO, or AI-search lead?
+            </h2>
+            <p className="text-white/75 text-lg leading-relaxed">
+              Before you put technical SEO, AI citations, content strategy, CRO, analytics,
+              and automation into one job description, send us the role. We&apos;ll show you
+              what belongs with a person, what belongs in software, and what can be operated
+              as a managed system.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-7">
+            <p className="text-white font-display font-bold text-2xl mb-3">Search Function Review</p>
+            <p className="text-white/65 text-sm leading-relaxed mb-6">
+              Company URL + job description → operating-model comparison, search-footprint review,
+              and recommended next step.
+            </p>
+            <Link href="/search-function-review" className="bg-white text-[#0B1F3A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition-colors">
+              Send Us the Role <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="section-tinted py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <p className="label-text text-[var(--brand-primary)] mb-4">PRINCIPAL-LED</p>
