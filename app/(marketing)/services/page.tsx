@@ -1,8 +1,15 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Route } from 'next';
 import { ArrowRight } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
+
+export const metadata: Metadata = {
+  title: 'Services',
+  description:
+    'Xenco Labs services span managed AI search and content, digital growth strategy, websites, AI applications, infrastructure advisory, and product launch support.',
+};
 
 const services = [
   {

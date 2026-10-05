@@ -62,7 +62,7 @@ const proof = [
   {
     name: 'Vision Battery US',
     href: 'https://visionbattery.us',
-    body: 'Technical-market repositioning with problem-first messaging, a battery selector, AI assistant, data-center pages, and a search-led content hub.',
+    body: 'Demonstration build for a technical battery manufacturer: problem-first messaging, a battery selector, AI assistant, data-center pages, and a search-led content hub.',
   },
   {
     name: 'CompareITAD',

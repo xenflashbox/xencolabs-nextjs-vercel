@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
-  title: 'Managed Search & Content Intelligence | Xenco Labs',
+  title: 'Managed Search & Content Intelligence',
   description:
     'Enterprise SEO, AEO, GEO, corpus-grounded content operations, and conversion strategy operated as a managed function by Xenco Labs.',
 };

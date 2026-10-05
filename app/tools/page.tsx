@@ -9,7 +9,7 @@ import {
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
-  title: 'Free Developer Tools | Xenco Labs',
+  title: 'Free Developer Tools',
   description:
     'Free browser-based developer utilities from Xenco Labs for JSON, Base64, JWTs, hashes, UUIDs, regex, timestamps, URL encoding, cURL, fetch, Axios, YAML, CSV, and more.',
 };

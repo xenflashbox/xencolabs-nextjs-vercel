@@ -5,7 +5,7 @@ import { ArrowRight, ExternalLink } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
-  title: 'Portfolio | Xenco Labs',
+  title: 'Portfolio',
   description:
     'Production AI products, owned search properties, enterprise platforms, ecommerce builds, and operational websites built and operated by Xenco Labs.',
 };
