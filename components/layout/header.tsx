@@ -6,7 +6,7 @@ import { Route } from 'next'
 import { Menu, X, ArrowRight } from 'lucide-react'
 
 const navItems = [
-  { label: 'Apps', href: '/apps' as Route },
+  { label: 'Products', href: '/apps' as Route },
   { label: 'Portfolio', href: '/portfolio' as Route },
   { label: 'Services', href: '/services' as Route },
   { label: 'Growth', href: '/growth' as Route },
