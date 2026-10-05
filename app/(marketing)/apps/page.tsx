@@ -1,34 +1,94 @@
-import Link from "next/link";
-import { Route } from "next";
-import { APPS } from "@/lib/apps";
+import React from 'react';
+import Link from 'next/link';
+import { ArrowRight, ExternalLink } from 'lucide-react';
+import { MarketingLayout } from '@/components/layout/marketing-layout';
+import { APPS } from '@/lib/apps';
+
+const status: Record<string, string> = {
+  ScoreCraft: 'Live',
+  BlogCraft: 'Managed',
+  ImageCrafter: 'Launch-ready',
+  LaunchCraft: 'In build',
+  RexResume: 'Live',
+  'MCP Forge': 'In build',
+  'Vision Battery US': 'Live demo',
+  CompareITAD: 'In build',
+};
 
 export default function Page() {
   return (
-    <section className="section">
-      <div className="container">
-        <h1 className="text-3xl font-bold">Our Apps</h1>
-        <p className="mt-2 text-gray-700">
-          One account. Access everything in the Xenco Labs ecosystem.
-        </p>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {APPS.map((app) => (
-            <div key={app.name} className="card">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-xl font-semibold">{app.name}</h3>
-                  <p className="text-sm text-gray-600">{app.subtitle}</p>
-                </div>
-                <span className="text-xs rounded bg-gray-100 px-2 py-1">{app.subdomain}</span>
-              </div>
-              <p className="mt-3 text-gray-700">{app.description}</p>
-              <div className="mt-4 flex gap-3">
-                <a className="btn btn-primary" href={app.href} target="_blank" rel="noreferrer">Open</a>
-                <Link className="btn" href={"/sign-in" as Route}>Sign in</Link>
-              </div>
-            </div>
-          ))}
+    <MarketingLayout>
+      <section className="pt-32 lg:pt-40 pb-20 px-6 section-light">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="label-text text-[var(--brand-primary)] mb-6">PRODUCTS &amp; PLATFORMS</p>
+          <h1 className="font-display font-bold text-5xl lg:text-6xl text-[var(--text-primary)] mb-6 leading-tight">
+            We build the tools we use to operate.
+          </h1>
+          <p className="text-lg text-[var(--text-secondary)] font-body max-w-3xl mx-auto mb-10 leading-relaxed">
+            Xenco Labs develops production software across search, content, creative,
+            workflow automation, consumer SaaS, and enterprise infrastructure. Some
+            products are self-serve; others power our managed services and vertical platforms.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/services/managed-search-content" className="btn-primary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2">
+              See the Managed Stack <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link href="/portfolio" className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center">
+              View Portfolio
+            </Link>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="section-tinted py-20 px-6">
+        <div className="max-w-content mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {APPS.map((app) => (
+              <a
+                key={app.name}
+                href={app.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card group flex flex-col"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <h2 className="text-2xl font-display font-bold text-[var(--text-primary)]">{app.name}</h2>
+                    <p className="text-sm text-[var(--text-tertiary)]">{app.subtitle}</p>
+                  </div>
+                  <span className="text-xs rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-[var(--text-secondary)] flex-none">
+                    {status[app.name] || 'Portfolio'}
+                  </span>
+                </div>
+                <p className="text-[var(--text-secondary)] leading-relaxed flex-1">{app.description}</p>
+                <div className="mt-5 flex items-center justify-between gap-4">
+                  <span className="text-xs font-mono text-[var(--text-tertiary)]">{app.subdomain}</span>
+                  <span className="text-[var(--brand-primary)] font-medium text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Visit <ExternalLink className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-light py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="label-text text-[var(--brand-primary)] mb-4">WHY THE PORTFOLIO MATTERS</p>
+          <h2 className="section-headline text-[var(--text-primary)] mb-5">
+            The products are not separate from the services.
+          </h2>
+          <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
+            ScoreCraft becomes the diagnostic layer. BlogCraft becomes the managed production
+            layer. ImageCrafter becomes the visual layer. Our agents, MCP integrations, and
+            vertical platforms provide the automation and domain context around them.
+          </p>
+          <Link href="/portfolio" className="btn-secondary px-7 py-3 rounded-lg font-semibold inline-flex items-center gap-2">
+            See the Operating Portfolio <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+    </MarketingLayout>
   );
 }
