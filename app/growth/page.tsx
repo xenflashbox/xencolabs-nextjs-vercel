@@ -94,9 +94,9 @@ const deliverables = [
   'Complete demo site with conversion-optimized messaging',
   'A/B testing framework with GA4 tracking per variant',
   'Self-assessment quiz funnel replacing the 8-field form',
-  'SEO-driven blog content targeting buyer search queries',
+  'Buyer-intent content architecture targeting real search demand',
   'AI sales assistant trained on product-specific knowledge',
-  'AI-generated 60-second brand video ($0 production cost)',
+  'AI-generated visual and video assets matched to the content strategy',
   'Revenue calculator for channel partner pages',
   'Narrated strategy presentation with token-gated access',
 ];
@@ -106,9 +106,9 @@ const includedColumns = [
     label: 'STRATEGY',
     items: [
       'Competitive landscape analysis',
-      'Search visibility audit',
-      'Buyer persona mapping',
-      'Content gap identification',
+      'Search + AI visibility audit',
+      'Buyer persona and pain-point mapping',
+      'Keyword, competitor, and content-gap intelligence',
       'Conversion funnel redesign',
     ],
   },
@@ -118,27 +118,27 @@ const includedColumns = [
       'Demo site — live, deployed, yours to review',
       'Narrated strategy presentation',
       'AI-generated video and imagery',
-      'Blog content targeting buyer searches',
-      'Landing page and form optimization',
+      'Corpus-grounded BlogCraft content production',
+      'Landing page, CTA, and form optimization',
     ],
   },
   {
     label: 'TECHNOLOGY',
     items: [
       'A/B testing with GA4 tracking',
-      'AI assistant trained on your product',
+      'ScoreCraft SEO/GEO QA',
+      'AI assistant trained on approved knowledge',
       'Self-assessment and quiz funnels',
       'Lead capture with intent scoring',
-      'CRM-ready lead notifications',
     ],
   },
   {
     label: 'ACCOUNTABILITY',
     items: [
-      'Monthly KPI reporting',
-      'Search ranking tracking',
+      'Monthly executive KPI reporting',
+      'Search + AI visibility tracking',
       'Conversion rate optimization',
-      'Content performance reviews',
+      'Content performance and refresh reviews',
       'Strategy adjustment based on data',
     ],
   },
@@ -146,24 +146,24 @@ const includedColumns = [
 
 const whyItems = [
   {
-    title: 'We built the tools.',
-    body: "BlogCraft, our proprietary content engine, powers every engagement. This isn't ChatGPT with a wrapper.",
+    title: 'We built the operating stack.',
+    body: 'ScoreCraft diagnoses SEO and GEO gaps. BlogCraft grounds, produces, validates, and publishes content. ImageCrafter handles the visual layer. Our agents connect the workflow.',
   },
   {
-    title: 'We use them on ourselves.',
-    body: 'WineCountryCorner.com and ResumeCoach.me run on the same pipeline we deploy for clients.',
+    title: 'We operate it on real properties.',
+    body: 'Vision Battery, CompareITAD, RexResume, Wine Country Corner, and our owned content network give us live environments for testing search, messaging, conversion, and content operations.',
   },
   {
-    title: 'We know your industry.',
-    body: '20+ years in enterprise tech — AboveNet, NexusGuard, Black Lotus (acquired by Level 3). We speak your language.',
+    title: 'We understand complex B2B markets.',
+    body: 'The principals bring decades of enterprise technology, data-center, network, security, channel, and go-to-market experience. The work starts with business context, not prompts.',
   },
   {
-    title: "AI is a tool, not a magic word.",
-    body: 'We use AI for production — content, video, imagery, automation. But strategy comes from experience, not algorithms.',
+    title: 'Search now includes AI discovery.',
+    body: 'We plan for Google rankings, AI Overviews, answer engines, source authority, citation readiness, and the buyer journeys that connect visibility to pipeline.',
   },
   {
-    title: 'You see results before you commit.',
-    body: "The demo site is live. The presentation is ready. You evaluate real work, not slide decks with promises.",
+    title: 'You see proof before commitment.',
+    body: 'We can show a live demo, an account-specific search analysis, a ScoreCraft diagnostic, and the operating plan before the engagement becomes a long-term program.',
   },
 ];
 
@@ -528,7 +528,7 @@ export default function GrowthPage() {
                 <li>Recorded walkthrough for your team</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
-                By consultation
+                From $20,000/month
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)] mb-6">
                 Fixed-fee engagement · No retainer required
@@ -554,18 +554,18 @@ export default function GrowthPage() {
                 Everything in the Sprint, plus:
               </p>
               <ul className="text-sm text-[var(--text-secondary)] space-y-1 font-body mb-6 list-disc list-inside">
-                <li>Ongoing content production via BlogCraft</li>
-                <li>Monthly SEO and conversion optimization</li>
-                <li>Automated narrated pitch presentations</li>
-                <li>AI-generated brand video featuring your executives</li>
-                <li>Monthly KPI reporting and strategy adjustment</li>
-                <li>Dedicated account management</li>
+                <li>Managed content operations via BlogCraft</li>
+                <li>ScoreCraft SEO/GEO diagnostics and remediation</li>
+                <li>Monthly SEO, AI-visibility, and conversion optimization</li>
+                <li>AI-generated visual, video, and interactive assets</li>
+                <li>Monthly executive KPI reporting and strategy adjustment</li>
+                <li>Principal-led account strategy</li>
               </ul>
               <p className="font-display font-bold text-3xl text-[var(--text-primary)]">
                 By consultation
               </p>
               <p className="text-sm font-body text-[var(--text-tertiary)]">
-                Monthly engagement · 3-month minimum
+                Enterprise managed program · 3-month initial term
               </p>
               <p className="text-xs font-body text-[var(--text-tertiary)] mt-4 mb-6">
                 Cybersecurity · IT Asset Management · SaaS · Manufacturing
