@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://xencolabs.com"),
   icons: {
     icon: [
+      { url: "/brand/xl-favicon.svg", type: "image/svg+xml" },
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16.png", type: "image/png", sizes: "16x16" },
       { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
     ],
