@@ -118,6 +118,13 @@ const contentNetwork: PortfolioItem[] = [
     proof: 'Shows how BlogCraft builds from corpus to clusters to landing pages.',
   },
   {
+    name: 'Find a Vibrator',
+    category: 'Search-driven commerce content',
+    status: 'Live portfolio property',
+    description: 'Owned niche property used to test content architecture, search-led product discovery, editorial workflows, and affiliate conversion paths.',
+    proof: 'Part of the BlogCraft-operated content network and a live environment for content operations.',
+  },
+  {
     name: 'License4.com',
     category: 'Compliance and licensing content',
     status: 'Portfolio property',
@@ -197,6 +204,7 @@ export default function PortfolioPage() {
           <p className="text-lg text-[var(--text-secondary)] font-body max-w-3xl mx-auto mb-10 leading-relaxed">
             Xenco Labs is not a slide-deck agency. Our portfolio includes production AI apps,
             owned content properties, enterprise demo builds, and data-center industry platforms.
+            The same software and operating methods used here become the delivery stack for client work.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/services/managed-search-content" className="btn-primary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2">
