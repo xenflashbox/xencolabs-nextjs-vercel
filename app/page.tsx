@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Route } from 'next';
 import { ArrowRight, CheckCircle2, ExternalLink } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
@@ -273,7 +274,7 @@ export default function Page() {
                 </div>
               );
               return item.internal ? (
-                <Link key={item.name} href={item.href}>{content}</Link>
+                <Link key={item.name} href={item.href as Route}>{content}</Link>
               ) : (
                 <a key={item.name} href={item.href} target="_blank" rel="noopener noreferrer">{content}</a>
               );
