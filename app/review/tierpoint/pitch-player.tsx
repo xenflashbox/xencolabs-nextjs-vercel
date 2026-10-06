@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { sharedSearchPitchSlides } from '../../../lib/review/shared-search-pitch';
 
-const slides = [
+const customSlides = [
   {
     video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152010_157151c8-4718-40bd-8347-2af84fe50d00.mp4',
     audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/32ebd177-cae8-45eb-afa6-10a90891c236.mp3',
@@ -30,32 +31,9 @@ const slides = [
     audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/723a534a-47b4-4621-a7b0-a929769062fb.mp3',
     title: 'NeoCloud: SEO vs. GEO',
   },
-  {
-    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152204_77bf87f4-c549-4c8f-a5e8-58642f8134ec.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/ff53f8b9-dac8-42a9-ad18-a8257c054a96.mp3',
-    title: 'Search Beyond Google',
-  },
-  {
-    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152232_7f0e9fbc-f793-4cf9-b5b4-58802b8a5528.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/2405d830-3311-4429-b380-e318337efff9.mp3',
-    title: 'The XencoLabs Operating System',
-  },
-  {
-    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152318_2c319825-885f-4804-94e9-819bd78df20a.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/06cb4b9d-097a-4e01-8099-66729edefbdf.mp3',
-    title: 'Proof of Execution',
-  },
-  {
-    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152336_66815544-744d-49e0-bcfb-186f78e54299.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/f92e8073-a68c-412a-99d1-e48108b9a7c9.mp3',
-    title: 'The First 90 Days',
-  },
-  {
-    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152354_1b5713d4-fdd6-427a-af53-d8316e541269.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/20d656ca-dea3-4031-993a-f22726b16417.mp3',
-    title: 'Managed Function vs. One Hire',
-  },
 ];
+
+const slides = [...customSlides, ...sharedSearchPitchSlides];
 
 export function TierPointPitchPlayer() {
   const [index, setIndex] = useState(0);
