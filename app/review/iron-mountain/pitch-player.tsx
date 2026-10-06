@@ -26,6 +26,11 @@ const customSlides = [
     audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/a13975af-636d-41ad-bbf1-c2844b662e6a.mp3',
     title: 'CompareITAD Advantage',
   },
+  {
+    video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261006_040656_32d00bfa-40a9-45c1-848b-9d4ca4d1c03d.mp4',
+    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/d160db6a-867b-43e0-846b-8c45b06ae761.mp3',
+    title: 'CompareITAD Search Advantage',
+  },
 ];
 
 const slides = [...customSlides, ...sharedSearchPitchSlides];
