@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/services/managed-search-content",
     "/search-function-review",
     "/portfolio",
+    "/compareitad",
     "/growth",
     "/about",
     "/blog",
@@ -60,10 +61,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority:
       route === ""
         ? 1.0
-        : route.startsWith("/apps")
-          ? 0.8
-          : route.startsWith("/tools")
-            ? 0.5
-            : 0.6,
+        : route === "/compareitad"
+          ? 0.85
+          : route.startsWith("/apps")
+            ? 0.8
+            : route.startsWith("/tools")
+              ? 0.5
+              : 0.6,
   }));
 }
