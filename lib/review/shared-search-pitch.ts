@@ -22,10 +22,10 @@ export const sharedSearchPitchSlides: SharedPitchSlide[] = [
   },
   {
     video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152232_7f0e9fbc-f793-4cf9-b5b4-58802b8a5528.mp4',
-    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/7eb64c30-c86e-41b8-8de6-378efe0d3ffc.mp3',
+    audio: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/9334e7e6-fcd1-4a53-a4f3-2575658cf01c.mp3',
     title: 'The XencoLabs Operating System',
     narration:
-      'Xenco Labs operates search as a system. Search intelligence from Ahrefs, Data for SEO, and Search Console feeds a grounded knowledge corpus. That drives content strategy, BlogCraft production, ScoreCraft quality control, subject-matter expert approval, publishing, and measurement. Each stage feeds the next, so the system improves over time.',
+      'Xenco Labs operates search as a system. Search intelligence from H refs, Data for SEO, and Search Console feeds a grounded knowledge corpus. That drives content strategy, BlogCraft production, ScoreCraft quality control, subject-matter expert approval, publishing, and measurement. Each stage feeds the next, so the system improves over time.',
   },
   {
     video: 'https://d8j0ntlcm91z4.cloudfront.net/user_3CWed9VwrQQc03Una20MG2k84nU/hf_20261005_152318_2c319825-885f-4804-94e9-819bd78df20a.mp4',
