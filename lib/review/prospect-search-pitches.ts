@@ -214,7 +214,7 @@ export const prospectSearchPitches: Record<string, ProspectPitchConfig> = {
       cdn + '/ce696949-2da2-41cb-8930-6080431250ef.mp3',
       cdn + '/d93bea3d-8024-4689-9844-40a5d59869ff.mp3',
       cdn + '/269fc571-fc53-420a-8ec1-9c0e786ed5b6.mp3',
-      cdn + '/1636f1f7-ca2a-4095-b1e8-e3ed20679396.mp3',
+      cdn + '/90ced32e-8b3f-49a0-91f4-4139e7d2ae59.mp3',
       cdn + '/4576bb59-4f22-42a7-96d8-6cd5ae92576f.mp3',
     ],
   },
@@ -403,8 +403,8 @@ export const prospectSearchPitches: Record<string, ProspectPitchConfig> = {
     operatingCallout:
       'A managed system for demand mapping, technical execution, authority, content, experimentation and pipeline reporting.',
     audio: [
-      cdn + '/747597f9-007d-44a9-ae0d-888aed874675.mp3',
-      cdn + '/b706301a-685e-4ea0-ac70-054d1d65ed5a.mp3',
+      cdn + '/df070220-61b6-40d9-abda-eade1c493533.mp3',
+      cdn + '/f2978a72-e216-4595-8214-499e7393e303.mp3',
       cdn + '/e9f13229-350d-45ab-9a9f-649897e2ffd7.mp3',
       cdn + '/d9dfd005-5105-4804-bd18-6b5c41e3fc8e.mp3',
       cdn + '/11b7f33b-5c70-4a31-a446-624bdbe4b403.mp3',
