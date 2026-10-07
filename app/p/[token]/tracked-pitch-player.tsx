@@ -54,8 +54,11 @@ export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
     setStarted(true);
     video.currentTime = 0;
     audio.currentTime = 0;
+    // Narration is the clock: the slide plays when its MP3 plays. Video is best-effort, so a browser that cannot
+    // decode a clip (e.g. HEVC in Firefox) still hears the narration and advances instead of stalling silently.
+    video.play().catch(() => undefined);
     try {
-      await Promise.all([video.play(), audio.play()]);
+      await audio.play();
       setPlaying(true);
       onSlidePlaying(index);
     } catch {
@@ -70,8 +73,9 @@ export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
   };
 
   const resume = async () => {
+    videoRef.current?.play().catch(() => undefined);
     try {
-      await Promise.all([videoRef.current?.play(), audioRef.current?.play()]);
+      await audioRef.current?.play();
       setPlaying(true);
     } catch {
       setPlaying(false);
@@ -89,7 +93,8 @@ export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
       v.currentTime = 0;
       a.currentTime = 0;
       if (autoplay || started) {
-        Promise.all([v.play(), a.play()]).then(() => { setPlaying(true); onSlidePlaying(safe); }).catch(() => setPlaying(false));
+        v.play().catch(() => undefined);
+        a.play().then(() => { setPlaying(true); onSlidePlaying(safe); }).catch(() => setPlaying(false));
       }
     }, 60);
   };
