@@ -32,6 +32,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/growth-audit',
   '/search-function-review',
   '/review/(.*)',
+  '/p/(.*)', // per-recipient tracked presentations (opaque token, noindex)
   '/api/search-function-review',
   '/websites',
   '/websites/(.*)',
