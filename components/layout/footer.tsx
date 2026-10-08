@@ -62,6 +62,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/services/local-service-business-os" className="text-white/70 hover:text-white transition-colors text-sm">
+                  Local Service Business OS
+                </Link>
+              </li>
+              <li>
                 <Link href="/websites" className="text-white/70 hover:text-white transition-colors text-sm">
                   Websites &amp; Landing Pages
                 </Link>
