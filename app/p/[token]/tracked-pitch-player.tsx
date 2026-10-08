@@ -12,7 +12,7 @@ export type TrackedSlide = { video: string; audio: string; title: string };
  * Telemetry (lead-intelligence API): view · start · slide_start · slide_complete · complete · cta_impression ·
  * cta_click · presentation_replay — fire-and-forget beacons that never block playback.
  */
-export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
+export function TrackedPitchPlayer({ token, company, slides, eventsUrl }: {
   token: string; company: string; slides: TrackedSlide[]; eventsUrl: string;
 }) {
   const [index, setIndex] = useState(0);
@@ -150,8 +150,8 @@ export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
         }}
         className="absolute inset-0 w-full h-full object-contain bg-[#07172c]" />
       <audio key={slides[index].audio} ref={audioRef} src={slides[index].audio} preload="auto" />
-      {completed && <EndState track={track} slide={index + 1} onReplay={replay} />}
-      <FinalCTA track={track} slide={index + 1} visible={index === last && !completed} />
+      {completed && <EndState track={track} slide={index + 1} onReplay={replay} token={token} />}
+      <FinalCTA track={track} slide={index + 1} visible={index === last && !completed} token={token} />
     </PresentationShell>
   );
 }
