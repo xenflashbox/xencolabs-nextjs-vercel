@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
+import { SonomaWashShowcase } from '@/components/marketing/sonoma-wash-showcase';
 
 export const metadata: Metadata = {
   title: 'Local Service Business OS | Small Business Automation',
@@ -191,11 +192,7 @@ export default function LocalServiceBusinessOSPage() {
             </div>
           </div>
           <a href="https://sonomawashco.com" target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-[var(--border-default)] shadow-xl bg-white">
-            <img
-              src="https://media.sonomawashco.com/img/hero-desktop-natural-poster.jpg"
-              alt="Sonoma Wash Co. exterior-cleaning business"
-              className="w-full aspect-[16/10] object-cover"
-            />
+            <SonomaWashShowcase className="aspect-[16/10] w-full" />
             <div className="p-5 border-t border-[var(--border-subtle)]">
               <p className="font-display font-bold text-[var(--text-primary)]">Live production business</p>
               <p className="text-sm text-[var(--text-secondary)] mt-1">Sonoma Valley · launched 2026</p>
