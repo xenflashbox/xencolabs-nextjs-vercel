@@ -16,7 +16,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  UserRoundCheck,
+  UserCheck,
 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
@@ -31,7 +31,7 @@ const workflow = [
   { icon: PhoneCall, title: 'Lead arrives', body: 'Phone or web. The customer gets an answer instead of voicemail.' },
   { icon: Gauge, title: 'Estimate', body: 'A rules-based calculator produces a written estimate from your real rate card.' },
   { icon: CalendarCheck, title: 'Book', body: 'Customers schedule the right appointment against live calendar availability.' },
-  { icon: UserRoundCheck, title: 'Verify', body: 'You confirm measurements, conditions, scope and pricing from the field.' },
+  { icon: UserCheck, title: 'Verify', body: 'You confirm measurements, conditions, scope and pricing from the field.' },
   { icon: FileSignature, title: 'Contract', body: 'The approved scope becomes an e-signable agreement with your terms and disclosures.' },
   { icon: ClipboardCheck, title: 'Do the job', body: 'The signed scope creates the job checklist so the field work matches what was sold.' },
   { icon: Images, title: 'Document', body: 'Before-and-after media creates a job record and reduces disputes.' },
