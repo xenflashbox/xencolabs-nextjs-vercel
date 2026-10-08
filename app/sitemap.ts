@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/apps",
     "/services",
     "/services/managed-search-content",
+    "/services/local-service-business-os",
+    "/portfolio/sonoma-wash-co",
     "/search-function-review",
     "/portfolio",
     "/compareitad",
