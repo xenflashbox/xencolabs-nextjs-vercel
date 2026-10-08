@@ -8,7 +8,7 @@ import { MarketingLayout } from '@/components/layout/marketing-layout';
 export const metadata: Metadata = {
   title: 'Services',
   description:
-    'Xenco Labs services span managed AI search and content, digital growth strategy, websites, AI applications, infrastructure advisory, and product launch support.',
+    'Xenco Labs services span managed AI search and content, a turnkey Local Service Business OS, digital growth strategy, AI applications, infrastructure advisory, and product launch support.',
 };
 
 const services = [
@@ -20,6 +20,15 @@ const services = [
     href: '/services/managed-search-content',
     cta: 'View the Program',
     featured: true,
+  },
+  {
+    title: 'Local Service Business OS',
+    price: '$14,500 setup · from $995/mo',
+    body:
+      'A connected digital back office for owner-operated service businesses: website, AI receptionist, estimates, scheduling, e-sign, field workflow, invoicing, payments, CRM follow-up, and local growth.',
+    href: '/services/local-service-business-os',
+    cta: 'See the Local Business OS',
+    featured: false,
   },
   {
     title: 'Digital Growth Strategy',
