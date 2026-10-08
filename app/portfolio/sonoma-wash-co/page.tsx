@@ -1,18 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  Bot,
-  CalendarCheck,
-  CheckCircle2,
-  ClipboardCheck,
-  FileSignature,
-  Gauge,
-  Images,
-  PhoneCall,
-  Receipt,
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
@@ -22,13 +11,13 @@ export const metadata: Metadata = {
 };
 
 const flow = [
-  ['Phone / web lead', PhoneCall],
-  ['Instant estimate', Gauge],
-  ['15-minute assessment', CalendarCheck],
-  ['Verified scope', ClipboardCheck],
-  ['E-sign agreement', FileSignature],
-  ['Field job + media', Images],
-  ['Invoice + payment', Receipt],
+  'Phone / web lead',
+  'Instant estimate',
+  '15-minute assessment',
+  'Verified scope',
+  'E-sign agreement',
+  'Field job + media',
+  'Invoice + payment',
 ];
 
 export default function SonomaWashCaseStudyPage() {
@@ -122,16 +111,14 @@ export default function SonomaWashCaseStudyPage() {
             <h2 className="section-headline text-[var(--text-primary)] mb-4">The office work follows the job automatically.</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-7 gap-4">
-            {flow.map(([title, Icon], i) => {
-              const FlowIcon = Icon as React.ComponentType<{ className?: string }>;
-              return (
-                <div key={title as string} className="bg-white border border-[var(--border-subtle)] rounded-xl p-4 text-center">
-                  <FlowIcon className="w-6 h-6 text-[var(--brand-primary)] mx-auto mb-3" />
-                  <p className="text-xs font-mono text-[var(--text-tertiary)] mb-1">{String(i + 1).padStart(2, '0')}</p>
-                  <p className="font-display font-semibold text-sm text-[var(--text-primary)]">{title as string}</p>
+            {flow.map((title, i) => (
+              <div key={title} className="bg-white border border-[var(--border-subtle)] rounded-xl p-4 text-center">
+                <div className="w-9 h-9 rounded-full bg-[var(--surface-secondary)] grid place-items-center mx-auto mb-3 text-xs font-mono font-bold text-[var(--brand-primary)]">
+                  {String(i + 1).padStart(2, '0')}
                 </div>
-              );
-            })}
+                <p className="font-display font-semibold text-sm text-[var(--text-primary)]">{title}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -165,7 +152,7 @@ export default function SonomaWashCaseStudyPage() {
             </ul>
           </div>
           <div className="card">
-            <Bot className="w-9 h-9 text-[var(--brand-primary)] mb-5" />
+            <CheckCircle2 className="w-9 h-9 text-[var(--brand-primary)] mb-5" />
             <h3 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-3">
               A phone assistant that actually knows the business.
             </h3>
