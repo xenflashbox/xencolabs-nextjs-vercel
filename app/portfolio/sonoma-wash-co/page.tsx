@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
+import { SonomaWashShowcase } from '@/components/marketing/sonoma-wash-showcase';
 
 export const metadata: Metadata = {
   title: 'Sonoma Wash Co. Case Study | Pressure Washing Software Workflow',
@@ -46,11 +47,7 @@ export default function SonomaWashCaseStudyPage() {
               </div>
             </div>
             <a href="https://sonomawashco.com" target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-[var(--border-default)] shadow-xl bg-white">
-              <img
-                src="https://media.sonomawashco.com/img/hero-desktop-natural-poster.jpg"
-                alt="Sonoma Wash Co. live website and service brand"
-                className="w-full aspect-[4/3] object-cover"
-              />
+              <SonomaWashShowcase className="aspect-[4/3] w-full" />
             </a>
           </div>
         </div>
