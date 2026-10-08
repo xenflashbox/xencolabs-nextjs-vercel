@@ -142,6 +142,12 @@ export function TrackedPitchPlayer({ company, slides, eventsUrl }: {
   return (
     <PresentationShell company={company} subtitle="Managed Search & Content Intelligence" controls={controls}>
       <video key={slides[index].video} ref={videoRef} src={slides[index].video} muted playsInline preload="auto"
+        onLoadedMetadata={(e) => {
+          // Not playing yet (page load, or browsing slides before Start): show the slide's completed composition
+          // rather than the clip's near-empty first frame. Playback always restarts from frame zero.
+          const v = e.currentTarget;
+          if (!started && Number.isFinite(v.duration)) v.currentTime = Math.max(0, v.duration - 0.05);
+        }}
         className="absolute inset-0 w-full h-full object-contain bg-[#07172c]" />
       <audio key={slides[index].audio} ref={audioRef} src={slides[index].audio} preload="auto" />
       {completed && <EndState track={track} slide={index + 1} onReplay={replay} />}
