@@ -13,6 +13,17 @@ import { CALENDLY_URL } from '../../advisory/config';
 
 export const BOOKING_URL = CALENDLY_URL;
 
+/** Calendly link carrying the recipient's tracking token so a booking attributes back to account/contact/message/deck
+ *  (Calendly echoes utm_* in the invitee's tracking block; LeadIntel matches utm_source=leadintel). */
+export function bookingUrl(token?: string): string {
+  if (!token) return BOOKING_URL;
+  const u = new URL(BOOKING_URL);
+  u.searchParams.set('utm_source', 'leadintel');
+  u.searchParams.set('utm_medium', 'presentation');
+  u.searchParams.set('utm_content', token);
+  return u.toString();
+}
+
 export type PresentationEvent =
   | 'view' | 'start' | 'slide_start' | 'slide_complete' | 'complete' | 'cta_click' | 'cta_impression' | 'presentation_replay';
 
@@ -64,7 +75,7 @@ export function PresentationShell({ company, subtitle, children, controls }: {
 
 /** The dominant final-slide action: a real button, fixed above the bottom safe area, high contrast, pulsing until
  *  hovered/focused. Reports cta_impression the first time it is actually visible and cta_click on activation. */
-export function FinalCTA({ track, slide, visible }: { track: (e: PresentationEvent, s?: number) => void; slide: number; visible: boolean }) {
+export function FinalCTA({ track, slide, visible, token }: { track: (e: PresentationEvent, s?: number) => void; slide: number; visible: boolean; token?: string }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const seen = useRef(false);
   useEffect(() => {
@@ -83,7 +94,7 @@ export function FinalCTA({ track, slide, visible }: { track: (e: PresentationEve
   if (!visible) return null;
   return (
     <div className="fixed z-40 inset-x-3 sm:inset-x-auto sm:right-6 bottom-[calc(env(safe-area-inset-bottom)+84px)] sm:bottom-[calc(env(safe-area-inset-bottom)+96px)] flex justify-center sm:justify-end pointer-events-none">
-      <a ref={ref} href={BOOKING_URL} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
+      <a ref={ref} href={bookingUrl(token)} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
         className="xl-cta pointer-events-auto inline-flex items-center justify-center gap-3 min-h-[56px] px-7 sm:px-8 rounded-xl bg-[#E8A33D] text-[#0B1F3A] font-extrabold tracking-[0.06em] text-base sm:text-lg uppercase shadow-[0_10px_40px_rgba(232,163,61,0.45)] focus:outline-none focus-visible:ring-4 focus-visible:ring-white/80">
         <CalendarCheck className="w-5 h-5 shrink-0" aria-hidden="true" />
         Book a strategy review <span aria-hidden="true">→</span>
@@ -95,14 +106,14 @@ export function FinalCTA({ track, slide, visible }: { track: (e: PresentationEve
 
 /** Presentation-complete state: the final slide stays visible with one clear next step. On tablets/desktops it is an
  *  overlay on the slide; on phones (where the slide is short) it is a bottom sheet so nothing is clipped. */
-export function EndState({ track, slide, onReplay, replayLabel = 'Replay' }: {
-  track: (e: PresentationEvent, s?: number) => void; slide: number; onReplay: () => void; replayLabel?: string;
+export function EndState({ track, slide, onReplay, replayLabel = 'Replay', token }: {
+  track: (e: PresentationEvent, s?: number) => void; slide: number; onReplay: () => void; replayLabel?: string; token?: string;
 }) {
   const body = (
     <div className="text-center max-w-xl mx-auto">
       <p className="font-display font-bold text-xl sm:text-3xl leading-tight">Ready to see what this could look like for your team?</p>
       <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
+        <a href={bookingUrl(token)} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
           className="xl-cta inline-flex items-center justify-center gap-2 min-h-[56px] px-7 rounded-xl bg-[#E8A33D] text-[#0B1F3A] font-extrabold uppercase tracking-[0.06em] focus:outline-none focus-visible:ring-4 focus-visible:ring-white/80">
           <CalendarCheck className="w-5 h-5" aria-hidden="true" /> Book a strategy review <span aria-hidden="true">→</span>
         </a>

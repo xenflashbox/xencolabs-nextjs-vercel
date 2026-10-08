@@ -14,7 +14,7 @@ const DWELL_MS = 4000; // a page counts as read after this long on screen
  * Telemetry: view · start · slide_start · slide_complete (after DWELL_MS) · complete (last page read) ·
  * cta_impression · cta_click · presentation_replay.
  */
-export function StaticBrief({ company, slides, eventsUrl }: { company: string; slides: BriefSlide[]; eventsUrl: string }) {
+export function StaticBrief({ token, company, slides, eventsUrl }: { token?: string; company: string; slides: BriefSlide[]; eventsUrl: string }) {
   const [index, setIndex] = useState(0);
   const [finishedView, setFinishedView] = useState(false);
   const completed = useRef<Set<number>>(new Set());
@@ -87,8 +87,8 @@ export function StaticBrief({ company, slides, eventsUrl }: { company: string; s
   return (
     <PresentationShell company={company} subtitle="Search & AI Visibility Research Brief" controls={controls}>
       <img src={slides[index].image} alt={slides[index].title} className="absolute inset-0 w-full h-full object-contain bg-[#07172c]" />
-      {finishedView && <EndState track={track} slide={index + 1} onReplay={() => go(0)} replayLabel="Start over" />}
-      <FinalCTA track={track} slide={index + 1} visible={index === last && !finishedView} />
+      {finishedView && <EndState track={track} slide={index + 1} onReplay={() => go(0)} replayLabel="Start over" token={token} />}
+      <FinalCTA track={track} slide={index + 1} visible={index === last && !finishedView} token={token} />
     </PresentationShell>
   );
 }

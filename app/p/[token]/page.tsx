@@ -33,7 +33,7 @@ export default async function TrackedPresentationPage({ params }: { params: { to
   if (!manifest) notFound();
   const eventsUrl = `${API_BASE}/v1/lead-intelligence/pt/${encodeURIComponent(params.token)}/events`;
   if (manifest.type === 'static') {
-    return <StaticBrief company={manifest.company} slides={manifest.slides as BriefSlide[]} eventsUrl={eventsUrl} />;
+    return <StaticBrief token={params.token} company={manifest.company} slides={manifest.slides as BriefSlide[]} eventsUrl={eventsUrl} />;
   }
   return (
     <TrackedPitchPlayer
