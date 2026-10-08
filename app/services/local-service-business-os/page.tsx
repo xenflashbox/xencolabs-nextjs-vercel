@@ -6,9 +6,9 @@ import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
 
 export const metadata: Metadata = {
-  title: 'Local Service Business OS',
+  title: 'Local Service Business OS | Small Business Automation',
   description:
-    'A turnkey digital back office for owner-operated service businesses: website, AI receptionist, estimates, scheduling, e-sign, field workflows, invoices, payments, CRM and local growth.',
+    'Done-for-you service business software and small business automation: AI receptionist, estimates, scheduling, e-sign, field workflow, CRM, invoices, payments and local growth.',
 };
 
 const workflow = [
@@ -66,9 +66,9 @@ export default function LocalServiceBusinessOSPage() {
             The system handles the office.
           </h1>
           <p className="text-xl text-[var(--text-secondary)] font-body max-w-3xl mx-auto mb-10 leading-relaxed">
-            Xenco Labs builds the customer-facing business and the digital back office behind it:
-            phone answering, estimates, appointments, contracts, field workflows, documentation,
-            invoices, payments and follow-up — as one managed system.
+            Xenco Labs installs a connected service-business operating system around the owner:
+            AI phone answering, estimates, appointments, contracts, field workflows, CRM,
+            documentation, invoices, payments and follow-up — as one managed system.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -275,7 +275,7 @@ export default function LocalServiceBusinessOSPage() {
               Start where the workflow is repeatable.
             </h2>
             <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
-              The first deployments focus on local businesses where the owner or a small crew sells measurable field work,
+              The first deployments focus on local and field-service businesses where the owner or a small crew sells measurable field work,
               documents completion and collects after service. More regulated trades can use the same architecture with additional workflow design.
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
