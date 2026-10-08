@@ -19,6 +19,7 @@ import {
   UserRoundCheck,
 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
+import { CALENDLY_URL } from '@/app/advisory/config';
 
 export const metadata: Metadata = {
   title: 'Local Service Business OS',
@@ -86,12 +87,14 @@ export default function LocalServiceBusinessOSPage() {
             invoices, payments and follow-up — as one managed system.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
+            <a
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center gap-2"
             >
               Book a Build Consultation <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
             <Link
               href="/portfolio/sonoma-wash-co"
               className="btn-secondary px-8 py-3.5 rounded-lg font-semibold inline-flex items-center justify-center"
@@ -330,12 +333,14 @@ export default function LocalServiceBusinessOSPage() {
           <p className="text-white/80 text-lg mb-8 leading-relaxed">
             Bring us your services, pricing, territory and workflow. We will show you what can be standardized, automated and turned into a business that is easier to operate and easier to grow.
           </p>
-          <Link
-            href="/contact"
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-white text-[#0B1F3A] px-8 py-3.5 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition-colors"
           >
             Book a Build Consultation <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
         </div>
       </section>
     </MarketingLayout>
