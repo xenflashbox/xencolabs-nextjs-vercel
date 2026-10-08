@@ -5,9 +5,9 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 
 export const metadata: Metadata = {
-  title: 'Sonoma Wash Co. Case Study',
+  title: 'Sonoma Wash Co. Case Study | Pressure Washing Software Workflow',
   description:
-    'How Xenco Labs built a local-service operating system for Sonoma Wash Co.: brand, website, estimating, AI phone intake, scheduling, e-sign, field workflow, invoicing and follow-up.',
+    'How Xenco Labs built a pressure-washing business operating system for Sonoma Wash Co.: website, estimating, AI receptionist, scheduling, e-sign, field workflow, invoicing, payments and follow-up.',
 };
 
 const flow = [
