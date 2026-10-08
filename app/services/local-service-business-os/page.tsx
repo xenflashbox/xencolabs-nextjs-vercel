@@ -1,23 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  Bot,
-  CalendarCheck,
-  CheckCircle2,
-  ClipboardCheck,
-  FileSignature,
-  FileText,
-  Gauge,
-  Images,
-  PhoneCall,
-  Receipt,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  UserCheck,
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
 
@@ -28,14 +12,14 @@ export const metadata: Metadata = {
 };
 
 const workflow = [
-  { icon: PhoneCall, title: 'Lead arrives', body: 'Phone or web. The customer gets an answer instead of voicemail.' },
-  { icon: Gauge, title: 'Estimate', body: 'A rules-based calculator produces a written estimate from your real rate card.' },
-  { icon: CalendarCheck, title: 'Book', body: 'Customers schedule the right appointment against live calendar availability.' },
-  { icon: UserCheck, title: 'Verify', body: 'You confirm measurements, conditions, scope and pricing from the field.' },
-  { icon: FileSignature, title: 'Contract', body: 'The approved scope becomes an e-signable agreement with your terms and disclosures.' },
-  { icon: ClipboardCheck, title: 'Do the job', body: 'The signed scope creates the job checklist so the field work matches what was sold.' },
-  { icon: Images, title: 'Document', body: 'Before-and-after media creates a job record and reduces disputes.' },
-  { icon: Receipt, title: 'Invoice + collect', body: 'Completion generates the final invoice and payment flow automatically.' },
+  { title: 'Lead arrives', body: 'Phone or web. The customer gets an answer instead of voicemail.' },
+  { title: 'Estimate', body: 'A rules-based calculator produces a written estimate from your real rate card.' },
+  { title: 'Book', body: 'Customers schedule the right appointment against live calendar availability.' },
+  { title: 'Verify', body: 'You confirm measurements, conditions, scope and pricing from the field.' },
+  { title: 'Contract', body: 'The approved scope becomes an e-signable agreement with your terms and disclosures.' },
+  { title: 'Do the job', body: 'The signed scope creates the job checklist so the field work matches what was sold.' },
+  { title: 'Document', body: 'Before-and-after media creates a job record and reduces disputes.' },
+  { title: 'Invoice + collect', body: 'Completion generates the final invoice and payment flow automatically.' },
 ];
 
 const included = [
@@ -164,13 +148,13 @@ export default function LocalServiceBusinessOSPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {workflow.map(({ icon: Icon, title, body }, index) => (
+            {workflow.map(({ title, body }, index) => (
               <div key={title} className="card relative">
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-11 h-11 rounded-xl bg-[var(--surface-secondary)] flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
+                    <span className="text-sm font-mono font-bold text-[var(--brand-primary)]">{String(index + 1).padStart(2, '0')}</span>
                   </div>
-                  <span className="text-xs font-mono text-[var(--text-tertiary)]">{String(index + 1).padStart(2, '0')}</span>
+                  <CheckCircle2 className="w-4 h-4 text-[var(--brand-primary)]" />
                 </div>
                 <h3 className="font-display font-bold text-lg text-[var(--text-primary)] mb-2">{title}</h3>
                 <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{body}</p>
@@ -305,14 +289,14 @@ export default function LocalServiceBusinessOSPage() {
           </div>
           <div className="space-y-4">
             {[
-              { icon: Bot, title: 'AI receptionist', body: 'Answers from your approved knowledge, qualifies the request and books the appropriate appointment.' },
-              { icon: Search, title: 'Local growth foundation', body: 'Service pages, local landing pages, technical SEO, structured data and the content architecture for organic acquisition.' },
-              { icon: Sparkles, title: 'Follow-up without an office manager', body: 'Quote nurture, customer updates, recurring-service reminders and campaign automation run from the CRM.' },
-              { icon: ShieldCheck, title: 'Owner remains in control', body: 'Automations prepare and move the work; the business owner retains approval where pricing, scope and customer commitments matter.' },
-            ].map(({ icon: Icon, title, body }) => (
+              { title: 'AI receptionist', body: 'Answers from your approved knowledge, qualifies the request and books the appropriate appointment.' },
+              { title: 'Local growth foundation', body: 'Service pages, local landing pages, technical SEO, structured data and the content architecture for organic acquisition.' },
+              { title: 'Follow-up without an office manager', body: 'Quote nurture, customer updates, recurring-service reminders and campaign automation run from the CRM.' },
+              { title: 'Owner remains in control', body: 'Automations prepare and move the work; the business owner retains approval where pricing, scope and customer commitments matter.' },
+            ].map(({ title, body }) => (
               <div key={title} className="card flex gap-4">
                 <div className="w-10 h-10 rounded-lg bg-[var(--surface-secondary)] flex items-center justify-center flex-none">
-                  <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <CheckCircle2 className="w-5 h-5 text-[var(--brand-primary)]" />
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-lg text-[var(--text-primary)] mb-1">{title}</h3>
@@ -326,7 +310,7 @@ export default function LocalServiceBusinessOSPage() {
 
       <section className="section-purple py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <FileText className="w-10 h-10 text-[var(--accent-amber)] mx-auto mb-5" />
+          <CheckCircle2 className="w-10 h-10 text-[var(--accent-amber)] mx-auto mb-5" />
           <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-4">
             Stop building the office around yourself.
           </h2>
