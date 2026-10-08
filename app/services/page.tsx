@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Search, Wrench, TrendingUp } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
@@ -10,13 +11,20 @@ export const metadata: Metadata = {
     'Xenco Labs services for enterprise search and AI visibility, local service business automation, and digital growth strategy.',
 };
 
-const services = [
+const services: Array<{
+  icon: typeof Search;
+  label: string;
+  title: string;
+  body: string;
+  href: Route;
+  cta: string;
+}> = [
   {
     icon: Search,
     label: 'ENTERPRISE SEARCH',
     title: 'Managed Search & Content Intelligence',
     body: 'SEO, AEO, GEO, corpus-grounded content operations, conversion strategy, proprietary AI tooling and executive reporting operated as a managed function.',
-    href: '/services/managed-search-content',
+    href: '/services/managed-search-content' as Route,
     cta: 'See the managed program',
   },
   {
@@ -24,7 +32,7 @@ const services = [
     label: 'LOCAL BUSINESS OPERATIONS',
     title: 'Local Service Business OS',
     body: 'A connected digital back office for owner-operated service businesses: website, AI receptionist, estimates, scheduling, e-sign, field workflow, invoices, payments and follow-up.',
-    href: '/services/local-service-business-os',
+    href: '/services/local-service-business-os' as Route,
     cta: 'See the turnkey system',
   },
   {
@@ -32,7 +40,7 @@ const services = [
     label: 'DIGITAL GROWTH',
     title: 'Growth Strategy',
     body: 'Research, conversion architecture, live demo builds, search intelligence, content strategy and execution for companies that need a stronger digital acquisition system.',
-    href: '/growth',
+    href: '/growth' as Route,
     cta: 'See the growth process',
   },
 ];
