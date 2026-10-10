@@ -151,7 +151,7 @@ function Detail({ id, caller, onClose }: { id: number; caller: Caller; onClose: 
 
   return (
     <div className="fixed inset-0 z-30 flex justify-end bg-slate-900/40" onClick={onClose}>
-      <aside className="h-full w-full max-w-xl overflow-y-auto bg-white shadow-xl" onClick={(e) => e.stopPropagation()} aria-label="Prospect detail">
+      <aside className="h-full w-full max-w-xl overflow-y-auto overflow-x-hidden bg-white shadow-xl" onClick={(e) => e.stopPropagation()} aria-label="Prospect detail">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
           <div className="min-w-0">
             <h2 className="truncate text-base font-semibold">{p?.business_name || 'Loading…'}</h2>
@@ -255,7 +255,7 @@ function Detail({ id, caller, onClose }: { id: number; caller: Caller; onClose: 
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Why this score</h3>
               <ul className="grid gap-1.5 text-sm">
                 {evidence.map(([k, v]) => (
-                  <li key={k} className="grid grid-cols-[130px_1fr_40px] items-start gap-2">
+                  <li key={k} className="grid grid-cols-[minmax(0,110px)_minmax(0,1fr)_40px] items-start gap-2 [overflow-wrap:anywhere]">
                     <span className="text-slate-600">{PART[k] || k}</span><span className="text-slate-800">{v.evidence}</span>
                     <span className="text-right tabular-nums">{v.points}/{v.max}</span>
                   </li>
@@ -268,7 +268,7 @@ function Detail({ id, caller, onClose }: { id: number; caller: Caller; onClose: 
               {!p.timeline?.length && <p className="text-sm text-slate-500">No touches yet.</p>}
               <ol className="grid gap-2">
                 {(p.timeline || []).map((t, i) => (
-                  <li key={i} className="border-l-2 border-slate-200 pl-3 text-sm">
+                  <li key={i} className="min-w-0 border-l-2 border-slate-200 pl-3 text-sm [overflow-wrap:anywhere]">
                     <p><span className="font-medium">{t.kind.replace('_', ' ')}</span> · {t.outcome.replace(/_/g, ' ')} <span className="text-xs text-slate-500">{fmt(t.at)} · {t.actor}</span></p>
                     {t.note && <p className="text-slate-700">{t.note}</p>}
                     {t.callback_at && <p className="text-xs text-amber-700">Next: {fmt(t.callback_at)}</p>}
