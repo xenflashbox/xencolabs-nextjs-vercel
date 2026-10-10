@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
 import nodemailer from 'nodemailer';
+import { syncXlInboundToMautic } from '@/lib/mautic';
+import { guardInbound } from '@/lib/inbound-guard';
 
 const auditRequestSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
@@ -21,6 +23,17 @@ const auditRequestSchema = z.object({
     '$50M+',
     'Rather not say',
   ]),
+  consent: z.boolean().optional().default(false),
+  attribution: z
+    .object({
+      utm_source: z.string().max(200).optional(),
+      utm_medium: z.string().max(200).optional(),
+      utm_campaign: z.string().max(200).optional(),
+      utm_content: z.string().max(200).optional(),
+      utm_term: z.string().max(200).optional(),
+      landing_page: z.string().max(300).optional(),
+    })
+    .optional(),
 });
 
 async function saveToDatabase(data: z.infer<typeof auditRequestSchema>) {
@@ -103,7 +116,18 @@ async function sendNotificationEmail(data: z.infer<typeof auditRequestSchema>) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
+
+    // Bot hardening (honeypot → timing token → Turnstile) before anything is stored.
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+    const guard = await guardInbound(body, ip, 'growth-audit');
+    if (guard.action === 'drop') {
+      return NextResponse.json({ success: true, message: 'Audit request received' }, { status: 201 });
+    }
+    if (guard.action === 'reject') {
+      return NextResponse.json({ success: false, error: guard.error }, { status: 400 });
+    }
+
     const result = auditRequestSchema.safeParse(body);
 
     if (!result.success) {
@@ -121,10 +145,27 @@ export async function POST(request: NextRequest) {
     const data = result.data;
 
     // Run database and email independently — neither blocks the other
-    const [dbResult, emailResult] = await Promise.allSettled([
+    const [firstname, ...rest] = data.contactName.trim().split(/\s+/);
+    const [dbResult, emailResult, mauticResult] = await Promise.allSettled([
       saveToDatabase(data),
       sendNotificationEmail(data),
+      // Enterprise SEO journey (Mautic segment 51 → notify; 52 → drip, consent only). Best-effort.
+      syncXlInboundToMautic({
+        journey: 'enterprise-seo',
+        email: data.workEmail,
+        firstname,
+        lastname: rest.join(' ') || undefined,
+        company: data.companyName,
+        website: data.websiteUrl,
+        companySize: data.companySize,
+        consent: data.consent,
+        formVerified: guard.formVerified,
+        attribution: data.attribution,
+      }),
     ]);
+    if (mauticResult.status === 'rejected') {
+      console.error('[growth-audit] Mautic sync failed:', mauticResult.reason);
+    }
 
     if (dbResult.status === 'rejected') {
       console.error('[growth-audit] Database save failed:', dbResult.reason);

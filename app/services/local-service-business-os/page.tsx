@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
 import { SonomaWashShowcase } from '@/components/marketing/sonoma-wash-showcase';
+import { LocalOsInquiryForm } from './inquiry-form';
 
 export const metadata: Metadata = {
   title: 'Local Service Business OS | Small Business Automation',
@@ -303,6 +304,18 @@ export default function LocalServiceBusinessOSPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section id="inquiry" className="py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center mb-10">
+          <h2 className="font-display font-bold text-3xl md:text-4xl text-[var(--text-primary)] mb-4">
+            Not ready to book? Tell us about your business.
+          </h2>
+          <p className="text-[var(--text-secondary)] text-lg leading-relaxed">
+            A few details and we will come back with what we would automate first.
+          </p>
+        </div>
+        <LocalOsInquiryForm bookingUrl={CALENDLY_URL} />
       </section>
 
       <section className="section-purple py-20 px-6">
