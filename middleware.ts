@@ -34,6 +34,7 @@ const isPublicRoute = createRouteMatcher([
   '/review/(.*)',
   '/p/(.*)', // per-recipient tracked presentations (opaque token, noindex)
   '/lp/(.*)', // Local OS private workflow previews (opaque token, noindex)
+  '/presentations/(.*)', // public product presentations (static media, no recipient)
   '/api/search-function-review',
   '/websites',
   '/websites/(.*)',
@@ -66,7 +67,7 @@ export default clerkMiddleware((auth, req) => {
 
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|pdf|docx?|xlsx?|zip|webmanifest)).*)',
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|pdf|docx?|xlsx?|zip|webmanifest|mp4|webm|mp3|m4a)).*)',
     '/(api|trpc)(.*)',
   ],
 }

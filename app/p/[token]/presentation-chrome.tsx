@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { CalendarCheck, RotateCcw } from 'lucide-react';
 import { CALENDLY_URL } from '../../advisory/config';
 
@@ -27,24 +28,43 @@ export function bookingUrl(token?: string): string {
 export type PresentationEvent =
   | 'view' | 'start' | 'slide_start' | 'slide_complete' | 'complete' | 'cta_click' | 'cta_impression' | 'presentation_replay';
 
-/** Fire-and-forget telemetry beacon (JSON as text/plain, no-cors): never blocks or breaks the presentation. */
-export function useTracker(eventsUrl: string) {
-  return useCallback((event: PresentationEvent, slide?: number) => {
+export type Track = (event: PresentationEvent, slide?: number, extra?: Record<string, string>) => void;
+
+/** Fire-and-forget telemetry beacon (JSON as text/plain, no-cors): never blocks or breaks the presentation.
+ *  `context` (e.g. a product deck's anonymous session id) is merged into every event. */
+export function useTracker(eventsUrl: string, context?: Record<string, string>): Track {
+  return useCallback((event: PresentationEvent, slide?: number, extra?: Record<string, string>) => {
     try {
       fetch(eventsUrl, {
         method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(slide ? { event, slide } : { event }),
+        body: JSON.stringify({ event, ...(slide ? { slide } : {}), ...context, ...extra }),
       }).catch(() => undefined);
     } catch {
       /* telemetry never breaks the presentation */
     }
-  }, [eventsUrl]);
+  }, [eventsUrl, context]);
+}
+
+/** Final-slide / end-state calls to action. Prospect decks use the defaults (strategy review + managed program);
+ *  product decks pass their own primary booking label and a secondary destination. */
+export type PresentationCta = {
+  label: string;
+  href: string;
+  headline: string;
+  secondary?: { label: string; href: string; external?: boolean };
+};
+
+export function prospectCta(token?: string): PresentationCta {
+  return {
+    label: 'Book a strategy review', href: bookingUrl(token), headline: 'Ready to see what this could look like for your team?',
+    secondary: { label: 'Explore the managed program', href: '/services/managed-search-content' },
+  };
 }
 
 /** 100dvh shell: compact header, a stage that sizes 16:9 media against BOTH available width and height, and a
  *  fixed-height control area. The media never crops and never pushes the controls or CTA below the fold. */
-export function PresentationShell({ company, subtitle, children, controls }: {
-  company: string; subtitle: string; children: React.ReactNode; controls: React.ReactNode;
+export function PresentationShell({ company, subtitle, children, controls, eyebrow }: {
+  company: string; subtitle: string; children: React.ReactNode; controls: React.ReactNode; eyebrow?: string;
 }) {
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden bg-[#07172c] text-white">
@@ -54,7 +74,7 @@ export function PresentationShell({ company, subtitle, children, controls }: {
             <img src="/brand/xencolabs-on-dark.svg" alt="Xenco Labs" className="h-8 w-auto" />
           </Link>
           <div className="text-right min-w-0">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#E8A33D] truncate">Prepared for {company}</p>
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#E8A33D] truncate">{eyebrow ?? `Prepared for ${company}`}</p>
             <p className="text-[11px] text-white/50 truncate">{subtitle}</p>
           </div>
         </div>
@@ -75,7 +95,8 @@ export function PresentationShell({ company, subtitle, children, controls }: {
 
 /** The dominant final-slide action: a real button, fixed above the bottom safe area, high contrast, pulsing until
  *  hovered/focused. Reports cta_impression the first time it is actually visible and cta_click on activation. */
-export function FinalCTA({ track, slide, visible, token }: { track: (e: PresentationEvent, s?: number) => void; slide: number; visible: boolean; token?: string }) {
+export function FinalCTA({ track, slide, visible, token, cta }: { track: Track; slide: number; visible: boolean; token?: string; cta?: PresentationCta }) {
+  const c = cta ?? prospectCta(token);
   const ref = useRef<HTMLAnchorElement>(null);
   const seen = useRef(false);
   useEffect(() => {
@@ -94,10 +115,10 @@ export function FinalCTA({ track, slide, visible, token }: { track: (e: Presenta
   if (!visible) return null;
   return (
     <div className="fixed z-40 inset-x-3 sm:inset-x-auto sm:right-6 bottom-[calc(env(safe-area-inset-bottom)+84px)] sm:bottom-[calc(env(safe-area-inset-bottom)+96px)] flex justify-center sm:justify-end pointer-events-none">
-      <a ref={ref} href={bookingUrl(token)} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
+      <a ref={ref} href={c.href} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
         className="xl-cta pointer-events-auto inline-flex items-center justify-center gap-3 min-h-[56px] px-7 sm:px-8 rounded-xl bg-[#E8A33D] text-[#0B1F3A] font-extrabold tracking-[0.06em] text-base sm:text-lg uppercase shadow-[0_10px_40px_rgba(232,163,61,0.45)] focus:outline-none focus-visible:ring-4 focus-visible:ring-white/80">
         <CalendarCheck className="w-5 h-5 shrink-0" aria-hidden="true" />
-        Book a strategy review <span aria-hidden="true">→</span>
+        {c.label} <span aria-hidden="true">→</span>
       </a>
       <CtaStyles />
     </div>
@@ -106,25 +127,34 @@ export function FinalCTA({ track, slide, visible, token }: { track: (e: Presenta
 
 /** Presentation-complete state: the final slide stays visible with one clear next step. On tablets/desktops it is an
  *  overlay on the slide; on phones (where the slide is short) it is a bottom sheet so nothing is clipped. */
-export function EndState({ track, slide, onReplay, replayLabel = 'Replay', token }: {
-  track: (e: PresentationEvent, s?: number) => void; slide: number; onReplay: () => void; replayLabel?: string; token?: string;
+export function EndState({ track, slide, onReplay, replayLabel = 'Replay', token, cta }: {
+  track: Track; slide: number; onReplay: () => void; replayLabel?: string; token?: string; cta?: PresentationCta;
 }) {
+  const c = cta ?? prospectCta(token);
+  const sec = c.secondary;
   const body = (
     <div className="text-center max-w-xl mx-auto">
-      <p className="font-display font-bold text-xl sm:text-3xl leading-tight">Ready to see what this could look like for your team?</p>
+      <p className="font-display font-bold text-xl sm:text-3xl leading-tight">{c.headline}</p>
       <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <a href={bookingUrl(token)} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
+        <a href={c.href} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide)}
           className="xl-cta inline-flex items-center justify-center gap-2 min-h-[56px] px-7 rounded-xl bg-[#E8A33D] text-[#0B1F3A] font-extrabold uppercase tracking-[0.06em] focus:outline-none focus-visible:ring-4 focus-visible:ring-white/80">
-          <CalendarCheck className="w-5 h-5" aria-hidden="true" /> Book a strategy review <span aria-hidden="true">→</span>
+          <CalendarCheck className="w-5 h-5" aria-hidden="true" /> {c.label} <span aria-hidden="true">→</span>
         </a>
         <button type="button" onClick={() => { track('presentation_replay'); onReplay(); }}
           className="inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl border border-white/30 font-semibold hover:bg-white/10 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60">
           <RotateCcw className="w-4 h-4" aria-hidden="true" /> {replayLabel}
         </button>
       </div>
-      <Link href="/services/managed-search-content" className="inline-block mt-3 text-sm text-white/60 hover:text-white underline-offset-4 hover:underline">
-        Explore the managed program
-      </Link>
+      {sec && (sec.external ? (
+        <a href={sec.href} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_click', slide, { cta: 'secondary' })}
+          className="inline-block mt-3 text-sm text-white/60 hover:text-white underline-offset-4 hover:underline">
+          {sec.label} <span aria-hidden="true">↗</span>
+        </a>
+      ) : (
+        <Link href={sec.href as Route} className="inline-block mt-3 text-sm text-white/60 hover:text-white underline-offset-4 hover:underline">
+          {sec.label}
+        </Link>
+      ))}
     </div>
   );
   return (
