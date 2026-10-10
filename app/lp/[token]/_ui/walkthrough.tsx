@@ -70,7 +70,7 @@ export function Walkthrough({ template, eventsUrl, business, bookingUrl, videoSr
         {STEPS.map(({ key, label, icon: I }, i) => (
           <li key={key}>
             <button role="tab" aria-selected={step === key} onClick={() => go(key)}
-              className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm ${step === key ? 'text-white' : 'bg-slate-100 text-slate-700'}`}
+              className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm ${step === key ? 'text-white' : 'bg-slate-100 text-slate-700'}`}
               style={step === key ? { background: 'var(--accent)' } : undefined}>
               <I className="h-4 w-4" /><span className="tabular-nums">{i + 1}.</span> {label}
             </button>
