@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/dashboard", "/sign-in", "/sign-up", "/api/"],
+        disallow: ["/dashboard", "/sign-in", "/sign-up", "/api/", "/lp/", "/p/", "/admin"],
       },
     ],
     sitemap: "https://xencolabs.com/sitemap.xml",

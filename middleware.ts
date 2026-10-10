@@ -33,6 +33,7 @@ const isPublicRoute = createRouteMatcher([
   '/search-function-review',
   '/review/(.*)',
   '/p/(.*)', // per-recipient tracked presentations (opaque token, noindex)
+  '/lp/(.*)', // Local OS private workflow previews (opaque token, noindex)
   '/api/search-function-review',
   '/websites',
   '/websites/(.*)',
