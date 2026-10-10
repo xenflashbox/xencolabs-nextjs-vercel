@@ -80,7 +80,7 @@ export function CallingConsole({ caller }: { caller: Caller }) {
         </div>
         <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-3 pb-2" role="tablist">
           {QUEUES.map(([k, label]) => (
-            <button key={k} role="tab" aria-selected={queue === k} onClick={() => setQueue(k)}
+            <button key={k} role="tab" aria-selected={queue === k} onClick={() => (queue === k ? load() : setQueue(k))}
               className={`shrink-0 rounded-full px-3 py-1.5 text-sm ${queue === k ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
               {label} <span className="ml-1 tabular-nums opacity-70">{counts[k] ?? ''}</span>
             </button>
