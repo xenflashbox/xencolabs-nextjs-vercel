@@ -27,7 +27,7 @@ export function EstimateFlow({ template, eventsUrl, bookingUrl, demoPhone, busin
 
   return (
     <div className="mt-6 grid gap-6 md:grid-cols-[1.2fr_1fr]">
-      <form className="grid gap-4 rounded-xl border border-slate-200 p-5" onSubmit={(e) => e.preventDefault()} aria-label="Estimate questions">
+      <form className="grid gap-4 lp-panel p-5" onSubmit={(e) => e.preventDefault()} aria-label="Estimate questions">
         {t.fields.map((f) => (
           <div key={f.key} className="grid gap-1.5">
             <label htmlFor={`f-${f.key}`} className="text-sm font-medium">{f.label}</label>
@@ -54,7 +54,7 @@ export function EstimateFlow({ template, eventsUrl, bookingUrl, demoPhone, busin
       </form>
 
       <aside className="grid content-start gap-4">
-        <div className="rounded-xl border border-slate-200 p-5">
+        <div className="lp-panel p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Written estimate (sample prices)</p>
           <ul className="mt-3 grid gap-2 text-sm">
             {lines.map((l) => <li key={l.label} className="flex justify-between gap-3"><span>{l.label}</span><span className="tabular-nums">{money(l.amount)}</span></li>)}
@@ -67,7 +67,7 @@ export function EstimateFlow({ template, eventsUrl, bookingUrl, demoPhone, busin
         </div>
 
         {step === 'book' && (
-          <div className="rounded-xl border border-slate-200 p-5">
+          <div className="lp-panel p-5">
             <p className="flex items-center gap-2 font-semibold"><CalendarCheck className="h-5 w-5" style={{ color: 'var(--accent)' }} /> Pick a time</p>
             <p className="mt-1 text-sm text-slate-600">In the live version customers choose from {business}&apos;s real availability. In this demo, the slots below are samples.</p>
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
@@ -79,7 +79,7 @@ export function EstimateFlow({ template, eventsUrl, bookingUrl, demoPhone, busin
         )}
 
         {step === 'deposit' && (
-          <div className="rounded-xl border border-slate-200 p-5">
+          <div className="lp-panel p-5">
             <p className="flex items-center gap-2 font-semibold"><CreditCard className="h-5 w-5" style={{ color: 'var(--accent)' }} /> Hold the slot with a deposit</p>
             <p className="mt-1 rounded bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-900">TEST MODE: no card is charged, nothing is sent to a payment processor.</p>
             <div className="mt-3 grid gap-2 text-sm">
@@ -102,16 +102,16 @@ export function EstimateFlow({ template, eventsUrl, bookingUrl, demoPhone, busin
           </div>
         )}
 
-        <div className="rounded-xl bg-slate-900 p-5 text-white">
+        <div className="lp-band p-5">
           <p className="font-semibold">Want this running for {business}?</p>
-          <p className="mt-1 text-sm text-slate-300">20-minute walkthrough with Xenco Labs: your services, your prices, your calendar.</p>
+          <p className="mt-1 text-sm opacity-80">20-minute walkthrough with Xenco Labs: your services, your prices, your calendar.</p>
           {bookingUrl ? (
             <a href={bookingUrl} target="_blank" rel="noopener" onClick={() => track('booking_click', 'estimate')}
-              className="mt-3 inline-block rounded-lg bg-white px-4 py-2.5 font-semibold text-slate-900">Book the walkthrough</a>
+              className="lp-btn-light mt-3 inline-block">Book the walkthrough</a>
           ) : (
-            <p className="mt-3 text-sm text-slate-400">Booking link is being set up.</p>
+            <p className="mt-3 text-sm opacity-70">Booking link is being set up.</p>
           )}
-          {demoPhone && <p className="mt-2 text-xs text-slate-400">Or call the Xenco demo line: {demoPhone}</p>}
+          {demoPhone && <p className="mt-2 text-xs opacity-70">Or call the Xenco demo line: {demoPhone}</p>}
         </div>
       </aside>
     </div>

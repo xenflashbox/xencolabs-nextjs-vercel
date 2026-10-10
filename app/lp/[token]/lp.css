@@ -1,0 +1,108 @@
+/* Local OS private previews: three owned page families on one set of theme variables
+   (--accent, --accent-soft, --deep, --highlight; resolved in lib/local-os/theme.ts). */
+
+.lp { --paper: #ffffff; --ink: #0f172a; --line: rgb(15 23 42 / 0.12); --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--paper); color: var(--ink); }
+
+/* shared pieces */
+.lp-btn, .lp-btn-ghost, .lp-btn-light { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 1.25rem;
+  font-weight: 700; border-radius: 0.5rem; transition: filter .15s, background-color .15s; }
+.lp-btn { background: var(--accent); color: #fff; }
+.lp-btn:hover { filter: brightness(1.08); }
+.lp-btn-ghost { border: 1.5px solid currentColor; }
+.lp-btn-light { background: #fff; color: var(--deep); }
+.lp-btn:focus-visible, .lp-btn-ghost:focus-visible, .lp-btn-light:focus-visible, .lp-nav a:focus-visible { outline: 3px solid var(--highlight); outline-offset: 2px; }
+.lp-band { background: var(--deep); color: #fff; border-radius: 0.75rem; }
+.lp-panel { border: 1px solid var(--line); border-radius: 0.75rem; background: #fff; }
+.lp-kicker { font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.lp-h2 { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.lp-page-title { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; line-height: 1.1; }
+.lp-mono { background: var(--accent); color: #fff; border-radius: .5rem; }
+.lp-brand { font-weight: 700; }
+.lp-brand-sub { font-size: .75rem; opacity: .7; }
+.lp-nav a { padding: .4rem .75rem; border-radius: .4rem; }
+.lp-nav a:hover { background: rgb(127 127 127 / .14); }
+.lp-footer { border-top: 1px solid var(--line); opacity: .85; }
+
+.lp-rail { margin-top: 3rem; }
+.lp-rail-title { font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .6; margin-bottom: .75rem; }
+.lp-rail ol { background: var(--line); border: 1px solid var(--line); border-radius: .5rem; overflow: hidden; }
+.lp-rail li { background: var(--paper); border-top: 3px solid transparent; }
+.lp-rail li.is-here { background: var(--accent-soft); border-top-color: var(--accent); }
+.lp-rail a:hover { background: rgb(127 127 127 / .06); }
+.lp-rail-n { display: block; font-family: var(--mono); font-size: .75rem; opacity: .55; }
+.lp-rail li.is-here .lp-rail-n { color: var(--accent); opacity: 1; font-weight: 700; }
+.lp-rail-label { display: block; margin-top: .15rem; font-weight: 700; font-size: .9rem; line-height: 1.25; }
+.lp-rail-line { display: block; margin-top: .35rem; font-size: .78rem; line-height: 1.4; opacity: .72; }
+
+/* ── Exterior Service · Clean Line ───────────────────────────────────────────── */
+.lp-exterior .lp-header { background: var(--deep); color: #fff; }
+.lp-exterior .lp-brand { text-transform: uppercase; letter-spacing: .04em; font-weight: 900; }
+.lp-exterior .lp-mono { background: var(--highlight); color: var(--deep); border-radius: 2px; }
+.lp-exterior .lp-page-title, .lp-x-title, .lp-exterior .lp-h2 { text-transform: uppercase; letter-spacing: -.01em; font-weight: 900; }
+.lp-exterior .lp-btn, .lp-exterior .lp-btn-ghost, .lp-exterior .lp-btn-light, .lp-exterior .lp-panel, .lp-exterior .lp-band { border-radius: 3px; }
+.lp-x-hero { background: var(--deep); color: #fff; }
+.lp-x-hero .lp-kicker { color: var(--highlight); }
+.lp-x-hero .lp-btn { background: var(--highlight); color: var(--deep); }
+.lp-x-title { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.02; }
+.lp-x-sweep { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 3px; background: #fff; }
+.lp-x-clean { position: absolute; inset: 0; background: linear-gradient(160deg, #fff 0%, var(--accent-soft) 100%); }
+.lp-x-grime { position: absolute; inset: 0; clip-path: polygon(0 0, 58% 0, 38% 100%, 0 100%);
+  background:
+    radial-gradient(circle at 18% 30%, rgb(60 52 30 / .55) 0 9%, transparent 10%),
+    radial-gradient(circle at 34% 72%, rgb(60 52 30 / .5) 0 7%, transparent 8%),
+    radial-gradient(circle at 8% 82%, rgb(70 82 44 / .55) 0 11%, transparent 12%),
+    radial-gradient(circle at 44% 18%, rgb(70 82 44 / .45) 0 5%, transparent 6%),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / .06) 0 2px, transparent 2px 9px),
+    rgb(110 100 76 / .82); }
+.lp-x-blade { position: absolute; inset: 0; clip-path: polygon(57% 0, 61% 0, 41% 100%, 37% 100%); background: var(--highlight); }
+.lp-x-tag { position: absolute; font-size: .7rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; padding: .25rem .5rem; background: var(--deep); color: #fff; }
+.lp-x-tag-before { left: .75rem; bottom: .75rem; }
+.lp-x-tag-after { right: .75rem; top: .75rem; background: var(--highlight); color: var(--deep); }
+.lp-x-ticket ol { border: 2px solid var(--deep); margin-top: -1.5rem; position: relative; background: #fff; }
+.lp-x-ticket li { display: flex; gap: .75rem; align-items: baseline; padding: 1rem 1.1rem; font-weight: 800; text-transform: uppercase; font-size: .9rem; letter-spacing: .02em; }
+.lp-x-ticket li + li { border-top: 2px dashed var(--line); }
+@media (min-width: 640px) { .lp-x-ticket li + li { border-top: 0; border-left: 2px dashed var(--line); } }
+.lp-x-ticket-n, .lp-x-svc-n { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+.lp-x-svc { display: flex; gap: .75rem; align-items: baseline; border-top: 3px solid var(--deep); padding: .9rem 0 1.1rem; font-weight: 800; font-size: 1.05rem; }
+
+/* ── Property Care · Project Plan ────────────────────────────────────────────── */
+.lp-property { --paper: #f6f1e7; --ink: #2a2620; --line: rgb(42 38 32 / .16); --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; }
+.lp-property .lp-header { border-bottom: 3px double var(--line); }
+.lp-property .lp-brand, .lp-p-title, .lp-property .lp-page-title, .lp-property .lp-h2, .lp-p-lede, .lp-p-scope, .lp-p-numeral { font-family: var(--serif); }
+.lp-property .lp-brand { font-weight: 600; font-size: 1.1rem; }
+.lp-property .lp-mono { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; font-family: var(--serif); }
+.lp-property .lp-nav a { font-variant: small-caps; letter-spacing: .06em; font-size: 1rem; }
+.lp-property .lp-page-title, .lp-property .lp-h2 { font-weight: 500; }
+.lp-property .lp-btn, .lp-property .lp-btn-ghost, .lp-property .lp-btn-light { border-radius: 2px; letter-spacing: .04em; }
+.lp-property .lp-panel { background: #fffdf8; border-radius: 2px; }
+.lp-property .lp-band { border-radius: 2px; }
+.lp-p-title { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05; font-weight: 500; }
+.lp-p-lede { font-size: 1.25rem; line-height: 1.55; }
+.lp-p-plan { background: #fffdf8; border: 1px solid var(--line); padding: .75rem; color: var(--deep); align-self: start; }
+.lp-p-plan figcaption { margin-top: .5rem; font-family: var(--serif); font-style: italic; font-size: .85rem; color: var(--ink); opacity: .75; }
+.lp-p-rule { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.lp-p-rule svg { color: var(--deep); }
+.lp-p-numeral { font-size: 2rem; font-style: italic; color: var(--accent); line-height: 1; }
+.lp-p-scope li { break-inside: avoid; font-size: 1.2rem; padding: .7rem 0; border-bottom: 1px dotted var(--line); }
+
+/* ── Recurring Route Service · Route Report ─────────────────────────────────── */
+.lp-route { --paper: #f3f6f8; --line: rgb(15 23 42 / .14); }
+.lp-route .lp-header { background: #fff; border-bottom: 4px solid var(--accent); }
+.lp-route .lp-mono { background: var(--deep); color: var(--highlight); border-radius: 6px; font-family: var(--mono); }
+.lp-route .tabular-nums, .lp-r-mono { font-family: var(--mono); }
+.lp-r-hero { background: linear-gradient(180deg, #fff 0%, var(--paper) 100%); border-bottom: 1px solid var(--line); }
+.lp-r-title { font-size: clamp(1.9rem, 4.4vw, 3rem); font-weight: 800; line-height: 1.08; letter-spacing: -.01em; }
+.lp-r-log { display: grid; gap: .4rem; padding-top: .5rem; }
+.lp-r-log li { display: flex; gap: .75rem; padding: .35rem .75rem; border-left: 3px solid var(--accent); background: #fff; font-weight: 600; font-size: .95rem; }
+.lp-r-log li span { color: var(--accent); }
+.lp-r-report { background: #fff; padding: 1.25rem 1.25rem 2rem; box-shadow: 0 18px 40px -18px rgb(15 23 42 / .35); border-top: 6px solid var(--deep);
+  -webkit-mask: radial-gradient(9px at 50% 100%, #0000 97%, #000) 50% / 18px 100%; mask: radial-gradient(9px at 50% 100%, #0000 97%, #000) 50% / 18px 100%; }
+.lp-r-day { padding: .3rem 0; border: 1px solid var(--line); border-radius: 4px; font-family: var(--mono); }
+.lp-r-day.is-on { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+.lp-r-leader { display: flex; gap: .5rem; align-items: baseline; }
+.lp-r-leader dt { flex: 1; display: flex; align-items: baseline; }
+.lp-r-leader dt::after { content: ''; flex: 1; border-bottom: 1px dotted var(--line); margin: 0 .4rem; }
+.lp-r-row { padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.lp-route .lp-panel { border-radius: 6px; }
+.lp-route .lp-band { border-radius: 6px; }
