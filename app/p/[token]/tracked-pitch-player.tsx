@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
-import { EndState, FinalCTA, PresentationShell, useTracker } from './presentation-chrome';
+import { EndState, FinalCTA, PresentationShell, useTracker, type PresentationCta } from './presentation-chrome';
 
-export type TrackedSlide = { video: string; audio: string; title: string };
+export type TrackedSlide = { video: string; audio: string; title: string; poster?: string };
 
 /**
  * Per-recipient presentation player: silent MP4 + narration MP3 per slide, advance on narration end, hold the final
@@ -12,8 +12,10 @@ export type TrackedSlide = { video: string; audio: string; title: string };
  * Telemetry (lead-intelligence API): view · start · slide_start · slide_complete · complete · cta_impression ·
  * cta_click · presentation_replay — fire-and-forget beacons that never block playback.
  */
-export function TrackedPitchPlayer({ token, company, slides, eventsUrl }: {
-  token: string; company: string; slides: TrackedSlide[]; eventsUrl: string;
+export function TrackedPitchPlayer({ token, company, slides, eventsUrl, subtitle = 'Managed Search & Content Intelligence',
+  eyebrow, cta, telemetryContext }: {
+  token?: string; company: string; slides: TrackedSlide[]; eventsUrl: string;
+  subtitle?: string; eyebrow?: string; cta?: PresentationCta; telemetryContext?: Record<string, string>;
 }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -22,7 +24,8 @@ export function TrackedPitchPlayer({ token, company, slides, eventsUrl }: {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const sentStart = useRef(false);
-  const track = useTracker(eventsUrl);
+  const context = useMemo(() => telemetryContext, [telemetryContext]);
+  const track = useTracker(eventsUrl, context);
   const last = slides.length - 1;
 
   useEffect(() => { track('view'); }, [track]);
@@ -140,8 +143,8 @@ export function TrackedPitchPlayer({ token, company, slides, eventsUrl }: {
   );
 
   return (
-    <PresentationShell company={company} subtitle="Managed Search & Content Intelligence" controls={controls}>
-      <video key={slides[index].video} ref={videoRef} src={slides[index].video} muted playsInline preload="auto"
+    <PresentationShell company={company} subtitle={subtitle} eyebrow={eyebrow} controls={controls}>
+      <video key={slides[index].video} ref={videoRef} src={slides[index].video} poster={slides[index].poster} muted playsInline preload="auto"
         onLoadedMetadata={(e) => {
           // Not playing yet (page load, or browsing slides before Start): show the slide's completed composition
           // rather than the clip's near-empty first frame. Playback always restarts from frame zero.
@@ -149,9 +152,14 @@ export function TrackedPitchPlayer({ token, company, slides, eventsUrl }: {
           if (!started && Number.isFinite(v.duration)) v.currentTime = Math.max(0, v.duration - 0.05);
         }}
         className="absolute inset-0 w-full h-full object-contain bg-[#07172c]" />
+      {!started && slides[index].poster && (
+        // Before playback, decks that ship an approved still show it directly: deterministic on every browser, even
+        // where seeking an unplayed clip to its last frame does not paint.
+        <img src={slides[index].poster} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-contain bg-[#07172c]" />
+      )}
       <audio key={slides[index].audio} ref={audioRef} src={slides[index].audio} preload="auto" />
-      {completed && <EndState track={track} slide={index + 1} onReplay={replay} token={token} />}
-      <FinalCTA track={track} slide={index + 1} visible={index === last && !completed} token={token} />
+      {completed && <EndState track={track} slide={index + 1} onReplay={replay} token={token} cta={cta} />}
+      <FinalCTA track={track} slide={index + 1} visible={index === last && !completed} token={token} cta={cta} />
     </PresentationShell>
   );
 }
