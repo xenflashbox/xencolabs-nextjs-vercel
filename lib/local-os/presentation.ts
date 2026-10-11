@@ -11,6 +11,11 @@ const PRESENTATION_HOSTS = (process.env.LOCAL_OS_PRESENTATION_HOSTS || 'preview.
   .map((h) => h.trim().toLowerCase())
   .filter(Boolean);
 
+/** Canonical public origin of the presentation (first allowed host), for absolute og:image/og:url. */
+export function presentationOrigin(): string {
+  return `https://${PRESENTATION_HOSTS[0] || 'preview.xencolabs.com'}`;
+}
+
 /** True when `host` may serve the public presentation. Any other host gets a 404. */
 export function presentationHostAllowed(host: string | null): boolean {
   return PRESENTATION_HOSTS.includes((host || '').toLowerCase());

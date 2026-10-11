@@ -3,7 +3,7 @@ import { Barlow_Condensed, IBM_Plex_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { TenantShell } from '@/components/local-os/os/shell';
-import { osBase } from '@/lib/local-os/presentation';
+import { PRESENTATION_TENANT, osBase, presentationOrigin } from '@/lib/local-os/presentation';
 import { getTenant, tenantPreviewsEnabled } from '@/lib/local-os/tenants';
 
 export const dynamic = 'force-dynamic';
@@ -23,15 +23,18 @@ export function generateMetadata({ params }: { params: { tenant: string } }): Me
   if (!entry) return { title: 'Not found', robots: ROBOTS };
   const t = entry.config;
   const icon = t.branding.logos.favicon;
-  const h = headers();
-  const host = h.get('x-forwarded-host') || h.get('host') || 'preview.xencolabs.com';
-  const proto = host.startsWith('localhost') || host.startsWith('127.') ? 'http' : 'https';
+  // Presentation deployment: always the public custom domain (on Vercel, x-forwarded-host can be the
+  // deployment's *.vercel.app alias, which the host gate 404s). Elsewhere: the requesting host.
+  const host = headers().get('host') || 'xencolabs.com';
+  const origin = PRESENTATION_TENANT
+    ? presentationOrigin()
+    : `${host.startsWith('localhost') || host.startsWith('127.') ? 'http' : 'https'}://${host}`;
   const base = osBase(t.slug);
   const title = `${t.name} · Private Xenco Labs concept preview`;
   const description = `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
   const image = { url: `${base}/share-image`, width: 1200, height: 630, alt: `${t.name} concept preview by Xenco Labs` };
   return {
-    metadataBase: new URL(`${proto}://${host}`),
+    metadataBase: new URL(origin),
     title: { absolute: `${t.name} · private preview` },
     description,
     robots: ROBOTS,
