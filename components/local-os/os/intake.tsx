@@ -27,9 +27,9 @@ export function Intake() {
     addLead({
       id, sample: true, createdAt: new Date().toISOString(), name: `${v('name') || 'Preview requester'} (sample)`,
       company: v('company') || null, phone: v('phone'), email: v('email') || null, address: v('address'),
-      buildingType: v('buildingType'), laneId, workType: v('workType'), urgency: emergency ? 'emergency' : urgency, notes: v('notes'),
+      buildingType: v('buildingType'), laneId, workType: v('workType'), urgency: emergency ? 'emergency' : urgency, notes: v('notes'), fields: {},
       status: 'new', nextAction: emergency ? 'Emergency: call now' : 'Call back to qualify', dueAt: new Date(Date.now() + (emergency ? 0 : 4 * 3600e3)).toISOString(),
-      source: 'preview intake',
+      source: 'phone',
     });
     setDone(id);
     e.currentTarget.reset();
@@ -43,7 +43,7 @@ export function Intake() {
       {done ? (
         <Card>
           <p className="text-sm">Sample request {done} added to the queue.</p>
-          <div className="mt-2 flex gap-4"><NavLink href={osHref(tenant.slug, `/requests?open=${done}`)}>Open it</NavLink><button type="button" className="text-sm underline" onClick={() => setDone(null)}>Add another</button></div>
+          <div className="mt-2 flex gap-4"><NavLink href={osHref(tenant.slug, `/office/requests?open=${done}`)}>Open it</NavLink><button type="button" className="text-sm underline" onClick={() => setDone(null)}>Add another</button></div>
         </Card>
       ) : (
         <form onSubmit={submit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -72,7 +72,7 @@ export function Intake() {
           </fieldset>
           {emergency ? (
             <div className="rounded-lg border-2 border-[var(--brand)] bg-red-50 p-3 text-sm">
-              <p className="font-semibold text-[var(--brand-dark)]">Emergency? Call {tenant.name} now: <a className="underline" href={`tel:${tenant.phone}`}>{tenant.phone}</a></p>
+              <p className="font-semibold text-[var(--brand-dark)]">Emergency? Call {tenant.name} now: <a className="underline" href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`}>{tenant.phone}</a></p>
               <p className="mt-1 text-xs text-slate-700">{vertical.guardrails.emergency} You can still log the details below.</p>
             </div>
           ) : null}

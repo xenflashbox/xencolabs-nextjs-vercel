@@ -1,5 +1,5 @@
-import { CustomerStatus } from '@/components/local-os/os/customer-status';
+import { SiteStatus } from '@/components/local-os/os/site-status';
 
-export default function TenantCustomerStatusPage({ params }: { params: { id: string } }) {
-  return <CustomerStatus id={params.id} />;
+export default function TenantStatusPage({ params }: { params: { id: string } }) {
+  return <SiteStatus id={params.id} />;
 }

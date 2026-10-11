@@ -1,5 +1,5 @@
-import { Dashboard } from '@/components/local-os/os/dashboard';
+import { SiteHome } from '@/components/local-os/os/site-home';
 
-export default function TenantDashboardPage() {
-  return <Dashboard />;
+export default function TenantHomePage() {
+  return <SiteHome />;
 }

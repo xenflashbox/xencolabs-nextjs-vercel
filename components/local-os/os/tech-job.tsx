@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import type { DemoAssembly } from '@/lib/local-os/demo-types';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Guardrail, SampleBadge, timeOnly } from '@/components/local-os/os/ui';
 
@@ -13,10 +14,11 @@ const SECTION_TITLE = { prep: 'Arrival', safety: 'Safety and notifications', wor
  * one before photo, one after photo and the completion items.
  */
 export function TechJob({ id }: { id: string }) {
-  const { tenant, vertical, state, updateJob, toggleChecklist, addPhotos } = useDemo();
+  const { tenant, vertical, state, updateJob, toggleChecklist, addPhotos, updateReport } = useDemo();
   const j = state.jobs.find((x) => x.id === id);
   const inputs = { before: useRef<HTMLInputElement>(null), after: useRef<HTMLInputElement>(null) };
   if (!j) return <p className="text-sm">No such sample job.</p>;
+  const report = state.reports.find((r) => r.id === j.reportId) ?? null;
   const before = j.photos.filter((p) => p.phase === 'before');
   const after = j.photos.filter((p) => p.phase === 'after');
   const openCompletion = j.checklist.filter((c) => c.section === 'completion' && !c.done).length;
@@ -24,8 +26,21 @@ export function TechJob({ id }: { id: string }) {
     before.length < 1 && 'Add at least one before photo.',
     after.length < 1 && 'Add at least one after photo.',
     openCompletion > 0 && 'Tick the completion items.',
+    report && report.assemblies.some((a) => a.result === 'pending') && 'Record readings and a result for every assembly.',
+    report && report.items.some((i) => i.result === 'pending') && 'Score every inspection item.',
   ].filter(Boolean) as string[];
   const readOnly = j.status === 'completed' || j.status === 'report_ready';
+
+  function setAssembly(aid: string, patch: Partial<DemoAssembly>) {
+    if (!report) return;
+    const assemblies = report.assemblies.map((a) => (a.id === aid ? { ...a, ...patch } : a));
+    const failed = assemblies.filter((a) => a.result === 'fail');
+    updateReport(report.id, {
+      assemblies,
+      overall: assemblies.some((a) => a.result === 'pending') ? 'pending' : failed.length ? 'fail' : 'pass',
+      deficiencies: failed.map((a) => `Assembly ${a.id} (${a.type} ${a.size}, ${a.location}) did not pass`),
+    });
+  }
 
   function pick(phase: 'before' | 'after', files: FileList | null) {
     if (!files?.length) return;
@@ -85,6 +100,42 @@ export function TechJob({ id }: { id: string }) {
           );
         })}
       </div>
+
+      {report ? (
+        <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="text-sm font-semibold">{vertical.reportTemplates.find((t) => t.kind === report.kind)?.title} · {report.number}</h2>
+          <Guardrail>Readings recorded here go to the office for the certified tester’s / contractor’s review. They are not a certification or a filing.</Guardrail>
+          {report.assemblies.map((a) => (
+            <div key={a.id} className="rounded-lg border border-slate-200 p-3">
+              <p className="text-sm font-semibold">{a.id} · {a.type} {a.size} · {a.location}</p>
+              <p className="text-xs text-slate-500">{a.make} {a.model} · serial {a.serial}</p>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {(['check1', 'check2', 'relief'] as const).map((k) => (
+                  <label key={k} className="text-xs text-slate-600">
+                    {k === 'check1' ? 'Check 1' : k === 'check2' ? 'Check 2' : 'Relief'}
+                    <input value={a[k]} disabled={readOnly} onChange={(e) => setAssembly(a.id, { [k]: e.target.value })} placeholder={k === 'relief' && a.type !== 'RP' ? 'n/a' : 'psid'} className="mt-0.5 w-full rounded border border-slate-300 px-2 py-2 text-base" />
+                  </label>
+                ))}
+              </div>
+              <div className="mt-2 flex gap-2">
+                {(['pass', 'fail'] as const).map((r) => (
+                  <button key={r} type="button" disabled={readOnly} onClick={() => setAssembly(a.id, { result: r })} className={`h-11 flex-1 rounded-lg text-sm font-semibold ${a.result === r ? (r === 'pass' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white') : 'bg-slate-100 text-slate-700'}`}>{r === 'pass' ? 'Pass' : 'Fail'}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {report.items.map((it, idx) => (
+            <div key={it.label} className="rounded-lg border border-slate-200 p-3">
+              <p className="text-sm">{it.label}</p>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {(['pass', 'attention', 'fail'] as const).map((r) => (
+                  <button key={r} type="button" disabled={readOnly} onClick={() => updateReport(report.id, { items: report.items.map((x, k) => (k === idx ? { ...x, result: r } : x)) })} className={`h-10 rounded-lg text-xs font-semibold ${it.result === r ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}>{r === 'attention' ? 'Needs attention' : r === 'pass' ? 'Pass' : 'Fail'}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {(['before', 'after'] as const).map((phase) => {
         const list = phase === 'before' ? before : after;

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { lineTotal } from '@/lib/local-os/journey';
 import { Card, Guardrail, NavLink, Pill, SampleBadge, money, osHref, when } from '@/components/local-os/os/ui';
 
 /**
@@ -37,11 +38,13 @@ export function JobOffice({ id }: { id: string }) {
             <dt className="text-slate-500">Technician</dt><dd>{j.technician} (sample)</dd>
             <dt className="text-slate-500">Site contact</dt><dd>{j.siteContact}</dd>
             <dt className="text-slate-500">Access</dt><dd>{j.accessNotes}</dd>
-            {quote ? (<><dt className="text-slate-500">Estimate</dt><dd><NavLink href={osHref(s, `/quotes/${quote.id}`)}>{quote.number}</NavLink></dd></>) : null}
+            {quote ? (<><dt className="text-slate-500">Estimate</dt><dd><NavLink href={osHref(s, `/office/quotes/${quote.id}`)}>{quote.number}</NavLink></dd></>) : null}
           </dl>
           <div className="mt-3 flex flex-wrap gap-3">
             <NavLink href={osHref(s, `/tech/${j.id}`)}>Technician job packet →</NavLink>
-            <NavLink href={osHref(s, `/status/${j.id}`)}>Customer status view →</NavLink>
+            <NavLink href={osHref(s, `/status/${j.leadId}`)}>Customer status view →</NavLink>
+            {j.reportId ? <NavLink href={osHref(s, `/office/reports/${j.reportId}`)}>Report →</NavLink> : null}
+            {invoice ? <NavLink href={osHref(s, `/office/invoices/${invoice.id}`)}>Invoice →</NavLink> : null}
           </div>
           {j.status === 'scheduled' ? (
             <button type="button" onClick={() => updateJob(j.id, { status: 'confirmed' })} className="mt-3 rounded-md bg-white px-3 py-1.5 text-sm ring-1 ring-slate-200">Customer confirmed the appointment</button>
@@ -79,11 +82,11 @@ export function JobOffice({ id }: { id: string }) {
 
       {invoice ? (
         <Card title="Invoice and payment follow-up">
-          <p className="flex flex-wrap items-center gap-2 text-sm"><SampleBadge /> {invoice.number} · {money(invoice.amount)} <Pill tone={invoice.status === 'overdue' ? 'red' : 'slate'}>{invoice.status}</Pill></p>
+          <p className="flex flex-wrap items-center gap-2 text-sm"><SampleBadge /> {invoice.number} · {money(lineTotal(invoice.lines))} <Pill tone={invoice.status === 'overdue' ? 'red' : 'slate'}>{invoice.status}</Pill></p>
           <p className="mt-1 text-xs text-slate-500">{invoice.followUp}. Preview: no invoice or payment link is sent, and no payment is taken.</p>
         </Card>
       ) : null}
-      <NavLink href={osHref(s)}>← Dashboard</NavLink>
+      <NavLink href={osHref(s, '/office')}>← Dashboard</NavLink>
     </div>
   );
 }

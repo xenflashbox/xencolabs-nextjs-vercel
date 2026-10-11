@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { lineTotal } from '@/lib/local-os/journey';
 import { Card, NavLink, Pill, SampleBadge, isToday, leadTone, money, osHref, timeOnly, when } from '@/components/local-os/os/ui';
 
 /** The owner's morning view: what needs a person today. */
@@ -17,6 +19,8 @@ export function Dashboard() {
   const today = state.jobs.filter((j) => isToday(j.scheduledStart)).sort((a, b) => a.scheduledStart.localeCompare(b.scheduledStart));
   const upcoming = state.jobs.filter((j) => !isToday(j.scheduledStart) && j.status !== 'report_ready');
   const reports = state.jobs.filter((j) => j.status === 'completed');
+  const toReviewReports = state.reports.filter((r) => !r.reviewedBy);
+  const awaitingCustomer = state.quotes.filter((q) => q.status === 'sent');
   const owed = state.invoices.filter((i) => i.status !== 'paid');
 
   const stat = (label: string, n: number, tone = 'text-slate-900') => (
@@ -43,7 +47,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Today’s jobs" action={<NavLink href={osHref(s, '/requests')}>All requests</NavLink>}>
+        <Card title="Today’s jobs" action={<NavLink href={osHref(s, '/office/requests')}>All requests</NavLink>}>
           {today.length ? (
             <ul className="divide-y divide-slate-100">
               {today.map((j) => (
@@ -55,7 +59,7 @@ export function Dashboard() {
                     <p className="text-xs text-slate-500">{lane(j.laneId)} · {j.technician} · {j.status.replace('_', ' ')}</p>
                   </div>
                   <div className="flex gap-3 text-sm">
-                    <NavLink href={osHref(s, `/jobs/${j.id}`)}>Office</NavLink>
+                    <NavLink href={osHref(s, `/office/jobs/${j.id}`)}>Office</NavLink>
                     <NavLink href={osHref(s, `/tech/${j.id}`)}>Technician</NavLink>
                   </div>
                 </li>
@@ -71,7 +75,7 @@ export function Dashboard() {
             <ul className="divide-y divide-slate-100">
               {due.map((l) => (
                 <li key={l.id} className="py-2.5">
-                  <Link href={osHref(s, `/requests?open=${l.id}`)} className="block">
+                  <Link href={osHref(s, `/office/requests?open=${l.id}`)} className="block">
                     <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       <SampleBadge /> {l.company ?? l.name}
                       <Pill tone={leadTone(l.status)}>{statusLabel(l.status)}</Pill>
@@ -99,7 +103,7 @@ export function Dashboard() {
                       <p className="flex flex-wrap items-center gap-2 text-sm font-medium"><SampleBadge /> {q.number}</p>
                       <p className="truncate text-xs text-slate-500">{lead?.company ?? lead?.name} · {money(total)} (sample) · {q.status}</p>
                     </div>
-                    <NavLink href={osHref(s, `/quotes/${q.id}`)}>Review</NavLink>
+                    <NavLink href={osHref(s, `/office/quotes/${q.id}`)}>Review</NavLink>
                   </li>
                 );
               })}
@@ -114,20 +118,47 @@ export function Dashboard() {
             {reports.map((j) => (
               <li key={j.id} className="flex items-center justify-between gap-2 py-2.5">
                 <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {j.number}: completion report needs your sign-off</span>
-                <NavLink href={osHref(s, `/jobs/${j.id}`)}>Open</NavLink>
+                <NavLink href={osHref(s, `/office/jobs/${j.id}`)}>Open</NavLink>
               </li>
             ))}
             {owed.map((i) => (
               <li key={i.id} className="flex items-center justify-between gap-2 py-2.5">
                 <span className="flex flex-wrap items-center gap-2">
-                  <SampleBadge /> {i.number} · {money(i.amount)}
+                  <SampleBadge /> {i.number} · {money(lineTotal(i.lines))}
                   <Pill tone={i.status === 'overdue' ? 'red' : 'slate'}>{i.status}</Pill>
                 </span>
-                <span className="text-xs text-slate-500">{i.followUp}</span>
+                <NavLink href={osHref(s, `/office/invoices/${i.id}`)}>Open</NavLink>
               </li>
             ))}
             {!reports.length && !owed.length ? <li className="py-2 text-slate-500">All clear.</li> : null}
           </ul>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card title="Reports to review">
+          {toReviewReports.length ? (
+            <ul className="divide-y divide-slate-100 text-sm">
+              {toReviewReports.map((r) => (
+                <li key={r.id} className="flex items-center justify-between gap-2 py-2.5">
+                  <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {r.number} · {r.property.name}{r.assemblies.some((a) => a.result === 'pending') ? ' · waiting for readings' : ''}</span>
+                  <NavLink href={osHref(s, `/office/reports/${r.id}`)}>Open</NavLink>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="text-sm text-slate-500">Nothing to review.</p>}
+        </Card>
+        <Card title="Estimates with the customer">
+          {awaitingCustomer.length ? (
+            <ul className="divide-y divide-slate-100 text-sm">
+              {awaitingCustomer.map((q) => (
+                <li key={q.id} className="flex items-center justify-between gap-2 py-2.5">
+                  <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {q.number} · awaiting customer approval</span>
+                  <NavLink href={osHref(s, `/estimate/${q.id}`)}>Customer view</NavLink>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="text-sm text-slate-500">None waiting.</p>}
         </Card>
       </div>
 
@@ -137,12 +168,13 @@ export function Dashboard() {
             {upcoming.map((j) => (
               <li key={j.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
                 <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {when(j.scheduledStart)} · {j.title}</span>
-                <NavLink href={osHref(s, `/jobs/${j.id}`)}>Open</NavLink>
+                <NavLink href={osHref(s, `/office/jobs/${j.id}`)}>Open</NavLink>
               </li>
             ))}
           </ul>
         </Card>
       ) : null}
+      {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} variant="compact" /> : null}
     </div>
   );
 }

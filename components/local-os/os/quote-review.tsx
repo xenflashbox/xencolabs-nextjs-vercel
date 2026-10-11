@@ -43,7 +43,7 @@ export function QuoteReview({ id }: { id: string }) {
     const jid = `J-${Math.floor(Math.random() * 9000 + 1000)}`;
     const items = (vertical.checklists[q!.laneId] ?? []).map((c, i) => ({ id: `${q!.laneId}-${i}`, section: c.section, label: c.label, done: false }));
     addJob({
-      id: jid, sample: true, number: `JOB-${jid.slice(2)} (sample)`, leadId: lead.id, quoteId: q!.id, laneId: q!.laneId,
+      id: jid, sample: true, number: `JOB-${jid.slice(2)} (sample)`, leadId: lead.id, quoteId: q!.id, reportId: null, laneId: q!.laneId,
       title: lead.workType, scheduledStart: start.toISOString(), scheduledEnd: new Date(start.getTime() + 90 * 60e3).toISOString(),
       technician: 'Sample Technician', status: 'scheduled', siteContact: `${lead.name} · ${lead.phone}`, accessNotes: 'Confirm access with the site contact.',
       scope: [q!.scope], checklist: items, photos: [], techNotes: '', reportApprovedBy: null,
@@ -134,7 +134,7 @@ export function QuoteReview({ id }: { id: string }) {
       {q.status === 'accepted' ? (
         <Card title="Schedule the job">
           {job ? (
-            <p className="text-sm">Scheduled: <Link className="underline" href={osHref(s, `/jobs/${job.id}`)}>{job.number}</Link></p>
+            <p className="text-sm">Scheduled: <Link className="underline" href={osHref(s, `/office/jobs/${job.id}`)}>{job.number}</Link></p>
           ) : (
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <input type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} className="rounded-lg border border-slate-300 px-3 py-2" />
@@ -145,7 +145,8 @@ export function QuoteReview({ id }: { id: string }) {
         </Card>
       ) : null}
 
-      <NavLink href={osHref(s, '/requests')}>← Requests</NavLink>
+      {['sent', 'accepted', 'declined'].includes(q.status) ? <NavLink href={osHref(s, `/estimate/${q.id}`)}>Customer’s view of this estimate →</NavLink> : null}
+      <NavLink href={osHref(s, '/office/requests')}>← Requests</NavLink>
     </div>
   );
 }

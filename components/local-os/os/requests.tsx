@@ -31,7 +31,7 @@ export function Requests() {
       .slice(0, 2)
       .map((q) => ({ label: q.label, unit: q.unit, qty: 1, unitPrice: q.sampleUnitPrice }));
     const id = `Q-${Math.floor(Math.random() * 9000 + 1000)}`;
-    addQuote({ id, sample: true, leadId: l.id, number: `EST-${id.slice(2)} (sample)`, laneId: l.laneId, scope: `${l.workType} at ${l.address}.`, lines, status: 'draft', reviewedBy: null, reviewNote: '' });
+    addQuote({ id, sample: true, leadId: l.id, number: `EST-${id.slice(2)} (sample)`, laneId: l.laneId, scope: `${l.workType} at ${l.address}.`, lines, status: 'draft', reviewedBy: null, reviewNote: '', fromReportId: null, customerApproval: null });
     updateLead(l.id, { status: 'quoted', nextAction: 'Review the draft estimate before it is sent' });
     return id;
   }
@@ -46,7 +46,7 @@ export function Requests() {
               {f === 'active' ? 'Open' : 'All'}
             </button>
           ))}
-          <NavLink href={osHref(s, '/intake')}>+ New request</NavLink>
+          <NavLink href={osHref(s, '/office/intake')}>+ New request</NavLink>
         </div>
       </div>
       <ul className="space-y-2">
@@ -86,9 +86,9 @@ export function Requests() {
                     <button type="button" className="rounded-md bg-white px-3 py-1.5 ring-1 ring-slate-200" onClick={() => updateLead(l.id, { status: 'qualified', nextAction: 'Draft an estimate' })}>Qualified</button>
                     <button type="button" className="rounded-md bg-white px-3 py-1.5 ring-1 ring-slate-200" onClick={() => updateLead(l.id, { status: 'lost', nextAction: 'None', dueAt: null })}>Not proceeding</button>
                     {quote ? (
-                      <NavLink href={osHref(s, `/quotes/${quote.id}`)}>Open {quote.number} ({money(quote.lines.reduce((a, x) => a + x.qty * x.unitPrice, 0))} sample)</NavLink>
+                      <NavLink href={osHref(s, `/office/quotes/${quote.id}`)}>Open {quote.number} ({money(quote.lines.reduce((a, x) => a + x.qty * x.unitPrice, 0))} sample)</NavLink>
                     ) : l.urgency !== 'emergency' ? (
-                      <button type="button" className="rounded-md bg-[var(--brand)] px-3 py-1.5 font-medium text-white" onClick={() => { const id = draftEstimate(l); window.location.assign(`/os/${s}/quotes/${id}`); }}>Draft estimate for review</button>
+                      <button type="button" className="rounded-md bg-[var(--brand)] px-3 py-1.5 font-medium text-white" onClick={() => { const id = draftEstimate(l); window.location.assign(`/os/${s}/office/quotes/${id}`); }}>Draft estimate for review</button>
                     ) : null}
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import type { DemoJob, DemoLead, DemoPhoto, DemoQuote, DemoState } from '@/lib/local-os/demo-types';
+import type { DemoInvoice, DemoJob, DemoLead, DemoPhoto, DemoQuote, DemoReport, DemoState } from '@/lib/local-os/demo-types';
 import type { TenantConfig, VerticalPack } from '@/lib/local-os/tenant-types';
 import { getTenant } from '@/lib/local-os/tenants';
 
@@ -23,6 +23,8 @@ interface Store {
   addJob: (job: DemoJob) => void;
   toggleChecklist: (jobId: string, itemId: string) => void;
   addPhotos: (jobId: string, photos: DemoPhoto[]) => void;
+  updateReport: (id: string, patch: Partial<DemoReport>) => void;
+  updateInvoice: (id: string, patch: Partial<DemoInvoice>) => void;
   reset: () => void;
 }
 
@@ -36,7 +38,7 @@ export function useDemo(): Store {
 
 export function DemoProvider({ slug, children }: { slug: string; children: React.ReactNode }) {
   const entry = getTenant(slug);
-  const key = `local-os:${slug}:v1`;
+  const key = `local-os:${slug}:v2`;
   const [state, setState] = useState<DemoState | null>(null);
 
   useEffect(() => {
@@ -85,6 +87,8 @@ export function DemoProvider({ slug, children }: { slug: string; children: React
         })),
       addPhotos: (jobId, photos) =>
         mut((s) => ({ ...s, jobs: s.jobs.map((j) => (j.id === jobId ? { ...j, photos: [...j.photos, ...photos] } : j)) })),
+      updateReport: (id, patch) => mut((s) => ({ ...s, reports: s.reports.map((r) => (r.id === id ? { ...r, ...patch } : r)) })),
+      updateInvoice: (id, patch) => mut((s) => ({ ...s, invoices: s.invoices.map((i) => (i.id === id ? { ...i, ...patch } : i)) })),
       reset: () => {
         try {
           window.localStorage.removeItem(key);

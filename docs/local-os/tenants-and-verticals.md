@@ -1,4 +1,57 @@
-# Local OS: tenants and vertical packs
+# Local OS: vertical sales preview (tenants + trade modules)
+
+A prospect preview is the whole business in one connected system: **branded customer website →
+customer journey (request, estimate approval, status, report, invoice) → office operating system →
+technician mobile workflow → live Xenco AI receptionist demo**. All of it is configuration plus a
+trade module; nothing is built per prospect.
+
+## Routes (shared by every tenant)
+
+| Zone | Route | Screen |
+|---|---|---|
+| Customer site | `/os/[t]` | Homepage: positioning, credibility, services, emergency direction, request CTA, AI demo |
+| | `/os/[t]/services/[slug]` | Service detail from the trade module |
+| | `/os/[t]/request` | Guided intake (service → property → contact → review); emergencies become "call now" |
+| | `/os/[t]/status/[leadId]` | Customer status: received → scheduled → report/estimate → approved → completed → invoiced |
+| | `/os/[t]/estimate/[id]` | Customer estimate review and approval (only contractor-approved, sent estimates) |
+| | `/os/[t]/report/[id]` | Report from a template (only contractor-reviewed reports) |
+| | `/os/[t]/invoice/[id]` | Invoice (only sent invoices) |
+| Office | `/os/[t]/office` · `/requests` · `/intake` | Dashboard, request queue, phone intake |
+| | `/os/[t]/office/quotes/[id]` · `/jobs/[id]` · `/reports/[id]` · `/invoices/[id]` | Estimate review, job, report review/delivery, invoice actions |
+| Technician | `/os/[t]/tech/[id]` | Job packet: checklist, report readings/scoring, before/after photos, notes |
+
+Every screen carries the amber "sample data only" band and a guided **demo tour** (from `tenant.tour`).
+Every generated document renders in `DocFrame`: tenant letterhead, a "Sample preview — not a
+certification, invoice, or official filing" banner top and bottom, and a diagonal watermark.
+
+The **Xenco AI receptionist panel** (`lib/local-os/xenco-demo.ts`, `(415) 338-9949`) is shown when
+`tenant.aiDemo` is on. It is always labelled "Xenco Labs live demonstration · not <tenant>'s line" and
+is never offered for emergencies; emergencies always point to the tenant's own office number.
+
+## Trade-module contents (VerticalPack)
+
+`lanes`, `services` (customer-facing pages), `buildingTypes`, `urgency`, `intakeFields` (trade
+questions per lane), `leadStatuses`, `checklists` (technician families), `quoteLines`,
+`lineItemFamilies` (inspection / parts / device testing / admin; placeholder prices),
+`reportTemplates` (scored items and/or multi-assembly readings, delivery to owner / AHJ),
+`customerSteps`, `guardrails` (quote, compliance, emergency, completion, document), `reportSections`.
+
+## Tenant contents
+
+Identity (name, owner, licence, phone, region, established), branding (palette + per-surface logo
+map), `laneIds`, `site` copy (from the client's own published material only), `tour`, `aiDemo`,
+public website (reference only), and a SAMPLE seed that tells one connected story.
+
+## Adding the next prospect (e.g. HVAC, exterior cleaning, asphalt)
+
+1. New trade? Add `lib/local-os/verticals/<trade>.ts` with the fields above.
+2. Add `lib/local-os/tenants/<slug>.ts`: identity, brand assets under `public/os/<slug>/brand`,
+   site copy, tour, sample seed. Register it in `tenants/index.ts`.
+3. No new routes or components.
+
+---
+
+# Tenants and vertical packs (reference)
 
 The Local OS is one set of screens configured per client. A client is a **tenant**; the
 trade vocabulary comes from a **vertical pack**. Adding a contractor means adding
