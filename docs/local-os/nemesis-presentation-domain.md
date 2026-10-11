@@ -173,3 +173,109 @@ media included.
 - No change to Cloudflare DNS.
 - No change to `xencolabs.com`, `www.xencolabs.com` or `nemesisfire.com`.
 - No Nemesis live site, form, email, booking or customer data.
+
+
+---
+
+## Update 2026-10-11 (later): R2 read credential, Preview-only, media live
+
+### Environment mapping (one-way, no values in this document)
+
+| Source (Infisical `xencolabs-fe-site`) | Sync | Destination (Vercel) |
+|---|---|---|
+| Staging `/frontend` — canonical values (founder-minted, bucket-scoped read-only) | `preview-sync` (pre-existing) | `xencolabs` → **Preview** (all branches) |
+| Staging `/xenco-preview` — four **references** to `/frontend`: `R2_TENANT_MEDIA_ACCOUNT_ID`, `_BUCKET`, `_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` | `xenco-preview-r2-media` (new; auto-sync on, secret deletion disabled) | `xenco-preview` → **Preview**, branch `feat/local-os-tenant-nemesis-fire` |
+
+- The references expand to exactly the `/frontend` values (hash-compared). Nothing was copied,
+  so rotation happens in one place.
+- Only those four keys reach `xenco-preview`. The other 47 `/frontend` secrets do not, including
+  `R2_TENANT_MEDIA_ACCOUNT_API_TOKEN`.
+- **Production is unset in both projects:** no `R2_*` variable targets Production in `xencolabs`
+  or in `xenco-preview`. `xenco-preview` has no Production variables at all.
+
+### Serving model change
+
+Vercel cannot attach the Preview env to a Production deployment. To keep the credentials
+Preview-only, `preview.xencolabs.com` is now a **branch domain**:
+
+- **Branch:** `feat/local-os-tenant-nemesis-fire`, Preview target.
+- **Production branch:** `main`. The ignore step means it never builds.
+- **Presentation flags + Clerk keys:** Preview variables scoped to that branch.
+- **Vercel Authentication:** off on `xenco-preview` only. Standard protection also covers Preview
+  branch domains, and the presentation must not need a login. The main `xencolabs` project still
+  uses `all_except_custom_domains`.
+
+This is safe because every build in this project carries the host gate. Every `*.vercel.app` URL
+of `xenco-preview` returns **404** for every path, media included (verified on all four existing
+deployment/branch URLs). The one pre-gate deployment (740ba13) was deleted.
+
+### Media verification (live, signed-out)
+
+```
+== xenco-preview  (8 vars total)
+   R2_TENANT_MEDIA_ACCOUNT_ID           target=['preview'] branch=feat/local-os-tenant-nemesis-fire type=encrypted value matches vault
+   R2_TENANT_MEDIA_BUCKET               target=['preview'] branch=feat/local-os-tenant-nemesis-fire type=encrypted value matches vault
+   R2_TENANT_MEDIA_ACCESS_KEY_ID        target=['preview'] branch=feat/local-os-tenant-nemesis-fire type=encrypted value matches vault
+   R2_TENANT_MEDIA_SECRET_ACCESS_KEY    target=['preview'] branch=feat/local-os-tenant-nemesis-fire type=encrypted value matches vault
+   Production R2_* vars: NONE
+
+== preview.xencolabs.com (signed-out) on Preview deployment 3478a6a
+/                                            302 https://preview.xencolabs.com/nemesis-fire
+/nemesis-fire                                200 
+/nemesis-fire/status/L-107                   200 
+/nemesis-fire/office                         200 
+/nemesis-fire/tech/J-301                     200 
+/nemesis-fire/estimate/Q-203                 200 
+/nemesis-fire/report/R-501                   200 
+/nemesis-fire/invoice/I-403                  200 
+== media route: every configured object → 302 to presigned R2, then fetched bytes
+media/hero-pump-room.jpg                   302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=b26dc15dc03b86ac
+media/technician-sprinkler.jpg             302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=5355f66e626e1d7b
+media/pump-room-wide-01.jpg                302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=5a93c4f196e15377
+media/backflow-valve.jpg                   302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=8f537e6ab6ae8ffc
+media/extinguisher-truck-01.jpg            302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=a324c094ba4f925d
+media/gallery-01.jpg                       302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=e4547550847e30cd
+media/field-equipment-loop.mp4             302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=1d26577a8204c836
+media/field-equipment-poster.png           302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=6ba47c20526a7c71
+media/sprinkler-inspection-loop.mp4        302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=7fac2aa31f37d7a5
+media/sprinkler-inspection-poster.png      302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=1ec80ecfe9f43fcf
+media/fire-riser-service-loop.mp4          302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=7aa59e66f121bc4a
+media/fire-riser-service-poster.png        302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=4a0fd1b0c3860722
+brand/nemesis-shield-color-dark.svg        302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=77549f64fd1b3d43
+brand/nemesis-wordmark-color-dark.svg      302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=a3a1b17e0b041453
+brand/nemesis-wordmark-color-light.svg     302 -> <account>.r2.cloudflarestorage.com X-Amz-Expires=300 sha256=4fce7c841476e4ee
+== not allowlisted / other tenants
+/os-media/nemesis-fire/media/gallery-02.jpg  404
+/os-media/other/x.jpg                        404
+/os/other-tenant                             404
+/about                                       404
+== xenco-preview *.vercel.app URLs (no Vercel auth on this project; host gate)
+xenco-preview-br7uglis5-xenophons-projec…/                           404
+xenco-preview-br7uglis5-xenophons-projec…/nemesis-fire               404
+xenco-preview-br7uglis5-xenophons-projec…/os-media/nemesis-fire/media/hero-pump-room.jpg 404
+xenco-preview-git-feat-local-f0b2f3-xeno…/                           404
+xenco-preview-git-feat-local-f0b2f3-xeno…/nemesis-fire               404
+xenco-preview-git-feat-local-f0b2f3-xeno…/os-media/nemesis-fire/media/hero-pump-room.jpg 404
+xenco-preview-ipvwr0zjg-xenophons-projec…/                           404
+xenco-preview-ipvwr0zjg-xenophons-projec…/nemesis-fire               404
+xenco-preview-ipvwr0zjg-xenophons-projec…/os-media/nemesis-fire/media/hero-pump-room.jpg 404
+xenco-preview-4fjr5btmb-xenophons-projec…/                           404
+xenco-preview-4fjr5btmb-xenophons-projec…/nemesis-fire               404
+xenco-preview-4fjr5btmb-xenophons-projec…/os-media/nemesis-fire/media/hero-pump-room.jpg 404
+
+browser 155.0.8059.39
+desktop no-preference url=/nemesis-fire imgs=9 broken=0 videos=3 field-equipment-loop.mp4[ready=4 1080x1080 playing] sprinkler-inspection-loop.mp4[ready=4 1080x1080 playing] fire-riser-service-loop.mp4[ready=4 1080x1080 playing] r2Objects=15 errors=0 OK
+   report page broken imgs: 0
+desktop reduce        url=/nemesis-fire imgs=12 broken=0 videos=0  r2Objects=15 errors=0 OK
+   reduced-motion poster imgs: field-equipment-poster.png loaded, sprinkler-inspection-poster.png loaded, fire-riser-service-poster.png loaded
+phone   no-preference url=/nemesis-fire imgs=9 broken=0 videos=3 field-equipment-loop.mp4[ready=4 1080x1080 playing] sprinkler-inspection-loop.mp4[ready=4 1080x1080 playing] fire-riser-service-loop.mp4[ready=4 1080x1080 playing] r2Objects=15 errors=0 OK
+   report page broken imgs: 0
+phone   reduce        url=/nemesis-fire imgs=12 broken=0 videos=0  r2Objects=15 errors=0 OK
+   reduced-motion poster imgs: field-equipment-poster.png loaded, sprinkler-inspection-poster.png loaded, fire-riser-service-poster.png loaded
+RESULT: all media loaded through the private route
+```
+
+- Every fetched object's SHA-256 matches the provenance inventory in
+  `nemesis-media-hardening.md`.
+- Videos were verified in Google Chrome 155. Playwright's bundled Chromium has no H.264 decoder
+  (`canPlayType` returns `""`, error 4), so it cannot confirm video playback.
