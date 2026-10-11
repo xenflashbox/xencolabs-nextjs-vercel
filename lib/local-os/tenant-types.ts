@@ -42,6 +42,8 @@ export interface TenantBranding {
   light: string
   /** Client-supplied assets, used as-is: never stretched, recoloured or combined. */
   logos: Record<LogoSurface, string>
+  /** Type system for the customer site: 'industrial' = condensed display + mono field labels. */
+  typography: 'industrial' | 'standard'
 }
 
 /** Customer-facing site copy. Facts must come from the client's own published material. */
@@ -57,6 +59,32 @@ export interface TenantSite {
   aboutBody: string
   /** How the request process works, in the client's own words where possible. */
   process: { title: string; body: string }[]
+}
+
+/** A photo the client supplied, with how to frame it and what it shows (also its alt text). */
+export interface MediaImage {
+  src: string
+  alt: string
+  /** CSS object-position for cropping, e.g. '50% 40%'. */
+  focus?: string
+  caption?: string
+}
+
+/** A short silent field clip. Always muted, lazy-loaded, with a poster fallback; never a hero. */
+export interface MediaVideo {
+  src: string
+  poster: string
+  caption: string
+}
+
+/** Selected client media for the preview. Only the client's own work imagery; never stock. */
+export interface TenantMedia {
+  hero: MediaImage
+  about: MediaImage
+  /** One image per service lane id. */
+  lanes: Record<string, MediaImage>
+  gallery: MediaImage[]
+  videos: MediaVideo[]
 }
 
 /** One stop on the guided demo tour. `path` is relative to /os/[tenant]. */
@@ -80,6 +108,7 @@ export interface TenantConfig {
   /** Service lane ids from the vertical pack this tenant sells. */
   laneIds: string[]
   site: TenantSite
+  media: TenantMedia
   tour: TourStop[]
   /** Show the Xenco live AI receptionist panel (a Xenco number, never the client's). */
   aiDemo: boolean
@@ -101,6 +130,8 @@ export interface ServiceLane {
 export interface ServicePage {
   slug: string
   laneId: string
+  /** Short field code shown on lane cards, e.g. '01'. */
+  code: string
   title: string
   summary: string
   includes: string[]
@@ -159,11 +190,16 @@ export interface ReportTemplate {
   deliverTo: ('owner' | 'ahj')[]
 }
 
-/** One customer-status step, computed from the linked records. */
+/**
+ * One stage of the customer lifecycle ("Protection lifecycle" for fire protection), computed from
+ * the linked records. `sample` is the preview record that illustrates the stage.
+ */
 export interface CustomerStep {
   id: 'received' | 'scheduled' | 'report' | 'approved' | 'completed' | 'invoiced'
   label: string
   detail: string
+  /** Path (relative to /os/[tenant]) of a sample record showing this stage. */
+  sample?: string
 }
 
 export interface VerticalPack {
@@ -179,6 +215,8 @@ export interface VerticalPack {
   quoteLines: QuoteLineTemplate[]
   lineItemFamilies: LineItemFamily[]
   reportTemplates: ReportTemplate[]
+  /** Lifecycle name shown to customers, e.g. 'Protection lifecycle'. */
+  lifecycleName: string
   customerSteps: CustomerStep[]
   /** Statements the system must never make on its own; shown where they would otherwise appear. */
   guardrails: {

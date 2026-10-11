@@ -28,6 +28,22 @@ The **Xenco AI receptionist panel** (`lib/local-os/xenco-demo.ts`, `(415) 338-99
 `tenant.aiDemo` is on. It is always labelled "Xenco Labs live demonstration · not <tenant>'s line" and
 is never offered for emergencies; emergencies always point to the tenant's own office number.
 
+## Reusable preview primitives (`components/local-os/os/preview/`)
+
+| Primitive | What it does |
+|---|---|
+| `PreviewBar` | Sticky private-preview navigation on every screen: "Private Xenco preview · sample data only", Website / Office / Technician, and the Xenco AI receptionist `tel:` link |
+| `Lifecycle` | The tenant's lifecycle (`vertical.lifecycleName` + `customerSteps`): `showcase` on the homepage (each stage opens its sample record), `status` for one customer's progress |
+| `TenantPhoto` | Client photo via `next/image` (responsive srcset), cropped by the configured focus point |
+| `FieldVideo` | Silent square clip: poster first, source attached only near the viewport, muted inline loop while visible, controls instead of autoplay under reduced motion. Never a hero |
+| `AiDemoPanel` | The Xenco live AI receptionist (`lib/local-os/xenco-demo.ts`), card or compact; always labelled as Xenco's demonstration |
+| `DocFrame` | Letterhead + top/bottom banner + watermark for every sample document |
+| `type.ts` | `DISPLAY` / `FIELD` type tokens; with `branding.typography: 'industrial'` they resolve to Barlow Condensed + IBM Plex Mono (loaded only under `/os`) |
+
+Tenant media lives in `tenant.media` (hero, about, one image per lane, gallery, videos) and in
+`public/os/<slug>/media`. Import rule: resize for the web, strip EXIF/GPS from photos and all
+container metadata from video, transcode video to H.264 with no audio track, and generate a poster.
+
 ## Trade-module contents (VerticalPack)
 
 `lanes`, `services` (customer-facing pages), `buildingTypes`, `urgency`, `intakeFields` (trade
@@ -86,6 +102,16 @@ Name, owner, licence line exactly as the client publishes it, phone, region, bra
 (primary colour, dark surface, logos from the client's own site), the lanes they sell,
 a link to their public site (read-only reference), and a sample seed. `previewOnly: true`
 means nothing leaves the browser.
+
+## Founder decisions for prospect previews (2026-10-11, Nemesis Fire)
+
+1. Use the client's real job imagery only. No stock fire imagery.
+2. Never use selfies, food or personal photos, photos of children, TikTok screenshots, or near-duplicates.
+3. The client's current live site (e.g. www.nemesisfire.com) is a sound rescue-site foundation — hero, service lanes, quote CTA, local positioning — but it is only the website layer.
+4. Fire protection carries **Backflow Testing & Certification** as a fourth real service lane.
+5. Do not promise "24-hour response", "24/7", specific credentials, or ratings unless the client confirms each one for the paid/live version.
+6. Every preview document is visibly sample-only. The client's real invoices and reports are private workflow references; they are never copied into public documents or the repository.
+7. The Xenco AI demo number is mandatory and visible on every prospect preview.
 
 ## Guardrails every vertical must keep
 

@@ -35,11 +35,11 @@ export function DemoTour({ tenant }: { tenant: TenantConfig }) {
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-lg">
-            <Compass className="h-4 w-4" /> Demo tour{idx >= 0 ? ` · ${idx + 1}/${tenant.tour.length}` : ''}
+          <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-lg sm:px-4 sm:py-2.5">
+            <Compass className="h-4 w-4" /> <span className="hidden sm:inline">Demo tour</span><span className="sm:hidden">Tour</span>{idx >= 0 ? ` ${idx + 1}/${tenant.tour.length}` : ''}
           </button>
           {next ? (
-            <Link href={osHref(tenant.slug, next.path)} className="rounded-full bg-white px-3 py-2.5 text-sm font-medium text-slate-900 shadow-lg ring-1 ring-slate-200">
+            <Link href={osHref(tenant.slug, next.path)} className="rounded-full bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-lg ring-1 ring-slate-200 sm:py-2.5">
               <span className="hidden sm:inline">Next: {next.label} </span><span className="sm:hidden">Next </span>→
             </Link>
           ) : null}

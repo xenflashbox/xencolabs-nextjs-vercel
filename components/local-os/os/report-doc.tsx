@@ -66,10 +66,30 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
           </div>
         </div>
 
+        {r.cover ? (
+          <section className="mt-5 grid gap-4 border-y border-slate-200 py-4 text-sm sm:grid-cols-2">
+            <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1">
+              <dt className="text-slate-500">Occupancy class</dt><dd>{r.cover.occupancyClass}</dd>
+              <dt className="text-slate-500">Construction type</dt><dd>{r.cover.constructionType}</dd>
+              <dt className="text-slate-500">Stories</dt><dd>{r.cover.stories}</dd>
+              <dt className="text-slate-500">Year built</dt><dd>{r.cover.yearBuilt}</dd>
+              <dt className="text-slate-500">Job #</dt><dd>{r.cover.jobNumber}</dd>
+              <dt className="text-slate-500">Risers</dt><dd>{r.systems.length}</dd>
+            </dl>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-500">Systems inspected</p>
+              <ul className="mt-1 space-y-1">{r.cover.systemsInspected.map((x) => <li key={x.system} className="flex items-center justify-between gap-2"><span>{x.system}</span><Pill tone={RESULT[x.status].tone}>{RESULT[x.status].label}</Pill></li>)}</ul>
+            </div>
+          </section>
+        ) : null}
+
         {r.systems.length ? (
-          <section className="mt-5">
-            <h3 className="text-sm font-semibold">Systems / risers</h3>
-            <ul className="mt-1 text-sm">{r.systems.map((x) => <li key={x.id}>{x.id}: {x.type} · {x.location}{x.notes ? ` · ${x.notes}` : ''}</li>)}</ul>
+          <section className="mt-5 overflow-x-auto">
+            <h3 className="text-sm font-semibold">Risers and main drain test</h3>
+            <table className="mt-2 w-full min-w-[460px] text-xs">
+              <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-1.5">Riser</th><th>Type</th><th>Location</th><th>Static</th><th>Residual</th><th className="text-right">Result</th></tr></thead>
+              <tbody>{r.systems.map((x) => (<tr key={x.id} className="border-b border-slate-100"><td className="py-2">{x.id}</td><td>{x.type}</td><td>{x.location}</td><td>{x.staticPsi ? `${x.staticPsi} psi` : '—'}</td><td>{x.residualPsi ? `${x.residualPsi} psi` : '—'}</td><td className="text-right">{x.result ? <Pill tone={RESULT[x.result].tone}>{RESULT[x.result].label}</Pill> : '—'}</td></tr>))}</tbody>
+            </table>
           </section>
         ) : null}
 
@@ -86,8 +106,8 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
           <section className="mt-5 overflow-x-auto">
             <h3 className="text-sm font-semibold">Assemblies tested</h3>
             <table className="mt-2 w-full min-w-[640px] text-xs">
-              <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-1.5">#</th><th>Type / size</th><th>Make / model</th><th>Serial</th><th>Location</th><th>Check 1</th><th>Check 2</th><th>Relief</th><th className="text-right">Result</th></tr></thead>
-              <tbody>{r.assemblies.map((a) => (<tr key={a.id} className="border-b border-slate-100"><td className="py-2">{a.id}</td><td>{a.type} {a.size}</td><td>{a.make} {a.model}</td><td>{a.serial}</td><td>{a.location}</td><td>{a.check1 || '—'}</td><td>{a.check2 || '—'}</td><td>{a.relief || '—'}</td><td className="text-right"><Pill tone={RESULT[a.result].tone}>{RESULT[a.result].label}</Pill></td></tr>))}</tbody>
+              <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-1.5">#</th><th>Type / size</th><th>Make / model</th><th>Serial</th><th>Meter</th><th>Location</th><th>Line</th><th>Check 1</th><th>Check 2</th><th>Relief</th><th className="text-right">Result</th></tr></thead>
+              <tbody>{r.assemblies.map((a) => (<tr key={a.id} className="border-b border-slate-100"><td className="py-2">{a.id}</td><td>{a.type} {a.size}</td><td>{a.make} {a.model}</td><td>{a.serial}</td><td>{a.meterNo ?? '—'}</td><td>{a.location}</td><td>{a.linePressure || '—'}</td><td>{a.check1 || '—'}</td><td>{a.check2 || '—'}</td><td>{a.relief || '—'}</td><td className="text-right"><Pill tone={RESULT[a.result].tone}>{RESULT[a.result].label}</Pill></td></tr>))}</tbody>
             </table>
           </section>
         ) : null}
@@ -102,8 +122,11 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
         <section className="mt-5 grid gap-2 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-3">
           <p>Reviewed: <strong>{r.reviewedBy ?? 'not yet'}</strong></p>
           <p>Owner copy: <strong>{r.delivery.owner === 'sent' ? 'sent (sample)' : 'not sent'}</strong></p>
-          <p>AHJ / water purveyor: <strong>{r.delivery.ahj === 'submitted' ? 'submitted (sample — nothing filed)' : r.delivery.ahj === 'not_required' ? 'not required' : 'not submitted'}</strong></p>
+          <p>{r.kind === 'backflow' ? 'Water purveyor' : 'Fire AHJ'} copy: <strong>{r.delivery.ahj === 'submitted' ? 'submitted (sample — nothing filed)' : r.delivery.ahj === 'not_required' ? 'not required' : 'not submitted'}</strong></p>
         </section>
+        {r.assemblies.some((a) => a.testedBy) ? (
+          <p className="mt-3 text-xs text-slate-600">Tested by: {Array.from(new Set(r.assemblies.map((a) => a.testedBy).filter(Boolean))).join(', ')}</p>
+        ) : null}
         {r.followUpQuoteId ? (
           <p className="mt-3 text-sm">Follow-up: <Link className="font-semibold underline" href={osHref(s, mode === 'office' ? `/office/quotes/${r.followUpQuoteId}` : `/estimate/${r.followUpQuoteId}`)}>repair estimate</Link></p>
         ) : null}
@@ -122,7 +145,7 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
           ) : null}
           <div className="flex flex-wrap gap-2">
             <button type="button" disabled={!r.reviewedBy || r.delivery.owner === 'sent'} onClick={() => updateReport(r.id, { delivery: { ...r.delivery, owner: 'sent' } })} className="rounded-lg border border-slate-300 px-3 py-2 disabled:opacity-40">Mark owner copy sent (sample)</button>
-            <button type="button" disabled={!r.reviewedBy || r.delivery.ahj === 'submitted'} onClick={() => updateReport(r.id, { delivery: { ...r.delivery, ahj: 'submitted' } })} className="rounded-lg border border-slate-300 px-3 py-2 disabled:opacity-40">Mark AHJ submitted (sample)</button>
+            <button type="button" disabled={!r.reviewedBy || r.delivery.ahj === 'submitted'} onClick={() => updateReport(r.id, { delivery: { ...r.delivery, ahj: 'submitted' } })} className="rounded-lg border border-slate-300 px-3 py-2 disabled:opacity-40">Mark {r.kind === 'backflow' ? 'water purveyor' : 'AHJ'} copy submitted (sample)</button>
             {r.deficiencies.length && !r.followUpQuoteId ? <button type="button" onClick={followUp} className="rounded-lg bg-slate-900 px-3 py-2 font-semibold text-white">Draft follow-up estimate</button> : null}
           </div>
           <Guardrail>Preview: “sent” and “submitted” only change this sample record. No email is sent and nothing is filed with any city, water district or AHJ.</Guardrail>

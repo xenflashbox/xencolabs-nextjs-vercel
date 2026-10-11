@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { Phone } from 'lucide-react';
 import { DemoProvider, useDemo } from '@/components/local-os/os/demo-store';
 import { DemoTour } from '@/components/local-os/os/demo-tour';
+import { PreviewBar } from '@/components/local-os/os/preview/preview-bar';
+import { FIELD } from '@/components/local-os/os/preview/type';
 import { TenantLogo } from '@/components/local-os/os/tenant-logo';
 import { osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
@@ -43,19 +45,22 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
   return (
     <div
       className="min-h-[100dvh] text-slate-900"
-      style={{ background: tenant.branding.light, ['--brand' as string]: tenant.branding.primary, ['--brand-dark' as string]: tenant.branding.primaryDark }}
+      style={{
+        background: tenant.branding.light,
+        ['--paper' as string]: tenant.branding.light,
+        ['--brand' as string]: tenant.branding.primary,
+        ['--brand-dark' as string]: tenant.branding.primaryDark,
+      }}
     >
-      <div role="note" className="sticky top-0 z-30 bg-amber-300 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
-        Private sales preview by Xenco Labs · sample data only · nothing is sent, booked, charged, filed or certified
-      </div>
+      <PreviewBar tenant={tenant} />
       <DemoProvider slug={tenant.slug}>
         {zone === 'site' ? (
           <>
-            <div style={{ background: tenant.branding.primary }} className="px-4 py-2 text-center text-sm font-medium text-white">
+            <div style={{ background: tenant.branding.primary }} className="px-4 py-1.5 text-center text-sm font-medium text-white">
               {tenant.site.emergencyLine}{' '}
               <a href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`} className="font-bold underline underline-offset-2">{tenant.phone}</a>
             </div>
-            <header className="border-b border-slate-200 bg-white">
+            <header className="border-b border-neutral-300 bg-[var(--paper)]">
               <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
                 <Link href={osHref(tenant.slug)} aria-label={`${tenant.name} home`} className="flex items-center">
                   <TenantLogo tenant={tenant} surface="shieldOnLight" height={40} className="sm:hidden" />
@@ -66,7 +71,7 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
                   <a href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 rounded-md px-3 py-2 font-medium hover:bg-slate-100">
                     <Phone className="h-4 w-4" /> <span className="hidden md:inline">{tenant.phone}</span><span className="md:hidden">Call</span>
                   </a>
-                  <Link href={osHref(tenant.slug, '/request')} className="rounded-lg bg-[var(--brand)] px-3 py-2 font-semibold text-white hover:bg-[var(--brand-dark)]">Request service</Link>
+                  <Link href={osHref(tenant.slug, '/request')} className="bg-[var(--brand)] px-3 py-2 font-semibold text-white hover:bg-[var(--brand-dark)]">Request service</Link>
                 </nav>
               </div>
             </header>
@@ -75,7 +80,7 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
               <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
                 <div>
                   <TenantLogo tenant={tenant} surface="wordmarkOnDark" height={36} />
-                  <p className="mt-3">{tenant.site.tagline}</p>
+                  <p className={`${FIELD} mt-3 text-[11px] text-white/60`}>{tenant.site.tagline}</p>
                 </div>
                 <div>
                   <p className="font-semibold text-white">Contact</p>

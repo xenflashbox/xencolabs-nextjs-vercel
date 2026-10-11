@@ -104,6 +104,10 @@ export interface DemoAssembly {
   check2: string
   relief: string
   result: ItemResult
+  meterNo?: string
+  linePressure?: string
+  /** Who tested, and the tester's certificate number (sample values only). */
+  testedBy?: string
 }
 
 export interface DemoReport {
@@ -114,7 +118,16 @@ export interface DemoReport {
   jobId: string
   property: { name: string; address: string; occupancy: string; buildingType: string; details: string }
   technician: { name: string; credential: string }
-  systems: { id: string; type: string; location: string; notes: string }[]
+  /** Cover-sheet facts, as a five-year inspection report carries them (sample values only). */
+  cover?: {
+    occupancyClass: string
+    constructionType: string
+    stories: string
+    yearBuilt: string
+    jobNumber: string
+    systemsInspected: { system: string; status: ItemResult }[]
+  }
+  systems: { id: string; type: string; location: string; notes: string; staticPsi?: string; residualPsi?: string; result?: ItemResult }[]
   items: { label: string; result: ItemResult; note: string }[]
   assemblies: DemoAssembly[]
   deficiencies: string[]
@@ -126,6 +139,8 @@ export interface DemoReport {
 }
 
 export interface DemoInvoiceLine {
+  /** Line category as contractor invoices group them, e.g. 'Service', 'Shop time'. */
+  category?: string
   description: string
   unitPrice: number
   qty: number

@@ -13,6 +13,7 @@ import type { TenantConfig } from '@/lib/local-os/tenant-types'
 import { FIRE_PROTECTION } from '@/lib/local-os/verticals/fire-protection'
 
 const BRAND = '/os/nemesis-fire/brand'
+const MEDIA = '/os/nemesis-fire/media'
 
 export const NEMESIS_FIRE: TenantConfig = {
   slug: 'nemesis-fire',
@@ -31,6 +32,7 @@ export const NEMESIS_FIRE: TenantConfig = {
     primaryDark: '#A30404',
     surface: '#111111',
     light: '#FAFAFA',
+    typography: 'industrial',
     logos: {
       wordmarkOnLight: `${BRAND}/nemesis-wordmark-color-dark.svg`,
       wordmarkOnDark: `${BRAND}/nemesis-wordmark-color-light.svg`,
@@ -52,22 +54,46 @@ export const NEMESIS_FIRE: TenantConfig = {
     credibility: [
       'California C16 fire protection contractor · Lic# 1036129',
       'Serving Santa Rosa and the North Bay since 2020',
-      'Inspection, maintenance, repair and 24/7 emergency repair',
+      'Inspection, testing, maintenance and repair for residential and commercial properties',
     ],
     serviceAreas: ['Santa Rosa', 'Sonoma County', 'the greater North Bay'],
     emergencyLine: 'Sprinkler leaking or system activated? Call the office now.',
     aboutTitle: 'Providing Solutions, Not Just Services.',
     aboutBody:
-      'Nemesis Fire is a team of licensed fire protection professionals serving Santa Rosa, Sonoma County, and the greater North Bay area. We provide full-scale fire prevention solutions — from system design and installation to inspection, maintenance, and 24/7 emergency repair.',
+      'Nemesis Fire is a team of licensed fire protection professionals serving Santa Rosa, Sonoma County, and the greater North Bay area. We provide fire prevention solutions — from system installation to inspection, testing, maintenance and repair.',
     process: [
       { title: 'Request service', body: 'Tell us about your property and what you need.' },
       { title: 'Schedule an appointment', body: 'We come to your site at a time that works for you.' },
       { title: 'Problem solved', body: 'We diagnose and resolve the issue, with a full report and recommendations for ongoing protection.' },
     ],
   },
+  // Only the client's own job photography (curated package, 2026-10-11). Near-duplicates
+  // (extinguisher-truck-02, gallery-03) are deliberately unused. Metadata stripped on import.
+  media: {
+    hero: { src: `${MEDIA}/hero-pump-room.jpg`, alt: 'Nemesis Fire technician recording readings beside a fire pump', focus: '62% 50%' },
+    about: { src: `${MEDIA}/technician-sprinkler.jpg`, alt: 'Nemesis Fire technician working on a sprinkler riser', focus: '50% 30%' },
+    lanes: {
+      sprinkler: { src: `${MEDIA}/pump-room-wide-01.jpg`, alt: 'Technician servicing fire sprinkler piping in a pump room', focus: '40% 45%' },
+      backflow: { src: `${MEDIA}/backflow-valve.jpg`, alt: 'Technician at a sprinkler riser and backflow assembly in the field', focus: '55% 40%' },
+      extinguisher: { src: `${MEDIA}/extinguisher-truck-01.jpg`, alt: 'Fire extinguishers being serviced from the Nemesis Fire service van', focus: '50% 60%' },
+      emergency: { src: `${MEDIA}/gallery-01.jpg`, alt: 'Overhead fire sprinkler pipe run', focus: '50% 40%' },
+    },
+    gallery: [
+      { src: `${MEDIA}/backflow-field.jpg`, alt: 'Backflow assembly test in a vineyard', caption: 'Backflow assembly · field test', focus: '50% 45%' },
+      { src: `${MEDIA}/gallery-02.jpg`, alt: 'Technician servicing a fire extinguisher', caption: 'Extinguisher service', focus: '55% 40%' },
+      { src: `${MEDIA}/gallery-04.jpg`, alt: 'Technician at a fire pump controller', caption: 'Fire pump room', focus: '50% 45%' },
+      { src: `${MEDIA}/nemesis-service-truck.jpg`, alt: 'Nemesis Fire service truck', caption: 'Service truck', focus: '50% 55%' },
+      { src: `${MEDIA}/pump-room-wide-02.jpg`, alt: 'Technician documenting a fire pump inspection', caption: 'Inspection documentation', focus: '45% 50%' },
+    ],
+    videos: [
+      { src: `${MEDIA}/sprinkler-inspection-loop.mp4`, poster: `${MEDIA}/sprinkler-inspection-loop-poster.jpg`, caption: 'New sprinkler pipe run · roof framing' },
+      { src: `${MEDIA}/riser-service-loop.mp4`, poster: `${MEDIA}/riser-service-loop-poster.jpg`, caption: 'Hose and valve work in the field' },
+      { src: `${MEDIA}/field-equipment-loop.mp4`, poster: `${MEDIA}/field-equipment-loop-poster.jpg`, caption: 'Test equipment staged at the truck' },
+    ],
+  },
   tour: [
     { label: 'Customer website', detail: 'Branded homepage with emergency direction and request CTA', path: '' },
-    { label: 'Service detail', detail: 'Sprinkler inspection and testing', path: '/services/sprinkler-inspection' },
+    { label: 'Service detail', detail: 'Fire sprinkler systems', path: '/services/fire-sprinkler-systems' },
     { label: 'Request service', detail: 'Guided intake: property, service, urgency, contact', path: '/request' },
     { label: 'Estimate approval', detail: 'Customer reviews and approves recommended repairs', path: '/estimate/Q-203' },
     { label: 'Job status', detail: 'Request → scheduled → report → approved → complete → invoice', path: '/status/L-107' },
@@ -179,7 +205,7 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
           { label: 'Backflow test: RP assembly', unit: 'device', qty: 1, unitPrice: 125 },
           { label: 'Backflow test: DC / DCDA assembly', unit: 'device', qty: 1, unitPrice: 110 },
           { label: 'Backflow test: PVB assembly', unit: 'device', qty: 1, unitPrice: 95 },
-          { label: 'Water purveyor report submission', unit: 'device', qty: 3, unitPrice: 15 },
+          { label: 'Test reports submitted to the water purveyor', unit: 'submission', qty: 1, unitPrice: 40 },
         ],
         status: 'accepted', reviewedBy: 'Alex (sample sign-off)', reviewNote: 'Confirmed assembly count by phone.', fromReportId: null,
         customerApproval: 'Sample School Office',
@@ -201,7 +227,7 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         scope: 'Annual test of two backflow assemblies with water purveyor report submission.',
         lines: [
           { label: 'Backflow test: DC / DCDA assembly', unit: 'device', qty: 2, unitPrice: 110 },
-          { label: 'Water purveyor report submission', unit: 'device', qty: 2, unitPrice: 15 },
+          { label: 'Test reports submitted to the water purveyor', unit: 'submission', qty: 1, unitPrice: 40 },
         ],
         status: 'accepted', reviewedBy: 'Alex (sample sign-off)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Facilities Director',
       },
@@ -256,17 +282,27 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
           buildingType: 'Healthcare / care facility', details: 'Two stories · approx. 14,000 sq ft (sample)',
         },
         technician: { name: TECH.name, credential: 'Technician (sample)' },
-        systems: [{ id: 'Riser 1', type: 'Wet pipe', location: 'Riser room, rear corridor', notes: 'Single zone (sample)' }],
+        cover: {
+          occupancyClass: 'B (sample)', constructionType: 'V-B (sample)', stories: '2', yearBuilt: '2004 (sample)', jobNumber: 'SAMPLE-0501',
+          systemsInspected: [
+            { system: 'Automatic sprinkler system', status: 'attention' },
+            { system: 'Standpipe and hose system', status: 'na' },
+            { system: 'Fire pump', status: 'na' },
+          ],
+        },
+        systems: [{ id: 'Riser 1', type: 'Wet pipe', location: 'Riser room, rear corridor', notes: 'Main drain test', staticPsi: '68', residualPsi: '61', result: 'pass' }],
         items: five.map((label) => ({
           label,
-          result: /Visible sprinklers/.test(label) ? 'fail' : /Gauges/.test(label) ? 'attention' : /Spare sprinkler/.test(label) ? 'attention' : 'pass',
-          note: /Visible sprinklers/.test(label)
+          result: /Sprinklers, pipe/.test(label) ? 'fail' : /Gauges/.test(label) ? 'attention' : /Spare sprinklers/.test(label) ? 'attention' : 'pass',
+          note: /Sprinklers, pipe/.test(label)
             ? 'Four heads corroded in the rear stairwell.'
             : /Gauges/.test(label)
               ? 'System-side gauge reading erratic; recommend replacement.'
-              : /Spare sprinkler/.test(label)
+              : /Spare sprinklers/.test(label)
                 ? 'Cabinet stocked; wrench missing.'
-                : '',
+                : /alarm test/.test(label)
+                  ? 'Alarm at 48 seconds (sample).'
+                  : '',
         })),
         assemblies: [],
         deficiencies: ['Four corroded sprinkler heads, rear stairwell', 'System-side gauge reading erratic', 'Spare-head cabinet wrench missing'],
@@ -285,9 +321,9 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         systems: [],
         items: [],
         assemblies: [
-          { id: 'A1', type: 'RP', size: '2"', make: 'Sample Make', model: 'RP-200', serial: 'SN-SAMPLE-001', location: 'North gate enclosure', check1: '', check2: '', relief: '', result: 'pending' },
-          { id: 'A2', type: 'DCDA', size: '4"', make: 'Sample Make', model: 'DCDA-400', serial: 'SN-SAMPLE-002', location: 'Boiler room', check1: '', check2: '', relief: '', result: 'pending' },
-          { id: 'A3', type: 'PVB', size: '1"', make: 'Sample Make', model: 'PVB-100', serial: 'SN-SAMPLE-003', location: 'Irrigation, by the field', check1: '', check2: '', relief: '', result: 'pending' },
+          { id: 'A1', type: 'RP', size: '2"', make: 'Sample Make', model: 'RP-200', serial: 'SN-SAMPLE-001', location: 'North gate enclosure', check1: '', check2: '', relief: '', result: 'pending', meterNo: 'M-SAMPLE-11', linePressure: '' },
+          { id: 'A2', type: 'DCDA', size: '4"', make: 'Sample Make', model: 'DCDA-400', serial: 'SN-SAMPLE-002', location: 'Boiler room', check1: '', check2: '', relief: '', result: 'pending', meterNo: 'M-SAMPLE-12', linePressure: '' },
+          { id: 'A3', type: 'PVB', size: '1"', make: 'Sample Make', model: 'PVB-100', serial: 'SN-SAMPLE-003', location: 'Irrigation, by the field', check1: '', check2: '', relief: '', result: 'pending', meterNo: 'M-SAMPLE-13', linePressure: '' },
         ],
         deficiencies: [],
         overall: 'pending',
@@ -305,8 +341,8 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         systems: [],
         items: [],
         assemblies: [
-          { id: 'A1', type: 'DCDA', size: '6"', make: 'Sample Make', model: 'DCDA-600', serial: 'SN-SAMPLE-101', location: 'Street frontage, fire service', check1: '2.4 psid (sample)', check2: '1.6 psid (sample)', relief: 'n/a', result: 'pass' },
-          { id: 'A2', type: 'DC', size: '2"', make: 'Sample Make', model: 'DC-200', serial: 'SN-SAMPLE-102', location: 'Street frontage, domestic', check1: '2.1 psid (sample)', check2: '1.4 psid (sample)', relief: 'n/a', result: 'pass' },
+          { id: 'A1', type: 'DCDA', size: '6"', make: 'Sample Make', model: 'DCDA-600', serial: 'SN-SAMPLE-101', location: 'Street frontage, fire service', check1: '2.4 psid (sample)', check2: '1.6 psid (sample)', relief: 'n/a', result: 'pass', meterNo: 'M-SAMPLE-21', linePressure: '64 psi (sample)', testedBy: 'Sample Technician · cert. SAMPLE-0000' },
+          { id: 'A2', type: 'DC', size: '2"', make: 'Sample Make', model: 'DC-200', serial: 'SN-SAMPLE-102', location: 'Street frontage, domestic', check1: '2.1 psid (sample)', check2: '1.4 psid (sample)', relief: 'n/a', result: 'pass', meterNo: 'M-SAMPLE-22', linePressure: '64 psi (sample)', testedBy: 'Sample Technician · cert. SAMPLE-0000' },
         ],
         deficiencies: [],
         overall: 'pass',
@@ -320,10 +356,10 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         id: 'I-401', sample: true, jobId: 'J-301', number: 'INV-1041 (sample)', siteAddress: '500 Sample Road, Sebastopol, CA',
         billTo: 'Sample Charter School (sample)', issueDate: day(0), dueDate: day(30),
         lines: [
-          { description: 'Backflow test: RP assembly', unitPrice: 125, qty: 1 },
-          { description: 'Backflow test: DC / DCDA assembly', unitPrice: 110, qty: 1 },
-          { description: 'Backflow test: PVB assembly', unitPrice: 95, qty: 1 },
-          { description: 'Water purveyor / city report submission', unitPrice: 15, qty: 3 },
+          { category: 'Service', description: 'Backflow test: RP assembly', unitPrice: 125, qty: 1 },
+          { category: 'Service', description: 'Backflow test: DC / DCDA assembly', unitPrice: 110, qty: 1 },
+          { category: 'Service', description: 'Backflow test: PVB assembly', unitPrice: 95, qty: 1 },
+          { category: 'Shop time', description: 'Test reports submitted to the water purveyor', unitPrice: 40, qty: 1 },
         ],
         amountPaid: 0, status: 'draft', reportIds: ['R-502'], followUp: 'Send after the backflow report is reviewed',
       },
@@ -331,9 +367,11 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         id: 'I-403', sample: true, jobId: 'J-304', number: 'INV-1043 (sample)', siteAddress: '700 Sample Medical Drive, Santa Rosa, CA',
         billTo: 'Sample Medical Offices (sample)', issueDate: day(-6), dueDate: day(24),
         lines: [
-          { description: 'Five-year water-based sprinkler inspection', unitPrice: 650, qty: 1 },
-          { description: 'Sprinkler head cleaning', unitPrice: 10, qty: 6 },
-          { description: 'Cover plate replacement', unitPrice: 8, qty: 2 },
+          { category: 'Service', description: 'Five-year water-based sprinkler inspection', unitPrice: 650, qty: 1 },
+          { category: 'Service', description: 'Gauge replacement', unitPrice: 40, qty: 1 },
+          { category: 'Service', description: 'Sprinkler head cleaning', unitPrice: 10, qty: 6 },
+          { category: 'Service', description: 'Cover plate replacement', unitPrice: 8, qty: 2 },
+          { category: 'Service', description: 'Extinguisher annual service', unitPrice: 12, qty: 4 },
         ],
         amountPaid: 0, status: 'sent', reportIds: ['R-501'], followUp: 'Due in 24 days; reminder at 7 days before due (a person sends it)',
       },
@@ -341,10 +379,10 @@ export function seedNemesisFire(now: Date = new Date()): DemoState {
         id: 'I-404', sample: true, jobId: 'J-305', number: 'INV-1038 (sample)', siteAddress: '800 Sample Oaks Court, Healdsburg, CA',
         billTo: 'Sample Senior Living (sample)', issueDate: day(-20), dueDate: day(10),
         lines: [
-          { description: 'Backflow test: DC / DCDA assembly', unitPrice: 110, qty: 2 },
-          { description: 'Water purveyor / city report submission', unitPrice: 15, qty: 2 },
+          { category: 'Service', description: 'Backflow test: DC / DCDA assembly', unitPrice: 110, qty: 2 },
+          { category: 'Shop time', description: 'Test reports submitted to the water purveyor', unitPrice: 40, qty: 1 },
         ],
-        amountPaid: 250, status: 'paid', reportIds: ['R-503'], followUp: 'Paid in full (sample)',
+        amountPaid: 260, status: 'paid', reportIds: ['R-503'], followUp: 'Paid in full (sample)',
       },
       {
         id: 'I-398', sample: true, jobId: 'J-299', number: 'INV-1031 (sample)', siteAddress: '900 Sample Market Street, Santa Rosa, CA',

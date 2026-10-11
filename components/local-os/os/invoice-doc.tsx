@@ -36,8 +36,8 @@ export function InvoiceDoc({ id, mode }: { id: string; mode: 'customer' | 'offic
         </div>
         <div className="mt-5 overflow-x-auto">
           <table className="w-full min-w-[460px] text-sm">
-            <thead className="border-b border-slate-200 text-left text-xs text-slate-500"><tr><th className="py-2">Description</th><th className="text-right">Unit price</th><th className="text-right">Qty</th><th className="text-right">Amount</th></tr></thead>
-            <tbody>{inv.lines.map((l, i) => (<tr key={i} className="border-b border-slate-100"><td className="py-2">{l.description}</td><td className="text-right">{money(l.unitPrice)}</td><td className="text-right">{l.qty}</td><td className="text-right tabular-nums">{money(l.unitPrice * l.qty)}</td></tr>))}</tbody>
+            <thead className="border-b border-slate-200 text-left text-xs text-slate-500"><tr><th className="py-2">Item</th><th>Description</th><th className="text-right">Unit price</th><th className="text-right">Qty</th><th className="text-right">Amount</th></tr></thead>
+            <tbody>{inv.lines.map((l, i) => (<tr key={i} className="border-b border-slate-100 align-top"><td className="py-2 pr-2 text-slate-600">{l.category ?? 'Service'}</td><td className="py-2">{i + 1}. {l.description}</td><td className="py-2 text-right">{money(l.unitPrice)}</td><td className="py-2 text-right">{String(l.qty).padStart(2, '0')}</td><td className="py-2 text-right tabular-nums">{money(l.unitPrice * l.qty)}</td></tr>))}</tbody>
           </table>
         </div>
         <dl className="ml-auto mt-3 grid w-full max-w-xs grid-cols-2 gap-y-1 text-sm">
@@ -50,7 +50,8 @@ export function InvoiceDoc({ id, mode }: { id: string; mode: 'customer' | 'offic
           <div>
             <p className="font-semibold text-slate-900">{tenant.name}</p>
             <p>{tenant.license}</p>
-            <p>Technician: {job?.technician ?? '—'} (sample)</p>
+            <p>Technician: {job?.technician ?? '—'} (sample) · technician certifications shown on live invoices</p>
+            <p className="mt-2 text-slate-500">Payment instructions appear here on live invoices.</p>
           </div>
           <div className="sm:text-right">
             <p>Work order: {job ? (mode === 'office' ? <Link className="underline" href={osHref(s, `/office/jobs/${job.id}`)}>{job.number}</Link> : job.number) : '—'}</p>

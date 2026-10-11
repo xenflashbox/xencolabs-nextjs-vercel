@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Check } from 'lucide-react';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { Lifecycle } from '@/components/local-os/os/preview/lifecycle';
 import { SampleBadge, money, osHref, when } from '@/components/local-os/os/ui';
 import { journeyFor, lineTotal } from '@/lib/local-os/journey';
 
@@ -30,25 +30,9 @@ export function SiteStatus({ id }: { id: string }) {
         ) : null}
       </div>
 
-      <ol className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        {j.steps.map((st, i) => (
-          <li key={st.id} className="relative flex gap-4 pb-6 last:pb-0">
-            {i < j.steps.length - 1 ? <span aria-hidden className={`absolute left-[15px] top-8 h-[calc(100%-2rem)] w-0.5 ${st.done ? 'bg-[var(--brand)]' : 'bg-slate-200'}`} /> : null}
-            <span className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${st.done ? 'bg-[var(--brand)] text-white' : st.current ? 'border-2 border-[var(--brand)] bg-white text-[var(--brand-dark)]' : 'bg-slate-200 text-slate-500'}`}>
-              {st.done ? <Check className="h-4 w-4" /> : i + 1}
-            </span>
-            <div>
-              <p className={`font-semibold ${st.done || st.current ? '' : 'text-slate-500'}`}>{st.label}</p>
-              <p className="text-sm text-slate-600">{st.detail}</p>
-              {st.href && (st.done || st.current) ? (
-                <Link href={osHref(s, st.href)} className="mt-1 inline-block text-sm font-semibold text-[var(--brand-dark)] underline">
-                  {st.id === 'approved' && !st.done ? 'Review and approve the estimate' : st.id === 'invoiced' ? 'View invoice' : st.id === 'approved' ? 'View estimate' : 'View report'}
-                </Link>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ol>
+      <div className="border border-neutral-300 bg-white p-6">
+        <Lifecycle slug={s} name={vertical.lifecycleName} stages={j.steps} variant="status" />
+      </div>
 
       {j.quotes.filter((q) => ['sent', 'accepted'].includes(q.status)).length || j.invoices.filter((i) => i.status !== 'draft').length ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm shadow-sm">

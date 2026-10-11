@@ -20,7 +20,7 @@ export const FIRE_PROTECTION: VerticalPack = {
   lanes: [
     {
       id: 'sprinkler',
-      label: 'Fire sprinkler inspection and testing',
+      label: 'Fire sprinkler systems',
       short: 'Sprinklers',
       workTypes: [
         'Five-year inspection (NFPA 25 scope)',
@@ -33,7 +33,7 @@ export const FIRE_PROTECTION: VerticalPack = {
     },
     {
       id: 'backflow',
-      label: 'Backflow testing',
+      label: 'Backflow testing and certification',
       short: 'Backflow',
       workTypes: ['Annual backflow test', 'Test after repair or install', 'Assembly repair or replacement'],
     },
@@ -51,7 +51,7 @@ export const FIRE_PROTECTION: VerticalPack = {
     },
     {
       id: 'emergency',
-      label: 'Repairs and emergency work',
+      label: 'Emergency repairs',
       short: 'Repairs',
       workTypes: [
         'Active leak or broken pipe',
@@ -64,11 +64,12 @@ export const FIRE_PROTECTION: VerticalPack = {
   ],
   services: [
     {
-      slug: 'sprinkler-inspection',
+      slug: 'fire-sprinkler-systems',
       laneId: 'sprinkler',
-      title: 'Fire sprinkler inspection and testing',
+      code: '01',
+      title: 'Fire sprinkler systems',
       summary:
-        'Scheduled inspection and testing of water-based fire sprinkler systems, from annual visits to the five-year inspection, with a written report of what was found.',
+        'Inspection, testing and maintenance of water-based fire sprinkler systems, from annual visits to the five-year inspection, plus repairs and upgrades — with a written report of what was found.',
       includes: [
         'Annual, quarterly and five-year inspections (NFPA 25 scope)',
         'Riser, control valve and gauge checks',
@@ -87,14 +88,15 @@ export const FIRE_PROTECTION: VerticalPack = {
     {
       slug: 'backflow-testing',
       laneId: 'backflow',
-      title: 'Backflow testing',
+      code: '02',
+      title: 'Backflow testing and certification',
       summary:
-        'Testing of backflow prevention assemblies by a certified tester, with readings recorded for every assembly on the property.',
+        'Annual testing of backflow prevention assemblies by a certified tester, readings recorded for every assembly, and test reports prepared for submission to your water purveyor.',
       includes: [
         'Reduced pressure (RP), double check (DC/DCDA) and pressure vacuum breaker (PVB) assemblies',
         'Readings recorded per assembly: check valves and relief valve',
         'Make, model, serial and location captured for each device',
-        'Test results prepared for submission to your water purveyor where required',
+        'Test reports prepared for submission to your water purveyor or city where required',
       ],
       whatToExpect: [
         'Tell us how many assemblies and where they are; we bring the right test kit.',
@@ -106,6 +108,7 @@ export const FIRE_PROTECTION: VerticalPack = {
     {
       slug: 'extinguisher-service',
       laneId: 'extinguisher',
+      code: '03',
       title: 'Fire extinguisher service',
       summary:
         'Inspection, maintenance, recharging and replacement of portable fire extinguishers at your location.',
@@ -122,9 +125,10 @@ export const FIRE_PROTECTION: VerticalPack = {
       reportKind: null,
     },
     {
-      slug: 'repairs-emergency',
+      slug: 'emergency-repairs',
       laneId: 'emergency',
-      title: 'Repairs and emergency work',
+      code: '04',
+      title: 'Emergency repairs',
       summary:
         'Repairs found during inspections, and urgent repairs when a system is leaking, has activated or is out of service.',
       includes: [
@@ -222,7 +226,7 @@ export const FIRE_PROTECTION: VerticalPack = {
     { laneId: 'sprinkler', label: 'Sprinkler head replacement', unit: 'head', sampleUnitPrice: 45 },
     { laneId: 'backflow', label: 'Backflow test: RP assembly', unit: 'device', sampleUnitPrice: 125 },
     { laneId: 'backflow', label: 'Backflow test: DC / DCDA assembly', unit: 'device', sampleUnitPrice: 110 },
-    { laneId: 'backflow', label: 'Water purveyor report submission', unit: 'device', sampleUnitPrice: 15 },
+    { laneId: 'backflow', label: 'Test reports submitted to the water purveyor', unit: 'submission', sampleUnitPrice: 40 },
     { laneId: 'emergency', label: 'Emergency call-out', unit: 'visit', sampleUnitPrice: 195 },
     { laneId: 'emergency', label: 'Repair labor', unit: 'hour', sampleUnitPrice: 145 },
     { laneId: 'extinguisher', label: 'Extinguisher annual service', unit: 'unit', sampleUnitPrice: 12 },
@@ -269,23 +273,27 @@ export const FIRE_PROTECTION: VerticalPack = {
     {
       id: 'admin',
       label: 'Reports and submissions',
-      items: [{ description: 'Water purveyor / city report submission', unit: 'device', sampleUnitPrice: 15 }],
+      items: [{ description: 'Test reports submitted to the water purveyor', unit: 'submission', sampleUnitPrice: 40 }],
     },
   ],
   reportTemplates: [
     {
       kind: 'sprinkler_5yr',
       title: 'Five-year fire sprinkler inspection',
+      // Inspection (I), Test (T), Maintenance (M) items, grouped the way a five-year report includes
+      // all quarterly and annual items. Labels only — no code citations, no compliance statements.
       items: [
-        'Control valves: position, supervision, accessibility',
-        'Riser and main drain test',
-        'Gauges: condition and readings',
-        'Alarm devices: water-flow and tamper',
-        'Fire department connection: caps, swivels, signage',
-        'Visible sprinklers: condition, obstruction, corrosion, paint',
-        'Spare sprinkler cabinet and wrench',
-        'Internal pipe assessment (five-year)',
-        'Hydraulic placard and signage',
+        'I · Control valves: identification signs and inspection',
+        'I · Water-flow alarm and supervisory devices',
+        'I · Gauges and water supply pressure readings',
+        'I · Hydraulic design information sign',
+        'I · Spare sprinklers and wrench',
+        'I · Fire department connections',
+        'I · Sprinklers, pipe, fittings and hangers',
+        'T · Water-flow alarm test (time to alarm)',
+        'T · Main drain test',
+        'T · Control valve position and operation',
+        'M · Internal pipe assessment (five-year)',
       ],
       deliverTo: ['owner', 'ahj'],
     },
@@ -297,13 +305,14 @@ export const FIRE_PROTECTION: VerticalPack = {
       deliverTo: ['owner', 'ahj'],
     },
   ],
+  lifecycleName: 'Protection lifecycle',
   customerSteps: [
-    { id: 'received', label: 'Request received', detail: 'The office has your request and will call you.' },
-    { id: 'scheduled', label: 'Inspection scheduled', detail: 'A technician visit is booked.' },
-    { id: 'report', label: 'Report / estimate', detail: 'Your report or estimate is ready to review.' },
-    { id: 'approved', label: 'Approved work', detail: 'You approved the recommended work.' },
-    { id: 'completed', label: 'Completion', detail: 'The work is complete and reviewed by the office.' },
-    { id: 'invoiced', label: 'Invoice', detail: 'Your invoice is ready.' },
+    { id: 'received', label: 'Request', detail: 'You tell us about the property; the office calls back to confirm scope and a time.', sample: '/request' },
+    { id: 'scheduled', label: 'Inspect', detail: 'A technician inspects and tests on site and records every item.', sample: '/tech/J-301' },
+    { id: 'report', label: 'Report', detail: 'The licensed contractor reviews the findings; you receive the report.', sample: '/report/R-501' },
+    { id: 'approved', label: 'Approve repairs', detail: 'Recommended corrections come as an estimate you approve before work starts.', sample: '/estimate/Q-203' },
+    { id: 'completed', label: 'Complete', detail: 'Repairs done, before/after photos taken, completion reviewed by the office.', sample: '/report/R-503' },
+    { id: 'invoiced', label: 'Invoice', detail: 'One invoice linked to the work order and the report packet.', sample: '/invoice/I-403' },
   ],
   guardrails: {
     quote:
@@ -314,7 +323,7 @@ export const FIRE_PROTECTION: VerticalPack = {
       'Emergencies go to a person by phone. Online requests never dispatch a crew or decide whether a system is safe.',
     completion:
       'The completion report is a record of work performed and photos taken. It is not an inspection certification.',
-    document: 'Sample preview — not a certification, invoice, or official filing.',
+    document: 'Sample preview — not an official report, certification, invoice, or filing.',
   },
   reportSections: ['Scope performed', 'Technician observations', 'Before and after photos', 'Follow-up recommended by the contractor'],
 }
