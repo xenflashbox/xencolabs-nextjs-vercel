@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  experimental: {
+    typedRoutes: true,
+    // Link-preview cards read their bundled fonts from disk at request time.
+    outputFileTracingIncludes: {
+      '/lp/[token]/share-image': ['./lib/local-os/og/fonts/**'],
+      '/os/[tenant]/share-image': ['./lib/local-os/og/fonts/**'],
+    },
+  },
 
   // Payload CMS media hosts for the blog (featured images, hero images,
   // author avatars, editorial image blocks). See the payload-blog-template

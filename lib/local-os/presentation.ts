@@ -15,3 +15,11 @@ const PRESENTATION_HOSTS = (process.env.LOCAL_OS_PRESENTATION_HOSTS || 'preview.
 export function presentationHostAllowed(host: string | null): boolean {
   return PRESENTATION_HOSTS.includes((host || '').toLowerCase());
 }
+
+/**
+ * URL base for a tenant's preview: the clean `/<slug>` on the presentation deployment (middleware
+ * rewrites it to `/os/<slug>`), `/os/<slug>` everywhere else. Server- and client-safe.
+ */
+export function osBase(slug: string): string {
+  return PRESENTATION_TENANT === slug ? `/${slug}` : `/os/${slug}`;
+}
