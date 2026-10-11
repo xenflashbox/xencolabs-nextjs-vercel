@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
+import sharp from 'sharp';
 
 /**
  * Link-preview (Open Graph / Twitter) card for Local OS preview sites: 1200×630, the preview's own
@@ -60,13 +61,17 @@ export async function toDataUrl(url: string | null | undefined, timeoutMs = 4000
 
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
 
-export async function renderShareCard(c: ShareCard, headers: Record<string, string> = {}): Promise<ImageResponse> {
+/**
+ * Renders the card and returns it as a progressive JPEG: photo cards are ~1 MB as PNG, while some
+ * unfurlers (WhatsApp) skip images over ~300 KB.
+ */
+export async function renderShareCard(c: ShareCard, headers: Record<string, string> = {}): Promise<Response> {
   const title = clip(c.title, 90);
   const titleSize = title.length > 60 ? 64 : title.length > 40 ? 76 : 88;
   const points = (c.points ?? []).slice(0, 3).map((p) => clip(p, 64));
   const panel = !c.photo && points.length > 0;
 
-  return new ImageResponse(
+  const png = new ImageResponse(
     (
       <div style={{ display: 'flex', position: 'relative', width: '100%', height: '100%', background: c.surface, color: '#fff', fontFamily: 'Body' }}>
         {c.photo ? (
@@ -122,10 +127,15 @@ export async function renderShareCard(c: ShareCard, headers: Record<string, stri
         </div>
       </div>
     ),
-    {
-      ...SHARE_CARD_SIZE,
-      fonts: await loadFonts(),
-      headers: { 'Cache-Control': 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400', ...headers },
-    },
+    { ...SHARE_CARD_SIZE, fonts: await loadFonts() },
   );
+  const jpeg = await sharp(Buffer.from(await png.arrayBuffer())).jpeg({ quality: 82, progressive: true, mozjpeg: true }).toBuffer();
+  return new Response(new Uint8Array(jpeg), {
+    headers: {
+      'Content-Type': 'image/jpeg',
+      'Content-Length': String(jpeg.byteLength),
+      'Cache-Control': 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400',
+      ...headers,
+    },
+  });
 }
