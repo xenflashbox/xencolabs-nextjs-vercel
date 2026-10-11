@@ -279,3 +279,77 @@ RESULT: all media loaded through the private route
   `nemesis-media-hardening.md`.
 - Videos were verified in Google Chrome 155. Playwright's bundled Chromium has no H.264 decoder
   (`canPlayType` returns `""`, error 4), so it cannot confirm video playback.
+
+
+---
+
+## Least-privilege cleanup (2026-10-11, after the OG-image work)
+
+This supersedes the "Environment mapping" table above.
+
+| Infisical (`xencolabs-fe-site`) | Sync | Vercel |
+|---|---|---|
+| Staging `/tenant-media`: `R2_TENANT_MEDIA_ACCOUNT_ID`, `_BUCKET`, `_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` (the only Staging copy) | `xenco-preview-r2-media` (auto-sync, **destination deletion disabled**) | `xenco-preview` → **Preview** → branch `feat/local-os-tenant-nemesis-fire` |
+| Staging `/frontend`: no `R2_TENANT_MEDIA_*` | `preview-sync` (destination deletion enabled) | `xencolabs` → Preview: no `R2_*` in any target |
+
+- `R2_TENANT_MEDIA_ACCOUNT_API_TOKEN`: removed from Staging `/frontend` (by the founder). It is
+  absent from every Infisical environment and from every target of both Vercel projects.
+- The four values were moved to `/tenant-media`, copied server-side and hash-verified. The old
+  `/xenco-preview` reference folder and the four `/frontend` copies were deleted.
+- The four variables are no longer in `xencolabs` Preview. `preview-sync` propagated the
+  `/frontend` deletions, and a check of every target confirms none remain.
+- **Production:** unset in both `xencolabs` and `xenco-preview`.
+- **Still present, not synced anywhere:**
+  - Development `/frontend` holds the four values.
+  - Production `/frontend` holds `R2_TENANT_MEDIA_ACCOUNT_ID`, which is an account identifier, not
+    a credential.
+  - No sync reads either location. They are left for the founder to decide.
+
+Verification (presence + SHA-256 comparison only; no values):
+
+```
+== Infisical xencolabs-fe-site: every R2_TENANT_MEDIA_* (names/paths only)
+   dev      [('/frontend', 'R2_TENANT_MEDIA_ACCESS_KEY_ID'), ('/frontend', 'R2_TENANT_MEDIA_ACCOUNT_ID'), ('/frontend', 'R2_TENANT_MEDIA_BUCKET'), ('/frontend', 'R2_TENANT_MEDIA_SECRET_ACCESS_KEY')]
+   staging  [('/tenant-media', 'R2_TENANT_MEDIA_ACCESS_KEY_ID'), ('/tenant-media', 'R2_TENANT_MEDIA_ACCOUNT_ID'), ('/tenant-media', 'R2_TENANT_MEDIA_BUCKET'), ('/tenant-media', 'R2_TENANT_MEDIA_SECRET_ACCESS_KEY')]
+   prod     [('/frontend', 'R2_TENANT_MEDIA_ACCOUNT_ID')]
+== Infisical secret syncs in this project
+   xenco-preview-r2-media   staging:/tenant-media   -> vercel xenco-preview preview branch=feat/local-os-tenant-nemesis-fire deletion=disabled status=succeeded
+   preview-sync             staging:/frontend       -> vercel xencolabs preview branch=(all) deletion=enabled status=succeeded
+== Vercel
+   xenco-preview: 4 R2_* vars
+      R2_TENANT_MEDIA_ACCESS_KEY_ID        target=['preview'] branch=feat/local-os-tenant-nemesis-fire hash==vault(/tenant-media): True
+      R2_TENANT_MEDIA_ACCOUNT_ID           target=['preview'] branch=feat/local-os-tenant-nemesis-fire hash==vault(/tenant-media): True
+      R2_TENANT_MEDIA_BUCKET               target=['preview'] branch=feat/local-os-tenant-nemesis-fire hash==vault(/tenant-media): True
+      R2_TENANT_MEDIA_SECRET_ACCESS_KEY    target=['preview'] branch=feat/local-os-tenant-nemesis-fire hash==vault(/tenant-media): True
+      Production R2_*: NONE
+   xencolabs: 0 R2_* vars (none, any target)
+      Production R2_*: NONE
+```
+
+## Rotation and revocation procedure (tenant-media read credential)
+
+The `xenco-preview-r2-media` sync **never deletes** Vercel variables. Updating a value
+propagates, but removing a secret from Infisical does **not** remove it from Vercel.
+
+**Rotate (new key, same names):**
+1. In Cloudflare R2, create the replacement token: Object Read only, bucket `xenco-tenant-media`.
+2. Update `R2_TENANT_MEDIA_ACCESS_KEY_ID` and `R2_TENANT_MEDIA_SECRET_ACCESS_KEY` in Staging
+   `/tenant-media`. The sync pushes the new values to `xenco-preview` Preview.
+3. Redeploy the presentation branch in `xenco-preview`. Env is read at build/boot, so running
+   deployments keep the old key until redeployed.
+4. Verify signed-out: `/os-media/nemesis-fire/media/hero-pump-room.jpg` → 302 to
+   `*.r2.cloudflarestorage.com`, and the image loads.
+5. Revoke the old token in Cloudflare. Recheck step 4 so that nothing depended on the old key.
+
+**Revoke or remove (stop serving media, or retire a variable):**
+1. Revoke the token in Cloudflare first. This is what actually cuts access.
+2. Delete the secret from Staging `/tenant-media`.
+3. **Explicitly delete the matching Vercel variable** in `xenco-preview` → Preview → branch
+   `feat/local-os-tenant-nemesis-fire`. The sync will not do it.
+4. Redeploy `xenco-preview` and confirm `/os-media/...` returns 503 (media not configured), not a
+   302.
+5. Check that no other project holds the name. The expected answer is none: `xencolabs` has no
+   `R2_*` variables.
+
+**Never** add these variables to a Production target, and never point `preview-sync`
+(`/frontend` → `xencolabs`) at `/tenant-media`.
