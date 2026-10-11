@@ -9,14 +9,32 @@
  * a compliance statement.
  */
 
+/**
+ * Where a logo is placed. Each surface maps to exactly one supplied asset, so a
+ * screen asks for "the mark for a compact dark header" rather than picking files.
+ */
+export type LogoSurface =
+  | 'wordmarkOnLight'
+  | 'wordmarkOnDark'
+  | 'shieldOnLight'
+  | 'shieldOnDark'
+  | 'wordmarkMonoBlack'
+  | 'wordmarkMonoWhite'
+  | 'shieldMonoBlack'
+  | 'shieldMonoWhite'
+  | 'favicon'
+
 export interface TenantBranding {
   /** Primary action / accent colour. */
   primary: string
+  /** Darker accent for text on light backgrounds and hover states. */
   primaryDark: string
   /** Header and dark-surface colour. */
   surface: string
-  logoOnDark: string
-  logoOnLight: string
+  /** Light page colour from the client's palette. */
+  light: string
+  /** Client-supplied assets, used as-is: never stretched, recoloured or combined. */
+  logos: Record<LogoSurface, string>
 }
 
 export interface TenantConfig {

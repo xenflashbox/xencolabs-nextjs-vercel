@@ -1,6 +1,7 @@
 'use client';
 
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { TenantLogo } from '@/components/local-os/os/tenant-logo';
 import { SampleBadge, when } from '@/components/local-os/os/ui';
 
 /**
@@ -26,6 +27,8 @@ export function CustomerStatus({ id }: { id: string }) {
   return (
     <div className="mx-auto max-w-md space-y-4">
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        {/* Light card: the colour-on-light wordmark. */}
+        <TenantLogo tenant={tenant} surface="wordmarkOnLight" height={40} className="mb-4" />
         <p className="flex items-center gap-2 text-xs text-slate-500"><SampleBadge /> Job status · {j.number}</p>
         <h1 className="mt-1 text-xl font-semibold">Hi {lead?.name?.split(' ')[0] ?? 'there'}, here is your {tenant.name} appointment</h1>
         <p className="mt-2 text-sm">{j.title}</p>

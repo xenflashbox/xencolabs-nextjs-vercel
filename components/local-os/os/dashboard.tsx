@@ -49,7 +49,7 @@ export function Dashboard() {
               {today.map((j) => (
                 <li key={j.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                   <div className="min-w-0">
-                    <p className="flex items-center gap-2 text-sm font-medium">
+                    <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       <SampleBadge /> {timeOnly(j.scheduledStart)} · {j.title}
                     </p>
                     <p className="text-xs text-slate-500">{lane(j.laneId)} · {j.technician} · {j.status.replace('_', ' ')}</p>
@@ -72,7 +72,7 @@ export function Dashboard() {
               {due.map((l) => (
                 <li key={l.id} className="py-2.5">
                   <Link href={osHref(s, `/requests?open=${l.id}`)} className="block">
-                    <p className="flex items-center gap-2 text-sm font-medium">
+                    <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       <SampleBadge /> {l.company ?? l.name}
                       <Pill tone={leadTone(l.status)}>{statusLabel(l.status)}</Pill>
                       {l.urgency === 'emergency' ? <Pill tone="red">Emergency</Pill> : null}
@@ -96,7 +96,7 @@ export function Dashboard() {
                 return (
                   <li key={q.id} className="flex items-center justify-between gap-2 py-2.5">
                     <div className="min-w-0">
-                      <p className="flex items-center gap-2 text-sm font-medium"><SampleBadge /> {q.number}</p>
+                      <p className="flex flex-wrap items-center gap-2 text-sm font-medium"><SampleBadge /> {q.number}</p>
                       <p className="truncate text-xs text-slate-500">{lead?.company ?? lead?.name} · {money(total)} (sample) · {q.status}</p>
                     </div>
                     <NavLink href={osHref(s, `/quotes/${q.id}`)}>Review</NavLink>
@@ -113,13 +113,13 @@ export function Dashboard() {
           <ul className="divide-y divide-slate-100 text-sm">
             {reports.map((j) => (
               <li key={j.id} className="flex items-center justify-between gap-2 py-2.5">
-                <span className="flex items-center gap-2"><SampleBadge /> {j.number}: completion report needs your sign-off</span>
+                <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {j.number}: completion report needs your sign-off</span>
                 <NavLink href={osHref(s, `/jobs/${j.id}`)}>Open</NavLink>
               </li>
             ))}
             {owed.map((i) => (
               <li key={i.id} className="flex items-center justify-between gap-2 py-2.5">
-                <span className="flex items-center gap-2">
+                <span className="flex flex-wrap items-center gap-2">
                   <SampleBadge /> {i.number} · {money(i.amount)}
                   <Pill tone={i.status === 'overdue' ? 'red' : 'slate'}>{i.status}</Pill>
                 </span>
@@ -136,7 +136,7 @@ export function Dashboard() {
           <ul className="divide-y divide-slate-100">
             {upcoming.map((j) => (
               <li key={j.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
-                <span className="flex items-center gap-2"><SampleBadge /> {when(j.scheduledStart)} · {j.title}</span>
+                <span className="flex flex-wrap items-center gap-2"><SampleBadge /> {when(j.scheduledStart)} · {j.title}</span>
                 <NavLink href={osHref(s, `/jobs/${j.id}`)}>Open</NavLink>
               </li>
             ))}

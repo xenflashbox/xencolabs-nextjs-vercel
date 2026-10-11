@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DemoProvider, useDemo } from '@/components/local-os/os/demo-store';
+import { TenantLogo } from '@/components/local-os/os/tenant-logo';
 import { osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 
@@ -36,8 +37,12 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
   ];
   return (
     <div
-      className="min-h-[100dvh] bg-slate-50 text-slate-900"
-      style={{ ['--brand' as string]: tenant.branding.primary, ['--brand-dark' as string]: tenant.branding.primaryDark }}
+      className="min-h-[100dvh] text-slate-900"
+      style={{
+        background: tenant.branding.light,
+        ['--brand' as string]: tenant.branding.primary,
+        ['--brand-dark' as string]: tenant.branding.primaryDark,
+      }}
     >
       <div role="note" className="sticky top-0 z-30 bg-amber-300 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
         Private alpha preview · sample data only · nothing is sent, booked, charged or certified
@@ -46,15 +51,23 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
         <header style={{ background: tenant.branding.surface }}>
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              {/* The client's own logo, from their public site. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={tenant.branding.logoOnDark} alt={tenant.name} className="h-10 w-10 shrink-0 object-contain" />
+              {/* Dark navigation: the colour-on-dark wordmark where there is room for it, the shield
+                  on narrow screens and on the compact technician and customer screens. */}
+              {isTech || isCustomer ? (
+                <TenantLogo tenant={tenant} surface="shieldOnDark" height={40} />
+              ) : (
+                <>
+                  <TenantLogo tenant={tenant} surface="shieldOnDark" height={40} className="sm:hidden" />
+                  <TenantLogo tenant={tenant} surface="wordmarkOnDark" height={36} className="hidden sm:block" />
+                </>
+              )}
               <div className="min-w-0 text-white">
-                <p className="truncate font-semibold">
+                <p className={`truncate font-semibold ${isTech || isCustomer ? '' : 'sm:sr-only'}`}>
                   {tenant.name}
                   {isTech ? ' · Technician' : isCustomer ? '' : ' · Office'}
                 </p>
                 <p className="truncate text-xs text-white/70">
+                  {isTech || isCustomer ? null : <span className="hidden sm:inline">Office · </span>}
                   {tenant.license ? `${tenant.license} · ` : ''}
                   {tenant.region}
                 </p>

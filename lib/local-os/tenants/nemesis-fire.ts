@@ -11,6 +11,8 @@ import type { DemoChecklistItem, DemoState } from '@/lib/local-os/demo-types'
 import type { TenantConfig } from '@/lib/local-os/tenant-types'
 import { FIRE_PROTECTION } from '@/lib/local-os/verticals/fire-protection'
 
+const BRAND = '/os/nemesis-fire/brand'
+
 export const NEMESIS_FIRE: TenantConfig = {
   slug: 'nemesis-fire',
   name: 'Nemesis Fire',
@@ -19,12 +21,25 @@ export const NEMESIS_FIRE: TenantConfig = {
   phone: '707-495-5051',
   region: 'Santa Rosa · Sonoma County · North Bay',
   verticalKey: FIRE_PROTECTION.key,
+  // Brand system supplied by the founder 2026-10-11 (charcoal #111111, fire red #D10505, white #FAFAFA).
+  // File names describe the ARTWORK colour, not the background: "color-light" has white letterforms
+  // and belongs on dark surfaces; "color-dark" has charcoal letterforms and belongs on light ones.
   branding: {
-    primary: '#DC2626',
-    primaryDark: '#B91C1C',
-    surface: '#111827',
-    logoOnDark: '/os/nemesis-fire/logo-white.svg',
-    logoOnLight: '/os/nemesis-fire/logo-color.svg',
+    primary: '#D10505',
+    primaryDark: '#A30404',
+    surface: '#111111',
+    light: '#FAFAFA',
+    logos: {
+      wordmarkOnLight: `${BRAND}/nemesis-wordmark-color-dark.svg`,
+      wordmarkOnDark: `${BRAND}/nemesis-wordmark-color-light.svg`,
+      shieldOnLight: `${BRAND}/nemesis-shield-color-dark.svg`,
+      shieldOnDark: `${BRAND}/nemesis-shield-color-light.svg`,
+      wordmarkMonoBlack: `${BRAND}/nemesis-wordmark-1c-black.svg`,
+      wordmarkMonoWhite: `${BRAND}/nemesis-wordmark-1c-white.svg`,
+      shieldMonoBlack: `${BRAND}/nemesis-shield-1c-black.svg`,
+      shieldMonoWhite: `${BRAND}/nemesis-shield-1c-white.svg`,
+      favicon: `${BRAND}/nemesis-shield-color-dark.svg`,
+    },
   },
   laneIds: ['sprinkler', 'emergency', 'extinguisher'],
   website: 'https://nemesisfire.com',
