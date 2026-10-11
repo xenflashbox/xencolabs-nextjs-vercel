@@ -43,7 +43,7 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
     });
     updateReport(r!.id, { followUpQuoteId: qid });
     updateLead(job.leadId, { nextAction: 'Review the follow-up estimate from the inspection' });
-    window.location.assign(`/os/${s}/office/quotes/${qid}`);
+    window.location.assign(osHref(s, `/office/quotes/${qid}`));
   }
 
   return (

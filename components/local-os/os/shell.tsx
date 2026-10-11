@@ -8,7 +8,7 @@ import { DemoTour } from '@/components/local-os/os/demo-tour';
 import { PreviewBar } from '@/components/local-os/os/preview/preview-bar';
 import { FIELD } from '@/components/local-os/os/preview/type';
 import { TenantLogo } from '@/components/local-os/os/tenant-logo';
-import { osHref } from '@/components/local-os/os/ui';
+import { osBase, osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 
 function ResetButton() {
@@ -34,7 +34,7 @@ function ResetButton() {
  */
 export function TenantShell({ tenant, children }: { tenant: TenantConfig; children: React.ReactNode }) {
   const path = usePathname() ?? '';
-  const base = `/os/${tenant.slug}`;
+  const base = osBase(tenant.slug);
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
   const office: [string, string][] = [
     ['/office', 'Dashboard'],

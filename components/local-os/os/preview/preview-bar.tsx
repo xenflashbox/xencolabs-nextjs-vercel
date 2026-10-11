@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PhoneCall } from 'lucide-react';
-import { osHref } from '@/components/local-os/os/ui';
+import { osBase, osHref } from '@/components/local-os/os/ui';
 import { FIELD } from '@/components/local-os/os/preview/type';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
@@ -15,7 +15,7 @@ import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
  */
 export function PreviewBar({ tenant }: { tenant: TenantConfig }) {
   const path = usePathname() ?? '';
-  const base = `/os/${tenant.slug}`;
+  const base = osBase(tenant.slug);
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
   const links: [string, string, string][] = [
     ['site', '', 'Website'],
@@ -25,7 +25,7 @@ export function PreviewBar({ tenant }: { tenant: TenantConfig }) {
   return (
     <div role="navigation" aria-label="Private preview" className="sticky top-0 z-40 border-b border-amber-500/40 bg-amber-300 text-amber-950">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5 text-xs">
-        <span className={`${FIELD} text-[10px] font-semibold`}>Private Xenco preview · sample data only</span>
+        <span className={`${FIELD} text-[10px] font-semibold`}>Private Xenco Labs concept preview for {tenant.name} · sample data only</span>
         <nav className="flex items-center gap-1">
           {links.map(([z, p, label]) => (
             <Link key={z} href={osHref(tenant.slug, p)} className={`rounded px-2 py-0.5 font-semibold ${zone === z ? 'bg-amber-950 text-amber-100' : 'hover:bg-amber-200'}`}>

@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Compass, X } from 'lucide-react';
-import { osHref } from '@/components/local-os/os/ui';
+import { osBase, osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 
 /** The guided story through the preview: customer site → request → documents → office → technician. */
 export function DemoTour({ tenant }: { tenant: TenantConfig }) {
   const path = usePathname() ?? '';
   const [open, setOpen] = useState(false);
-  const base = `/os/${tenant.slug}`;
+  const base = osBase(tenant.slug);
   const idx = tenant.tour.findIndex((t) => base + t.path === path);
   const next = tenant.tour[idx + 1];
   return (

@@ -14,8 +14,18 @@ export const timeOnly = (iso: string) => new Date(iso).toLocaleTimeString('en-US
 export const isToday = (iso: string) =>
   new Date(iso).toLocaleDateString('en-CA', { timeZone: TZ }) === new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 
+/**
+ * URL base for a tenant's preview. On the dedicated presentation deployment
+ * (NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT=<slug>, served at preview.xencolabs.com) the tenant
+ * lives at the clean path `/<slug>`; middleware rewrites it to `/os/<slug>`. Everywhere else it
+ * is `/os/<slug>`. Every in-preview link goes through here so navigation stays on the host.
+ */
+export function osBase(slug: string): string {
+  return process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT === slug ? `/${slug}` : `/os/${slug}`;
+}
+
 export function osHref(slug: string, path = ''): Route {
-  return `/os/${slug}${path}` as Route;
+  return `${osBase(slug)}${path}` as Route;
 }
 
 export function SampleBadge() {

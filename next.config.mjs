@@ -22,6 +22,8 @@ const nextConfig = {
   // Local OS tenant previews and their media are never indexed (also noindex meta + robots.txt).
   async headers() {
     const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, noimageindex' }];
+    // Presentation deployment (preview.xencolabs.com): every response is noindex, static files too.
+    if (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT) return [{ source: '/:path*', headers: noindex }];
     return [
       { source: '/os/:path*', headers: noindex },
       { source: '/os-media/:path*', headers: noindex },

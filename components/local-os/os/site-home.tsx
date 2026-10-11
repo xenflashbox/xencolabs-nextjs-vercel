@@ -156,7 +156,7 @@ export function SiteHome() {
       {/* BRIDGE — the operating system behind the site (private preview) */}
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <p className={`${FIELD} text-[11px] text-amber-300`}>Private Xenco preview</p>
+          <p className={`${FIELD} text-[11px] text-amber-300`}>Private Xenco Labs concept preview</p>
           <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>Behind this website: the operating system</h2>
           <p className="mt-3 max-w-2xl text-neutral-400">The same records, seen by the customer, the office and the technician. Sample data only.</p>
           <div className="mt-8 grid gap-px bg-neutral-800 md:grid-cols-3">

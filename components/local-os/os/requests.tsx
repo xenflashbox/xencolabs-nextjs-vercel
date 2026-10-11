@@ -88,7 +88,7 @@ export function Requests() {
                     {quote ? (
                       <NavLink href={osHref(s, `/office/quotes/${quote.id}`)}>Open {quote.number} ({money(quote.lines.reduce((a, x) => a + x.qty * x.unitPrice, 0))} sample)</NavLink>
                     ) : l.urgency !== 'emergency' ? (
-                      <button type="button" className="rounded-md bg-[var(--brand)] px-3 py-1.5 font-medium text-white" onClick={() => { const id = draftEstimate(l); window.location.assign(`/os/${s}/office/quotes/${id}`); }}>Draft estimate for review</button>
+                      <button type="button" className="rounded-md bg-[var(--brand)] px-3 py-1.5 font-medium text-white" onClick={() => { const id = draftEstimate(l); window.location.assign(osHref(s, `/office/quotes/${id}`)); }}>Draft estimate for review</button>
                     ) : null}
                   </div>
                 </div>

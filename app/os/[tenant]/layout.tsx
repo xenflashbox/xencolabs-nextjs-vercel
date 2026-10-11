@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 // headings and monospaced field labels. Loaded only under /os, never on the Xenco site.
 const display = Barlow_Condensed({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-display', display: 'swap' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono-field', display: 'swap' });
-const ROBOTS: Metadata['robots'] = { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } };
+const ROBOTS: Metadata['robots'] = { index: false, follow: false, noarchive: true, noimageindex: true, nocache: true, googleBot: { index: false, follow: false, noarchive: true, noimageindex: true } };
 
 /** Per-tenant tab title and favicon (the tenant's compact mark); always noindex. */
 export function generateMetadata({ params }: { params: { tenant: string } }): Metadata {
