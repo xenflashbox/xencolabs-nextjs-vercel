@@ -1,14 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse, type NextRequest } from 'next/server'
+import { PRESENTATION_TENANT, presentationHostAllowed } from '@/lib/local-os/presentation'
 
 /**
- * Dedicated presentation deployment (its own Vercel project, served at preview.xencolabs.com).
- * When NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT is set, this deployment serves ONLY that tenant's
- * preview, at the clean path /<slug>: `/` → 302 /<slug>, /<slug>/* is rewritten to /os/<slug>/*,
- * /os/<slug>/* redirects to the clean path, /os-media/* passes through to its gated route, and
- * everything else is a noindex 404. The general Xenco project never sets it.
+ * Presentation deployment only (see lib/local-os/presentation.ts). On an allowed host:
+ * `/` → 302 /<slug>, /<slug>/* is rewritten to /os/<slug>/*, /os/<slug>/* redirects to the clean
+ * path, /os-media/<slug>/* passes to its gated route, everything else is a noindex 404. Any other
+ * host is a 404 for every path.
  */
-const PRESENTATION_TENANT = process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT || ''
 const NOINDEX = 'noindex, nofollow, noarchive, noimageindex'
 
 function presentation(req: NextRequest): NextResponse {
@@ -16,7 +15,9 @@ function presentation(req: NextRequest): NextResponse {
   const { pathname, search } = req.nextUrl
   const url = req.nextUrl.clone()
   let res: NextResponse
-  if (pathname === '/') {
+  if (!presentationHostAllowed(req.headers.get('host'))) {
+    res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
+  } else if (pathname === '/') {
     url.pathname = `/${slug}`
     res = NextResponse.redirect(url, 302)
   } else if (pathname === `/${slug}` || pathname.startsWith(`/${slug}/`)) {
@@ -88,6 +89,8 @@ const isPublicRoute = createRouteMatcher([
 
 // Primary domain middleware configuration
 export default clerkMiddleware((auth, req) => {
+  // Public presentation paths are answered here, before any Clerk protection runs. This branch only
+  // exists on the dedicated presentation deployment; the Xenco site's auth policy below is unchanged.
   if (PRESENTATION_TENANT) return presentation(req)
 
   // For public routes, allow access
