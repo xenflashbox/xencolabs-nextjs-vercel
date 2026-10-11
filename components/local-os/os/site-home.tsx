@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { ArrowRight, PhoneCall } from 'lucide-react';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
-import { FieldVideo, TenantPhoto } from '@/components/local-os/os/preview/field-media';
+import { TenantPhoto } from '@/components/local-os/os/preview/field-media';
 import { Lifecycle } from '@/components/local-os/os/preview/lifecycle';
+import { ProofCard } from '@/components/local-os/os/preview/proof-card';
 import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { osHref } from '@/components/local-os/os/ui';
 import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
@@ -104,29 +105,23 @@ export function SiteHome() {
         </div>
       </section>
 
-      {/* FIELD RECORD — supporting proof, not a feed */}
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className={`${FIELD} text-[11px] text-neutral-500`}>Field record</p>
-            <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>Work on site</h2>
+      {/* REAL WORK — field proof tied to the system, not a gallery */}
+      {m.proof.length ? (
+        <section>
+          <div className="mx-auto max-w-6xl px-4 py-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className={`${FIELD} text-[11px] text-neutral-500`}>Real work</p>
+                <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>From the field to your file</h2>
+              </div>
+              <p className="max-w-md text-sm text-neutral-600">The work on site, and where it shows up: your request, the office, and the technician’s phone.</p>
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {m.proof.map((item, i) => <ProofCard key={item.id} slug={s} item={item} index={i} />)}
+            </div>
           </div>
-          <p className="max-w-md text-sm text-neutral-600">Short silent clips and photos from {tenant.name} jobs.</p>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {m.videos.map((v, i) => (
-            <FieldVideo key={v.src} video={v} label={`Clip ${String(i + 1).padStart(2, '0')}`} />
-          ))}
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-5">
-          {m.gallery.map((g) => (
-            <figure key={g.src} className="bg-white">
-              <TenantPhoto image={g} sizes="(min-width:768px) 20vw, 50vw" className="aspect-[4/5] w-full" />
-              {g.caption ? <figcaption className={`${FIELD} px-2 py-2 text-[10px] text-neutral-500`}>{g.caption}</figcaption> : null}
-            </figure>
-          ))}
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* ABOUT — spec-sheet credibility, only what the client publishes */}
       <section className="border-y border-neutral-300 bg-white">

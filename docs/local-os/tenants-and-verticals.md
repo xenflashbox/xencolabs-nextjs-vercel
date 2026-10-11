@@ -40,9 +40,23 @@ is never offered for emergencies; emergencies always point to the tenant's own o
 | `DocFrame` | Letterhead + top/bottom banner + watermark for every sample document |
 | `type.ts` | `DISPLAY` / `FIELD` type tokens; with `branding.typography: 'industrial'` they resolve to Barlow Condensed + IBM Plex Mono (loaded only under `/os`) |
 
-Tenant media lives in `tenant.media` (hero, about, one image per lane, gallery, videos) and in
-`public/os/<slug>/media`. Import rule: resize for the web, strip EXIF/GPS from photos and all
-container metadata from video, transcode video to H.264 with no audio track, and generate a poster.
+Tenant media lives in `tenant.media` (hero, about, one image per lane, proof clips) as **logical
+keys only** — `tenantAsset(slug, 'media')` → `/os-media/<slug>/media/<file>`. No tenant photo,
+video, poster or logo is committed to this public repository. The bytes live in the private R2
+bucket `xenco-tenant-media` at `tenants/<slug>/<key>` (no public access, no r2.dev, no custom
+domain, no CORS).
+
+`/os-media/[tenant]/[...key]` serves them: 404 in production unless previews are enabled, 404 for
+any key the tenant config does not reference (no enumeration), otherwise a 302 to a SigV4
+presigned GET valid for 300 s, with `X-Robots-Tag: noindex`, `Cache-Control: private, no-store`
+and `Referrer-Policy: no-referrer`. It reads `R2_TENANT_MEDIA_ACCOUNT_ID`, `_BUCKET`,
+`_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` — a **bucket-scoped, read-only** token, Preview env only;
+without them it returns 503. Never put an account-wide R2 token in Vercel.
+
+Import rule: resize photos for the web without re-cropping, strip EXIF/GPS from photos and all
+container metadata from video (lossless remux, `-map_metadata -1 -c copy`), keep supplied final
+clips and posters pixel/frame-identical, H.264 with no audio track. Upload to the bucket with an
+admin credential, then reference the key from the tenant file.
 
 ## Trade-module contents (VerticalPack)
 
@@ -61,7 +75,8 @@ public website (reference only), and a SAMPLE seed that tells one connected stor
 ## Adding the next prospect (e.g. HVAC, exterior cleaning, asphalt)
 
 1. New trade? Add `lib/local-os/verticals/<trade>.ts` with the fields above.
-2. Add `lib/local-os/tenants/<slug>.ts`: identity, brand assets under `public/os/<slug>/brand`,
+2. Add `lib/local-os/tenants/<slug>.ts`: identity, brand assets uploaded to `xenco-tenant-media` under
+   `tenants/<slug>/brand` and referenced via `tenantAsset`,
    site copy, tour, sample seed. Register it in `tenants/index.ts`.
 3. No new routes or components.
 

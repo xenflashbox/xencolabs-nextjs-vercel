@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { FIELD } from '@/components/local-os/os/preview/type';
 import type { MediaImage, MediaVideo } from '@/lib/local-os/tenant-types';
 
 /** A client work photo, responsive (next/image srcset), cropped by its configured focus point. */
@@ -11,60 +10,73 @@ export function TenantPhoto({ image, sizes, priority = false, className = '' }: 
     // Callers that position it themselves (e.g. a hero background) pass `absolute`; otherwise it is the
     // positioning context for the fill image.
     <div className={`${/\babsolute\b/.test(className) ? '' : 'relative'} overflow-hidden bg-neutral-800 ${className}`}>
-      <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} className="object-cover" style={{ objectPosition: image.focus ?? '50% 50%' }} />
+      {/* unoptimized: tenant media is served by the gated /os-media route (redirect to a short-lived
+          signed URL), which the image optimizer must not fetch or cache; files are pre-sized. */}
+      <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} unoptimized className="object-cover" style={{ objectPosition: image.focus ?? '50% 50%' }} />
     </div>
   );
 }
 
 /**
- * A short silent field clip: poster first, video source attached only when it scrolls near the
- * viewport, plays muted inline while visible, pauses when not. With reduced motion it never
- * autoplays and shows controls instead. Never used as a hero.
+ * A short silent field clip with its matching poster.
+ *   - muted, loop, playsInline, preload="metadata" (never an eager full download)
+ *   - the poster (often a large PNG) is attached when the clip nears the viewport
+ *   - plays only while on screen, pauses when scrolled away
+ *   - prefers-reduced-motion: renders the poster image only, no video element, no autoplay
  */
-export function FieldVideo({ video, label }: { video: MediaVideo; label: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [src, setSrc] = useState<string | null>(null);
+export function FieldVideo({ video }: { video: MediaVideo }) {
+  const box = useRef<HTMLDivElement>(null);
+  const vid = useRef<HTMLVideoElement>(null);
+  const [near, setNear] = useState(false);
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReduced(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    const el = box.current;
     if (!el) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setReduced(prefersReduced);
     const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        if (entry.isIntersecting) {
-          setSrc(video.src);
-          if (!prefersReduced) el.play().catch(() => undefined);
-        } else {
-          el.pause();
-        }
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        if (e.isIntersecting) setNear(true);
+        const v = vid.current;
+        if (!v || reduced) return;
+        if (e.intersectionRatio >= 0.35) v.play().catch(() => undefined);
+        else v.pause();
       },
-      { rootMargin: '200px 0px', threshold: 0.25 },
+      { rootMargin: '400px 0px', threshold: [0, 0.35, 0.7] },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [video.src]);
+  }, [reduced]);
 
   return (
-    <figure className="overflow-hidden border border-neutral-800 bg-neutral-900">
-      <video
-        ref={ref}
-        className="aspect-square w-full object-cover"
-        poster={video.poster}
-        src={src ?? undefined}
-        muted
-        loop
-        playsInline
-        preload="none"
-        controls={reduced}
-        aria-label={video.caption}
-      />
-      <figcaption className="flex items-center justify-between gap-2 px-3 py-2 text-neutral-300">
-        <span className={`${FIELD} text-[10px] text-[var(--brand)]`}>{label}</span>
-        <span className="text-xs">{video.caption}</span>
-      </figcaption>
-    </figure>
+    <div ref={box} className="relative aspect-square w-full overflow-hidden bg-neutral-900">
+      {reduced ? (
+        // Reduced motion: the poster only. No video is created, so nothing plays or downloads.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={video.poster} alt={video.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" data-media="poster-fallback" />
+      ) : (
+        <video
+          ref={vid}
+          className="h-full w-full object-cover"
+          src={video.src}
+          poster={near ? video.poster : undefined}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label={video.alt}
+          data-media="field-video"
+        />
+      )}
+    </div>
   );
 }

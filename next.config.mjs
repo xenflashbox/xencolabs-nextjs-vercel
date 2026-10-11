@@ -19,6 +19,15 @@ const nextConfig = {
   // underlying static files. With trailingSlash=false (the default) Next
   // canonicalises to the no-slash form, so we only rewrite the no-slash URLs;
   // /tools/ and /tools/:slug/ get 308'd to these by Next automatically.
+  // Local OS tenant previews and their media are never indexed (also noindex meta + robots.txt).
+  async headers() {
+    const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, noimageindex' }];
+    return [
+      { source: '/os/:path*', headers: noindex },
+      { source: '/os-media/:path*', headers: noindex },
+    ];
+  },
+
   async rewrites() {
     return [
       { source: '/tools/:slug', destination: '/tools/:slug/index.html' },

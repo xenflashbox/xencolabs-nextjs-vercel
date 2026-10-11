@@ -141,6 +141,9 @@ Every preview route, including media files, redirects to Vercel login (team-only
 
 ## 5. Media import checks
 
+> **Superseded** by `nemesis-media-hardening.md`: the 720×720 clips below were earlier raw exports.
+> They were replaced by the final supplied assets, and all media moved out of the repo into a private bucket.
+
 ```
 field-equipment-loop: stream|codec_name=h264|codec_type=video|width=720|height=720 
 riser-service-loop: stream|codec_name=h264|codec_type=video|width=720|height=720 

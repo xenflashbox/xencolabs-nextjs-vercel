@@ -35,6 +35,7 @@ const isPublicRoute = createRouteMatcher([
   '/p/(.*)', // per-recipient tracked presentations (opaque token, noindex)
   '/lp/(.*)', // Local OS private workflow previews (opaque token, noindex)
   '/os/(.*)', // Local OS tenant previews: 404 on production unless LOCAL_OS_TENANT_PREVIEWS=on
+  '/os-media/(.*)', // gated tenant media (allowlisted keys → short-lived signed URL); 404 on production
   '/api/search-function-review',
   '/websites',
   '/websites/(.*)',

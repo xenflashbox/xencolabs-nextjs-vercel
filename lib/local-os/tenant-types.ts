@@ -70,11 +70,31 @@ export interface MediaImage {
   caption?: string
 }
 
-/** A short silent field clip. Always muted, lazy-loaded, with a poster fallback; never a hero. */
+/**
+ * A short silent field clip with its matching poster. Rendered muted, looping, inline, with
+ * preload="metadata"; under prefers-reduced-motion only the poster is shown. Never a hero, and
+ * never carries baked-in text, logos or captions — all copy lives in the UI.
+ */
 export interface MediaVideo {
   src: string
   poster: string
-  caption: string
+  /** Accessible description of what the clip shows. */
+  alt: string
+}
+
+/**
+ * One piece of real-work proof on the customer site: a clip of the work, what it is, and where
+ * that work shows up in the system (request flow, office, technician). Not a gallery item.
+ */
+export interface ProofItem {
+  id: string
+  title: string
+  body: string
+  video: MediaVideo
+  /** Service lane this work belongs to, for the request link. */
+  laneId?: string
+  /** Where this work appears in the system; paths are relative to /os/[tenant]. */
+  links: { label: string; path: string; view: 'customer' | 'office' | 'technician' }[]
 }
 
 /** Selected client media for the preview. Only the client's own work imagery; never stock. */
@@ -83,8 +103,10 @@ export interface TenantMedia {
   about: MediaImage
   /** One image per service lane id. */
   lanes: Record<string, MediaImage>
-  gallery: MediaImage[]
-  videos: MediaVideo[]
+  /** Supporting photos, kept for tenants that want them; not rendered as a media wall. */
+  gallery?: MediaImage[]
+  /** Real-work proof cards (video + poster + links into the system). */
+  proof: ProofItem[]
 }
 
 /** One stop on the guided demo tour. `path` is relative to /os/[tenant]. */

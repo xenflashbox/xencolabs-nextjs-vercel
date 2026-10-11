@@ -10,10 +10,13 @@
  */
 import type { DemoChecklistItem, DemoState } from '@/lib/local-os/demo-types'
 import type { TenantConfig } from '@/lib/local-os/tenant-types'
+import { tenantAsset } from '@/lib/local-os/tenant-media'
 import { FIRE_PROTECTION } from '@/lib/local-os/verticals/fire-protection'
 
-const BRAND = '/os/nemesis-fire/brand'
-const MEDIA = '/os/nemesis-fire/media'
+// Logical keys only: the files live in the private tenant-media bucket (tenants/nemesis-fire/...),
+// served through the gated /os-media route. No tenant media is committed to this public repo.
+const BRAND = tenantAsset('nemesis-fire', 'brand')
+const MEDIA = tenantAsset('nemesis-fire', 'media')
 
 export const NEMESIS_FIRE: TenantConfig = {
   slug: 'nemesis-fire',
@@ -67,8 +70,9 @@ export const NEMESIS_FIRE: TenantConfig = {
       { title: 'Problem solved', body: 'We diagnose and resolve the issue, with a full report and recommendations for ongoing protection.' },
     ],
   },
-  // Only the client's own job photography (curated package, 2026-10-11). Near-duplicates
-  // (extinguisher-truck-02, gallery-03) are deliberately unused. Metadata stripped on import.
+  // Only the client's own job photography (curated package, 2026-10-11): resized, EXIF/GPS stripped.
+  // Clips are the final supplied files, losslessly remuxed only to drop container metadata
+  // (decoded frames identical to the supplied files).
   media: {
     hero: { src: `${MEDIA}/hero-pump-room.jpg`, alt: 'Nemesis Fire technician recording readings beside a fire pump', focus: '62% 50%' },
     about: { src: `${MEDIA}/technician-sprinkler.jpg`, alt: 'Nemesis Fire technician working on a sprinkler riser', focus: '50% 30%' },
@@ -78,17 +82,41 @@ export const NEMESIS_FIRE: TenantConfig = {
       extinguisher: { src: `${MEDIA}/extinguisher-truck-01.jpg`, alt: 'Fire extinguishers being serviced from the Nemesis Fire service van', focus: '50% 60%' },
       emergency: { src: `${MEDIA}/gallery-01.jpg`, alt: 'Overhead fire sprinkler pipe run', focus: '50% 40%' },
     },
-    gallery: [
-      { src: `${MEDIA}/backflow-field.jpg`, alt: 'Backflow assembly test in a vineyard', caption: 'Backflow assembly · field test', focus: '50% 45%' },
-      { src: `${MEDIA}/gallery-02.jpg`, alt: 'Technician servicing a fire extinguisher', caption: 'Extinguisher service', focus: '55% 40%' },
-      { src: `${MEDIA}/gallery-04.jpg`, alt: 'Technician at a fire pump controller', caption: 'Fire pump room', focus: '50% 45%' },
-      { src: `${MEDIA}/nemesis-service-truck.jpg`, alt: 'Nemesis Fire service truck', caption: 'Service truck', focus: '50% 55%' },
-      { src: `${MEDIA}/pump-room-wide-02.jpg`, alt: 'Technician documenting a fire pump inspection', caption: 'Inspection documentation', focus: '45% 50%' },
-    ],
-    videos: [
-      { src: `${MEDIA}/sprinkler-inspection-loop.mp4`, poster: `${MEDIA}/sprinkler-inspection-loop-poster.jpg`, caption: 'New sprinkler pipe run · roof framing' },
-      { src: `${MEDIA}/riser-service-loop.mp4`, poster: `${MEDIA}/riser-service-loop-poster.jpg`, caption: 'Hose and valve work in the field' },
-      { src: `${MEDIA}/field-equipment-loop.mp4`, poster: `${MEDIA}/field-equipment-loop-poster.jpg`, caption: 'Test equipment staged at the truck' },
+    // Final tenant-approved clips + posters (2026-10-11). Copy stays in the UI; nothing is baked in.
+    proof: [
+      {
+        id: 'field-ready',
+        title: 'Field-ready response and equipment',
+        body: 'Test equipment staged at the truck and hose run out to the system before work starts.',
+        video: { src: `${MEDIA}/field-equipment-loop.mp4`, poster: `${MEDIA}/field-equipment-poster.png`, alt: 'Red test manifold on a service truck hitch with hoses run across a parking lot' },
+        laneId: 'emergency',
+        links: [
+          { label: 'Request service', path: '/request?lane=emergency', view: 'customer' },
+          { label: 'Job in the office', path: '/office/jobs/J-302', view: 'office' },
+        ],
+      },
+      {
+        id: 'sprinkler-inspection',
+        title: 'Fire sprinkler inspection and testing',
+        body: 'Sprinkler piping checked run by run; every item is recorded on the inspection report.',
+        video: { src: `${MEDIA}/sprinkler-inspection-loop.mp4`, poster: `${MEDIA}/sprinkler-inspection-poster.png`, alt: 'Orange fire sprinkler pipe running through roof framing' },
+        laneId: 'sprinkler',
+        links: [
+          { label: 'Request an inspection', path: '/request?lane=sprinkler', view: 'customer' },
+          { label: 'Sample inspection report', path: '/report/R-501', view: 'customer' },
+        ],
+      },
+      {
+        id: 'riser-pump',
+        title: 'Fire riser and pump service',
+        body: 'Valves, hoses and riser room equipment worked on site, with readings captured on the technician’s phone.',
+        video: { src: `${MEDIA}/fire-riser-service-loop.mp4`, poster: `${MEDIA}/fire-riser-service-poster.png`, alt: 'Technician working a hose and valve, then inside a riser room with red equipment cabinets' },
+        laneId: 'sprinkler',
+        links: [
+          { label: 'Technician job packet', path: '/tech/J-301', view: 'technician' },
+          { label: 'Office report review', path: '/office/reports/R-502', view: 'office' },
+        ],
+      },
     ],
   },
   tour: [
