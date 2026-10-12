@@ -87,7 +87,63 @@ export const JACKSONS_PAVING: TenantConfig = {
       striping: { src: `${MEDIA}/lane-striping.jpg`, alt: 'Freshly striped parking lot lines on dark asphalt', focus: '50% 50%' },
       milling: { src: `${MEDIA}/lane-milling.jpg`, alt: 'Steel drum roller compacting hot asphalt', focus: '40% 50%' },
     },
-    proof: [],
+    // Clips from Jackson's public social channel (supplied 2026-10-12): illustrative footage of the
+    // trade, not a record of the sample project or of any specific customer, site or result.
+    // Lossless remux only (container metadata removed); decoded frames identical to the supplied files.
+    proofHeading: {
+      eyebrow: 'On the job',
+      title: 'Paving, start to finish',
+      body: 'Delivery, placement and compaction — and where each step shows up: the request, the office and the crew’s phone.',
+      cardLabel: 'On the job',
+      note: 'Footage from Jackson’s Paving’s public channel, shown as illustration. It does not depict the sample project or a specific customer.',
+    },
+    proof: [
+      {
+        id: 'asphalt-pouring',
+        title: 'Hot mix delivered to the paver',
+        body: 'A truck delivers asphalt for placement; the planned tonnage sits on the crew’s job packet.',
+        video: { src: `${MEDIA}/jacksons-paving-asphalt-pouring.mp4`, poster: `${MEDIA}/jacksons-paving-asphalt-pouring-poster.png`, alt: 'Dump truck backing in to deliver asphalt on a gravel road lined with trees' },
+        laneId: 'commercial',
+        links: [
+          { label: 'Request a site review', path: '/request?lane=commercial', view: 'customer' },
+          { label: 'Crew job packet', path: '/tech/J-803', view: 'technician' },
+        ],
+      },
+      {
+        id: 'foreman',
+        title: 'Crew lead at the paver',
+        body: 'The foreman runs the paver and the day’s checklist: closures, quantities and photos go to the office.',
+        video: { src: `${MEDIA}/jacksons-paving-foreman.mp4`, poster: `${MEDIA}/jacksons-paving-foreman-poster.png`, alt: 'Crew member in a high-visibility vest at an orange asphalt paver while a truck feeds the hopper' },
+        laneId: 'commercial',
+        links: [
+          { label: 'Crew schedule in the office', path: '/office/jobs/J-803', view: 'office' },
+          { label: 'Crew job packet', path: '/tech/J-803', view: 'technician' },
+        ],
+      },
+      {
+        id: 'rolling',
+        title: 'Compaction and rolling',
+        body: 'Rollers compact the new mat; the completion record captures what was placed, with photos.',
+        video: { src: `${MEDIA}/jacksons-paving-rolling.mp4`, poster: `${MEDIA}/jacksons-paving-rolling-poster.png`, alt: 'Double-drum roller compacting fresh asphalt beside a white barn, with a paver behind' },
+        laneId: 'commercial',
+        links: [
+          { label: 'Sample completion record', path: '/report/R-803', view: 'customer' },
+          { label: 'Sample invoice', path: '/invoice/I-903', view: 'customer' },
+        ],
+      },
+    ],
+    laneVideos: {
+      commercial: {
+        title: 'Finished surface',
+        body: 'Rolled and finished asphalt; the completion record lists quantities and before/after photos.',
+        video: { src: `${MEDIA}/jacksons-paving-finished-road.mp4`, poster: `${MEDIA}/jacksons-paving-finished-road-poster.png`, alt: 'Roller finishing a fresh asphalt drive, ending on a newly paved road beside vineyard rows' },
+      },
+      repair: {
+        title: 'Crew on site',
+        body: 'Crews working an asphalt drive and rolling it smooth.',
+        video: { src: `${MEDIA}/jacksons-paving-onthe-job.mp4`, poster: `${MEDIA}/jacksons-paving-onthe-job-poster.png`, alt: 'Asphalt crew working a shaded drive, with a roller compacting the surface' },
+      },
+    },
   },
   tour: [
     { label: 'Customer website', detail: 'Commercial paving homepage with the site-review CTA', path: '' },

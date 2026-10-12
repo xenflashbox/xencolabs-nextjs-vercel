@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, Check } from 'lucide-react';
 import { useDemo } from '@/components/local-os/os/demo-store';
-import { TenantPhoto } from '@/components/local-os/os/preview/field-media';
+import { FieldVideo, TenantPhoto } from '@/components/local-os/os/preview/field-media';
 import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { Guardrail, osHref } from '@/components/local-os/os/ui';
 
@@ -15,6 +15,7 @@ export function SiteService({ slug }: { slug: string }) {
   if (!svc) return <p className="mx-auto max-w-6xl p-6 text-sm">No such service.</p>;
   const template = vertical.reportTemplates.find((r) => r.kind === svc.reportKind);
   const image = tenant.media.lanes[svc.laneId] ?? tenant.media.hero;
+  const clip = tenant.media.laneVideos?.[svc.laneId];
   return (
     <div className="bg-[var(--paper)]">
       <section className="relative isolate overflow-hidden bg-neutral-950 text-white">
@@ -54,6 +55,16 @@ export function SiteService({ slug }: { slug: string }) {
           ) : null}
         </div>
         <aside className="space-y-4">
+          {clip ? (
+            <figure className="border border-neutral-800 bg-neutral-950 text-white">
+              <FieldVideo video={clip.video} />
+              <figcaption className="p-4">
+                <p className={`${DISPLAY} text-xl font-semibold uppercase`}>{clip.title}</p>
+                <p className="mt-1 text-sm text-neutral-400">{clip.body}</p>
+                {tenant.media.proofHeading?.note ? <p className={`${FIELD} mt-2 text-[10px] text-neutral-500`}>{tenant.media.proofHeading.note}</p> : null}
+              </figcaption>
+            </figure>
+          ) : null}
           <div className="border border-neutral-300 bg-white p-5">
             <p className={`${DISPLAY} text-2xl font-semibold uppercase`}>Request this service</p>
             <p className="mt-1 text-sm text-neutral-600">Tell us about the property; the office calls you back to confirm scope and a time.</p>

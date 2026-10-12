@@ -6,19 +6,22 @@ import { FieldVideo } from '@/components/local-os/os/preview/field-media';
 import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { osHref } from '@/components/local-os/os/ui';
 import type { ProofItem } from '@/lib/local-os/tenant-types';
+import { termsOf } from '@/lib/local-os/terms';
+import { getTenant } from '@/lib/local-os/tenants';
 
-const VIEW_LABEL = { customer: 'Customer', office: 'Office', technician: 'Technician' } as const;
 
 /**
  * Real-work proof: the clip of the work, what it is, and where that work appears in the system.
  * Copy sits under the media (never over it), so no overlay or gradient covers the work.
  */
-export function ProofCard({ slug, item, index }: { slug: string; item: ProofItem; index: number }) {
+export function ProofCard({ slug, item, index, label = 'Field proof' }: { slug: string; item: ProofItem; index: number; label?: string }) {
+  const vertical = getTenant(slug)?.vertical;
+  const VIEW_LABEL = { customer: 'Customer', office: 'Office', technician: vertical ? termsOf(vertical).fieldView : 'Technician' } as const;
   return (
     <article className="flex flex-col border border-neutral-800 bg-neutral-950 text-white">
       <FieldVideo video={item.video} />
       <div className="flex flex-1 flex-col p-5">
-        <p className={`${FIELD} text-[10px] text-[var(--brand)]`}>Field proof {String(index + 1).padStart(2, '0')}</p>
+        <p className={`${FIELD} text-[10px] text-[var(--brand)]`}>{label} {String(index + 1).padStart(2, '0')}</p>
         <h3 className={`${DISPLAY} mt-1 text-2xl font-semibold uppercase leading-tight`}>{item.title}</h3>
         <p className="mt-2 flex-1 text-sm text-neutral-400">{item.body}</p>
         <ul className="mt-4 divide-y divide-neutral-800 border-y border-neutral-800">

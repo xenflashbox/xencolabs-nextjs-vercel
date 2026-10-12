@@ -113,6 +113,10 @@ export interface TenantMedia {
   proof: ProofItem[]
   /** Background for the link-preview (OG) card; falls back to `hero`. */
   share?: MediaImage
+  /** Wording of the homepage proof section (defaults: "Real work" / "From the field to your file"). */
+  proofHeading?: { eyebrow: string; title: string; body: string; cardLabel: string; note?: string }
+  /** One illustrative clip per service lane, shown on that lane's service page. */
+  laneVideos?: Record<string, { title: string; body: string; video: MediaVideo }>
 }
 
 /** One stop on the guided demo tour. `path` is relative to /os/[tenant]. */

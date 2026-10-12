@@ -114,14 +114,15 @@ export function SiteHome() {
           <div className="mx-auto max-w-6xl px-4 py-16">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className={`${FIELD} text-[11px] text-neutral-500`}>Real work</p>
-                <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>From the field to your file</h2>
+                <p className={`${FIELD} text-[11px] text-neutral-500`}>{m.proofHeading?.eyebrow ?? 'Real work'}</p>
+                <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>{m.proofHeading?.title ?? 'From the field to your file'}</h2>
               </div>
-              <p className="max-w-md text-sm text-neutral-600">The work on site, and where it shows up: your request, the office, and the {terms.field.toLowerCase()}’s phone.</p>
+              <p className="max-w-md text-sm text-neutral-600">{m.proofHeading?.body ?? `The work on site, and where it shows up: your request, the office, and the ${terms.field.toLowerCase()}’s phone.`}</p>
             </div>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {m.proof.map((item, i) => <ProofCard key={item.id} slug={s} item={item} index={i} />)}
+              {m.proof.map((item, i) => <ProofCard key={item.id} slug={s} item={item} index={i} label={m.proofHeading?.cardLabel} />)}
             </div>
+            {m.proofHeading?.note ? <p className={`${FIELD} mt-4 text-[10px] text-neutral-500`}>{m.proofHeading.note}</p> : null}
           </div>
         </section>
       ) : null}

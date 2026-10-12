@@ -19,16 +19,19 @@ export function TenantPhoto({ image, sizes, priority = false, className = '' }: 
 
 /**
  * A short silent field clip with its matching poster.
- *   - muted, loop, playsInline, preload="metadata" (never an eager full download)
- *   - the poster (often a large PNG) is attached when the clip nears the viewport
+ *   - muted, loop, playsInline, preload="metadata"
+ *   - nothing is fetched until the clip nears the viewport: the video `src` and the poster are
+ *     attached only then, so a page with several clips never downloads them all up front
  *   - plays only while on screen, pauses when scrolled away
- *   - prefers-reduced-motion: renders the poster image only, no video element, no autoplay
+ *   - prefers-reduced-motion: renders the poster image only — no video element, no download, no autoplay
+ *   - until the motion preference is known (first client render), only an empty frame is rendered
  */
 export function FieldVideo({ video }: { video: MediaVideo }) {
   const box = useRef<HTMLDivElement>(null);
   const vid = useRef<HTMLVideoElement>(null);
   const [near, setNear] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [reduced, setReduced] = useState<boolean | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -46,29 +49,33 @@ export function FieldVideo({ video }: { video: MediaVideo }) {
         const e = entries[0];
         if (!e) return;
         if (e.isIntersecting) setNear(true);
-        const v = vid.current;
-        if (!v || reduced) return;
-        if (e.intersectionRatio >= 0.35) v.play().catch(() => undefined);
-        else v.pause();
+        setVisible(e.intersectionRatio >= 0.35);
       },
       { rootMargin: '400px 0px', threshold: [0, 0.35, 0.7] },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [reduced]);
+  }, []);
+
+  useEffect(() => {
+    const v = vid.current;
+    if (!v || reduced !== false || !near) return;
+    if (visible) v.play().catch(() => undefined);
+    else v.pause();
+  }, [visible, near, reduced]);
 
   return (
     <div ref={box} className="relative aspect-square w-full overflow-hidden bg-neutral-900">
-      {reduced ? (
+      {reduced === null || !near ? null : reduced ? (
         // Reduced motion: the poster only. No video is created, so nothing plays or downloads.
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={video.poster} alt={video.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" data-media="poster-fallback" />
+        <img src={video.poster} alt={video.alt} decoding="async" className="h-full w-full object-cover" data-media="poster-fallback" />
       ) : (
         <video
           ref={vid}
           className="h-full w-full object-cover"
           src={video.src}
-          poster={near ? video.poster : undefined}
+          poster={video.poster}
           muted
           loop
           playsInline
