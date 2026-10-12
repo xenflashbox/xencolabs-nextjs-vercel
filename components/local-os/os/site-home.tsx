@@ -64,8 +64,8 @@ export function SiteHome() {
                 </a>
               ) : null}
             </div>
-            <figure className="relative">
-              <TenantPhoto image={m.hero} sizes="(min-width:768px) 50vw, 100vw" priority className="lo-round aspect-[4/5] w-full overflow-hidden shadow-xl md:aspect-[5/6]" />
+            <figure className="relative order-first md:order-none">
+              <TenantPhoto image={m.hero} sizes="(min-width:768px) 50vw, 100vw" priority className="lo-round aspect-[4/3] w-full overflow-hidden shadow-xl md:aspect-[5/6]" />
               {tenant.site.photoCredit ? <figcaption className="mt-2 text-right text-xs text-neutral-500">Photo: {tenant.site.photoCredit}</figcaption> : null}
             </figure>
           </div>
