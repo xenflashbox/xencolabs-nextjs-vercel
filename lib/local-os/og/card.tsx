@@ -21,6 +21,10 @@ export interface ShareCard {
   brandName: string;
   /** data: URL of a logo that reads on a dark background. */
   logo?: string | null;
+  /** Light plate behind the logo, for artwork drawn only for light backgrounds. */
+  logoPlate?: string;
+  /** Width ÷ height of the logo (default 4). */
+  logoAspect?: number;
   /** data: URL of a photo used full-bleed behind the text. */
   photo?: string | null;
   accent: string;
@@ -90,8 +94,10 @@ export async function renderShareCard(c: ShareCard, headers: Record<string, stri
 
         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: panel ? 760 : 820, height: 566, padding: '52px 0 0 70px' }}>
           {c.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-            <img src={c.logo} height={62} style={{ height: 62, objectFit: 'contain', objectPosition: 'left' }} />
+            <div style={{ display: 'flex', alignSelf: 'flex-start', padding: c.logoPlate ? '8px 14px' : 0, background: c.logoPlate ?? 'transparent', borderRadius: 8 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+              <img src={c.logo} width={Math.round(62 * (c.logoAspect ?? 4))} height={62} style={{ width: Math.round(62 * (c.logoAspect ?? 4)), height: 62, objectFit: 'contain' }} />
+            </div>
           ) : (
             <div style={{ display: 'flex', fontFamily: 'Display', fontSize: 44, textTransform: 'uppercase', letterSpacing: 1 }}>{clip(c.brandName, 40)}</div>
           )}
