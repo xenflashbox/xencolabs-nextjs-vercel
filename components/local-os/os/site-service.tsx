@@ -30,13 +30,17 @@ export function SiteService({ slug }: { slug: string }) {
       </section>
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1.5fr_1fr]">
         <div>
-          <p className={`${FIELD} text-[11px] text-neutral-500`}>Scope</p>
-          <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>What’s included</h2>
-          <ul className="mt-4 divide-y divide-neutral-200 border-y border-neutral-200">
-            {svc.includes.map((i) => <li key={i} className="flex gap-3 py-3"><Check className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand)]" />{i}</li>)}
-          </ul>
-          <p className={`${FIELD} mt-10 text-[11px] text-neutral-500`}>On site</p>
-          <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>What to expect</h2>
+          {svc.includes.length ? (
+            <>
+            <p className={`${FIELD} text-[11px] text-neutral-500`}>Scope</p>
+            <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>What’s included</h2>
+            <ul className="mt-4 divide-y divide-neutral-200 border-y border-neutral-200">
+              {svc.includes.map((i) => <li key={i} className="flex gap-3 py-3"><Check className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand)]" />{i}</li>)}
+            </ul>
+            </>
+          ) : null}
+          <p className={`${FIELD} ${svc.includes.length ? 'mt-10' : ''} text-[11px] text-neutral-500`}>{svc.includes.length ? 'On site' : 'Local OS preview'}</p>
+          <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>{svc.includes.length ? 'What to expect' : 'How it works in this preview'}</h2>
           <ol className="mt-4 space-y-3">
             {svc.whatToExpect.map((i, k) => (
               <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-2">
@@ -66,9 +70,9 @@ export function SiteService({ slug }: { slug: string }) {
             </figure>
           ) : null}
           <div className="border border-neutral-300 bg-white p-5">
-            <p className={`${DISPLAY} text-2xl font-semibold uppercase`}>Request this service</p>
+            <p className={`${DISPLAY} text-2xl font-semibold uppercase`}>{tenant.site.ctaLabel ?? 'Request this service'}</p>
             <p className="mt-1 text-sm text-neutral-600">Tell us about the property; the office calls you back to confirm scope and a time.</p>
-            <Link href={osHref(tenant.slug, `/request?lane=${svc.laneId}`)} className="mt-4 flex items-center justify-center gap-2 bg-[var(--brand)] px-4 py-3 font-semibold text-white hover:bg-[var(--brand-dark)]">Request service <ArrowRight className="h-4 w-4" /></Link>
+            <Link href={osHref(tenant.slug, `/request?lane=${svc.laneId}`)} className="mt-4 flex items-center justify-center gap-2 bg-[var(--brand)] px-4 py-3 font-semibold text-white hover:bg-[var(--brand-dark)]">{tenant.site.ctaLabel ?? 'Request service'} <ArrowRight className="h-4 w-4" /></Link>
           </div>
           {svc.laneId === 'emergency' ? <Guardrail>{vertical.guardrails.emergency} Call {tenant.phone}.</Guardrail> : null}
           <div className="border border-neutral-300 bg-white p-5">

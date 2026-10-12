@@ -7,7 +7,7 @@ import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { osHref } from '@/components/local-os/os/ui';
 import type { ProofItem } from '@/lib/local-os/tenant-types';
 import { termsOf } from '@/lib/local-os/terms';
-import { getTenant } from '@/lib/local-os/tenants';
+import { useDemo } from '@/components/local-os/os/demo-store';
 
 
 /**
@@ -15,7 +15,7 @@ import { getTenant } from '@/lib/local-os/tenants';
  * Copy sits under the media (never over it), so no overlay or gradient covers the work.
  */
 export function ProofCard({ slug, item, index, label = 'Field proof' }: { slug: string; item: ProofItem; index: number; label?: string }) {
-  const vertical = getTenant(slug)?.vertical;
+  const { vertical } = useDemo();
   const VIEW_LABEL = { customer: 'Customer', office: 'Office', technician: vertical ? termsOf(vertical).fieldView : 'Technician' } as const;
   return (
     <article className="flex flex-col border border-neutral-800 bg-neutral-950 text-white">

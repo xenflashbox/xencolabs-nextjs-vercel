@@ -36,5 +36,6 @@ export function presentationHostAllowed(host: string | null): boolean {
  * rewrites it to `/os/<slug>`), `/os/<slug>` everywhere else. Server- and client-safe.
  */
 export function osBase(slug: string): string {
+  if (slug.startsWith('lp-')) return `/lp/${slug.slice(3)}`;
   return isPresentationTenant(slug) ? `/${slug}` : `/os/${slug}`;
 }

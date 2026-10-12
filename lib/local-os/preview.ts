@@ -13,6 +13,8 @@ export type PreviewManifest = {
     services: string[];
     /** Headline curated from the business's own public site; falls back to the template headline. */
     hero_title?: string | null;
+    /** Sourced tenant profile (prospect previews rendered as a Local OS tenant). */
+    profile?: import('./prospect/types').ProspectProfile;
     sandbox: { demo_phone?: string | null; notice: string };
     booking: { url?: string | null };
   };

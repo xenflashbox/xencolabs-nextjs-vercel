@@ -6,6 +6,7 @@ import { Fragment, useState } from 'react';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Guardrail, osHref } from '@/components/local-os/os/ui';
+import { DISPLAY } from '@/components/local-os/os/preview/type';
 import { termsOf } from '@/lib/local-os/terms';
 
 const STEPS = ['Service', 'Property', 'Contact', 'Review'] as const;
@@ -76,7 +77,7 @@ export function SiteRequest() {
   return (
     <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[1.6fr_1fr]">
       <div>
-        <h1 className="text-3xl font-bold">Request service</h1>
+        <h1 className={`${DISPLAY} text-3xl font-bold`}>{tenant.site.ctaLabel ?? 'Request service'}</h1>
         <ol className="mt-4 flex gap-1 text-xs">
           {STEPS.map((st, i) => (
             <li key={st} className={`flex-1 rounded-full px-2 py-1 text-center ${i <= step ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-600'}`}>{i + 1}. {st}</li>

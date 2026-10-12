@@ -43,7 +43,11 @@ export interface TenantBranding {
   /** Client-supplied assets, used as-is: never stretched, recoloured or combined. */
   logos: Record<LogoSurface, string>
   /** Type system for the customer site: 'industrial' = condensed display + mono field labels. */
-  typography: 'industrial' | 'standard'
+  typography: 'industrial' | 'standard' | 'brand'
+  /** Brand theme for prospect previews: the business's own fonts, heading case, corner radius and hero layout. */
+  theme?: { headingFont?: string; bodyFont?: string; headingCase?: 'uppercase' | 'none'; radius?: string; accent?: string; heroLayout?: 'overlay' | 'split' }
+  /** Clean text wordmark (beside the mark) when the business has no wide logo file. */
+  wordmarkText?: string
   /** Width ÷ height of the wordmark artwork (default 4). */
   wordmarkAspect?: number
   /** Width ÷ height of the compact mark (default 1, a square shield/icon). */
@@ -60,6 +64,10 @@ export interface TenantBranding {
 /** Customer-facing site copy. Facts must come from the client's own published material. */
 export interface TenantSite {
   tagline: string
+  /** The business's own primary call-to-action label (e.g. "Get a Free Quote"); default "Request service". */
+  ctaLabel?: string
+  /** Where the site's photos come from, shown as a credit under galleries (e.g. "quickywindows.com"). */
+  photoCredit?: string
   heroTitle: string
   heroSubtitle: string
   /** Short credibility facts, each one already public on the client's own site. */

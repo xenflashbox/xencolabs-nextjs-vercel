@@ -3,7 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { DemoInvoice, DemoJob, DemoLead, DemoPhoto, DemoQuote, DemoReport, DemoState } from '@/lib/local-os/demo-types';
 import type { TenantConfig, VerticalPack } from '@/lib/local-os/tenant-types';
-import { getTenant } from '@/lib/local-os/tenants';
+import { getTenant, type TenantEntry } from '@/lib/local-os/tenants';
+import { seedProspect, type ProspectEntryData } from '@/lib/local-os/prospect/build';
 
 /**
  * The preview's working state lives in this browser only (localStorage), seeded
@@ -36,8 +37,12 @@ export function useDemo(): Store {
   return s;
 }
 
-export function DemoProvider({ slug, children }: { slug: string; children: React.ReactNode }) {
-  const entry = getTenant(slug);
+export function DemoProvider({ slug, prospect, children }: { slug: string; prospect?: ProspectEntryData; children: React.ReactNode }) {
+  // Prospect previews arrive as serializable data (built on the server from the sourced profile).
+  const entry = useMemo<TenantEntry | null>(
+    () => (prospect ? { config: prospect.config, vertical: prospect.vertical, seed: (now?: Date) => seedProspect(prospect.config, prospect.vertical, now) } : getTenant(slug)),
+    [prospect, slug],
+  );
   const key = `local-os:${slug}:v2`;
   const [state, setState] = useState<DemoState | null>(null);
 

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { presignR2Get, tenantMediaConfig } from '@/lib/local-os/r2-presign';
 import { mediaObjectKey, referencedAssetKeys } from '@/lib/local-os/tenant-media';
 import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation';
-import { getTenant, tenantPreviewsEnabled } from '@/lib/local-os/tenants';
+import { resolveTenant } from '@/lib/local-os/tenants/resolve';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,10 +19,10 @@ const PRIVATE_HEADERS = {
  * requests skip middleware, so the host check lives here too). Otherwise a 5-minute presigned
  * redirect into the private bucket.
  */
-export function GET(req: Request, { params }: { params: { tenant: string; key: string[] } }) {
+export async function GET(req: Request, { params }: { params: { tenant: string; key: string[] } }) {
   const presentationOk =
-    !PRESENTATION_TENANT || (isPresentationTenant(params.tenant) && presentationHostAllowed(req.headers.get('host')));
-  const entry = presentationOk && tenantPreviewsEnabled() ? getTenant(params.tenant) : null;
+    !PRESENTATION_TENANT || ((isPresentationTenant(params.tenant) || params.tenant.startsWith('lp-')) && presentationHostAllowed(req.headers.get('host')));
+  const entry = presentationOk ? (await resolveTenant(params.tenant))?.entry ?? null : null;
   const key = (params.key ?? []).join('/');
   if (!entry || !key || key.includes('..') || !referencedAssetKeys(entry.config, params.tenant).has(key)) {
     return new NextResponse('Not found', { status: 404, headers: PRIVATE_HEADERS });

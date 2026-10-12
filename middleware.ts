@@ -9,16 +9,29 @@ import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } fr
  * through, everything else is a noindex 404. Any other
  * host is a 404 for every path.
  */
+const LEADINTEL_API = process.env.LEADINTEL_PUBLIC_API_BASE || 'https://api.xencolabs.com'
+/** True when the prospect preview has a sourced profile (then it renders as a Local OS tenant). */
+async function hasProfile(token: string): Promise<boolean> {
+  try {
+    const r = await fetch(`${LEADINTEL_API}/v1/lead-intelligence/local-preview/${encodeURIComponent(token)}`, { cache: 'no-store' })
+    if (!r.ok) return false
+    const m = (await r.json()) as { config?: { profile?: { version?: number } } }
+    return m.config?.profile?.version === 1
+  } catch {
+    return false
+  }
+}
+
 const NOINDEX = 'noindex, nofollow, noarchive, noimageindex'
 
-function presentation(req: NextRequest): NextResponse {
+async function presentation(req: NextRequest): Promise<NextResponse> {
   const { pathname, search } = req.nextUrl
   const url = req.nextUrl.clone()
   const seg = pathname.split('/')
   // /<slug>/…  ·  /os/<slug>/…  ·  /os-media/<slug>/…
   const clean = isPresentationTenant(seg[1] ?? '')
   const legacy = seg[1] === 'os' && isPresentationTenant(seg[2] ?? '')
-  const media = seg[1] === 'os-media' && isPresentationTenant(seg[2] ?? '') && seg.length > 3
+  const media = seg[1] === 'os-media' && (isPresentationTenant(seg[2] ?? '') || (seg[2] ?? '').startsWith('lp-')) && seg.length > 3
   // Local OS workflow-concept previews (/lp/<token>/…): token-addressed, noindex, sample data only.
   const lp = seg[1] === 'lp' && /^[A-Za-z0-9_-]{16,64}$/.test(seg[2] ?? '')
   let res: NextResponse
@@ -34,7 +47,20 @@ function presentation(req: NextRequest): NextResponse {
     url.pathname = pathname.slice(3)
     url.search = search
     res = NextResponse.redirect(url, 308)
-  } else if (media || lp || pathname === '/robots.txt') {
+  } else if (lp) {
+    // Prospect previews render as a Local OS tenant (slug lp-<token>) at the same /lp/<token> URL.
+    // The earlier workflow-concept subpaths map onto their Local OS equivalents.
+    const rest = seg.slice(3).join('/')
+    if (rest === 'estimate' || rest === 'system') {
+      url.pathname = `/lp/${seg[2]}/${rest === 'estimate' ? 'request' : 'office'}`
+      res = NextResponse.redirect(url, 308)
+    } else if (await hasProfile(seg[2] as string)) {
+      url.pathname = `/os/lp-${seg[2]}${rest ? `/${rest}` : ''}`
+      res = NextResponse.rewrite(url)
+    } else {
+      res = NextResponse.next() // not rebuilt yet: the earlier workflow-concept pages render as before
+    }
+  } else if (media || pathname === '/robots.txt') {
     res = NextResponse.next()
   } else {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })

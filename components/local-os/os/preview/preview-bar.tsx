@@ -7,20 +7,17 @@ import { osBase, osHref } from '@/components/local-os/os/ui';
 import { FIELD } from '@/components/local-os/os/preview/type';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
-import { linksOf, termsOf } from '@/lib/local-os/terms';
-import { getTenant } from '@/lib/local-os/tenants';
+import { linksOf } from '@/lib/local-os/terms';
 
 /**
  * The private-preview navigation, on every screen of every tenant: says this is a Xenco preview
  * with sample data, bridges the customer site ↔ office ↔ technician, and carries the Xenco live AI
  * receptionist number (a Xenco line, never the tenant's).
  */
-export function PreviewBar({ tenant }: { tenant: TenantConfig }) {
+export function PreviewBar({ tenant, fieldView = 'Technician' }: { tenant: TenantConfig; fieldView?: string }) {
   const path = usePathname() ?? '';
   const base = osBase(tenant.slug);
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
-  const vertical = getTenant(tenant.slug)?.vertical;
-  const fieldView = vertical ? termsOf(vertical).fieldView : 'Technician';
   const links: [string, string, string][] = [
     ['site', '', 'Website'],
     ['office', '/office', 'Office'],

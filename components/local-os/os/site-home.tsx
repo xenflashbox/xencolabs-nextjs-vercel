@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, PhoneCall } from 'lucide-react';
+import { ArrowRight, Check, Phone, PhoneCall } from 'lucide-react';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { TenantPhoto } from '@/components/local-os/os/preview/field-media';
@@ -26,10 +26,52 @@ export function SiteHome() {
   const tel = `tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`;
   const terms = termsOf(vertical);
   const links = linksOf(tenant);
+  const split = tenant.branding.theme?.heroLayout === 'split';
+  const cta = tenant.site.ctaLabel ?? 'Request service';
 
   return (
     <div className="bg-[var(--paper)] text-neutral-900">
-      {/* HERO — real job photo, charcoal field, no stock imagery */}
+      {split ? (
+        /* HERO (brand theme) — the business's own layout language: light, copy left, real photo right */
+        <section className="bg-[var(--paper)]">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 md:grid-cols-[1.05fr_1fr] md:pb-20 md:pt-16">
+            <div>
+              <p className="lo-btn inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-medium shadow-sm ring-1 ring-black/5">
+                <span className="lo-accent">●</span> {tenant.site.tagline}
+              </p>
+              <h1 className={`${DISPLAY} mt-5 text-[2.6rem] font-bold leading-[1.05] md:text-6xl`} style={{ color: tenant.branding.surface }}>{tenant.site.heroTitle}</h1>
+              <p className="mt-5 max-w-xl text-lg text-neutral-600">{tenant.site.heroSubtitle}</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href={osHref(s, '/request')} className="lo-btn inline-flex items-center gap-2 bg-[var(--brand)] px-6 py-3.5 font-semibold text-white shadow-[0_6px_18px_-6px_var(--brand)] hover:bg-[var(--brand-dark)]">
+                  {cta} <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a href={tel} className="lo-btn inline-flex items-center gap-2 bg-white px-6 py-3.5 font-semibold text-neutral-900 ring-1 ring-neutral-300 hover:bg-neutral-50">
+                  <Phone className="h-4 w-4" /> {terms.callCta} {tenant.phone}
+                </a>
+              </div>
+              {tenant.site.credibility.length ? (
+                <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 border-t border-neutral-200 pt-5 text-sm text-neutral-600">
+                  {tenant.site.credibility.map((c) => <li key={c} className="flex items-center gap-1.5"><Check className="lo-accent h-4 w-4" />{c}</li>)}
+                </ul>
+              ) : null}
+              {tenant.aiDemo ? (
+                <a href={`tel:${XENCO_AI_DEMO.tel}`} className="lo-round mt-7 flex max-w-xl items-center gap-3 border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 hover:border-amber-400">
+                  <PhoneCall className="h-5 w-5 shrink-0 text-amber-600" />
+                  <span>
+                    <span className={`${FIELD} block text-[10px] font-semibold text-amber-700`}>{XENCO_AI_DEMO.label} · not {tenant.name}’s line</span>
+                    {tenant.aiDemoHeading ?? XENCO_AI_DEMO.heading}: <strong>{XENCO_AI_DEMO.display}</strong>
+                  </span>
+                </a>
+              ) : null}
+            </div>
+            <figure className="relative">
+              <TenantPhoto image={m.hero} sizes="(min-width:768px) 50vw, 100vw" priority className="lo-round aspect-[4/5] w-full overflow-hidden shadow-xl md:aspect-[5/6]" />
+              {tenant.site.photoCredit ? <figcaption className="mt-2 text-right text-xs text-neutral-500">Photo: {tenant.site.photoCredit}</figcaption> : null}
+            </figure>
+          </div>
+        </section>
+      ) : (
+        /* HERO — real job photo, charcoal field, no stock imagery */
       <section className="relative isolate overflow-hidden bg-neutral-950 text-white">
         <TenantPhoto image={m.hero} sizes="100vw" priority className="absolute inset-0 -z-10 h-full w-full" />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-neutral-950 via-neutral-950/85 to-neutral-950/20" />
@@ -41,7 +83,7 @@ export function SiteHome() {
           <p className="mt-5 max-w-xl text-lg text-neutral-300">{tenant.site.heroSubtitle}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href={osHref(s, '/request')} className="inline-flex items-center gap-2 bg-[var(--brand)] px-5 py-3.5 font-semibold text-white hover:bg-[var(--brand-dark)]">
-              Request service <ArrowRight className="h-4 w-4" />
+              {cta} <ArrowRight className="h-4 w-4" />
             </Link>
             <a href={tel} className="inline-flex items-center gap-2 border border-white/40 px-5 py-3.5 font-semibold text-white hover:bg-white/10">
               {terms.callCta} {tenant.phone}
@@ -73,27 +115,58 @@ export function SiteHome() {
           </div>
         </dl>
       </section>
+      )}
 
       {/* SERVICE LANES */}
       <section id="services" className="mx-auto max-w-6xl px-4 py-16">
-        <p className={`${FIELD} text-[11px] text-neutral-500`}>Service lanes</p>
+        <p className={`${FIELD} text-[11px] text-neutral-500`}>{split ? 'What we do' : 'Service lanes'}</p>
         <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>{terms.servicesHeading}</h2>
-        <div className={`mt-8 grid gap-px border border-neutral-300 bg-neutral-300 sm:grid-cols-2 ${services.length === 5 ? 'lg:grid-cols-5' : services.length === 3 || services.length === 6 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
-          {services.map((svc) => (
-            <Link key={svc.slug} href={osHref(s, `/services/${svc.slug}`)} className="group flex flex-col bg-white">
-              <TenantPhoto image={m.lanes[svc.laneId] ?? m.hero} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
-              <div className="flex flex-1 flex-col p-5">
-                <p className={`${FIELD} text-[11px] text-[var(--brand)]`}>Lane {svc.code}</p>
-                <h3 className={`${DISPLAY} mt-1 text-2xl font-semibold uppercase leading-tight`}>{svc.title}</h3>
-                <p className="mt-2 flex-1 text-sm text-neutral-600">{svc.summary}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-neutral-900 group-hover:text-[var(--brand-dark)]">
-                  Lane detail <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          ))}
+        <div className={`mt-8 grid sm:grid-cols-2 ${split ? 'gap-5' : 'gap-px border border-neutral-300 bg-neutral-300'} ${services.length === 5 ? 'lg:grid-cols-5' : services.length === 3 || services.length === 6 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
+          {services.map((svc) => {
+            const photo = m.lanes[svc.laneId];
+            return (
+              <Link key={svc.slug} href={osHref(s, `/services/${svc.slug}`)} className={`group flex flex-col bg-white ${split ? 'lo-round overflow-hidden shadow-sm ring-1 ring-black/5 transition hover:shadow-md' : ''}`}>
+                {photo ? (
+                  <TenantPhoto image={photo} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
+                ) : (
+                  // No site photo for this service: a branded panel, never an empty box or a stock image.
+                  <div aria-hidden className="flex aspect-[4/3] w-full items-end p-5 text-white" style={{ background: `linear-gradient(135deg, ${tenant.branding.primary}, var(--accent, ${tenant.branding.primaryDark}))` }}>
+                    <span className={`${DISPLAY} text-3xl font-bold leading-tight`}>{svc.title}</span>
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col p-5">
+                  {split ? null : <p className={`${FIELD} text-[11px] text-[var(--brand)]`}>Lane {svc.code}</p>}
+                  <h3 className={`${DISPLAY} mt-1 text-2xl font-semibold uppercase leading-tight`}>{svc.title}</h3>
+                  <p className="mt-2 flex-1 text-sm text-neutral-600">{svc.summary}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-neutral-900 group-hover:text-[var(--brand-dark)]">
+                    {split ? 'Details' : 'Lane detail'} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
+
+      {/* RECENT WORK — photos the business's own site presents as its work, credited to the source */}
+      {m.gallery?.length && !m.proof.length ? (
+        <section className="bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className={`${FIELD} text-[11px] text-neutral-500`}>Recent work</p>
+                <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>On the job</h2>
+              </div>
+              {tenant.site.photoCredit ? <p className="text-sm text-neutral-500">Photos from {tenant.site.photoCredit}</p> : null}
+            </div>
+            <ul className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+              {m.gallery.slice(0, 8).map((g) => (
+                <li key={g.src}><TenantPhoto image={g} sizes="(min-width:768px) 25vw, 50vw" className="lo-round aspect-square w-full overflow-hidden" /></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       {/* PROTECTION LIFECYCLE — the signature */}
       <section className="bg-neutral-950 text-white">
@@ -130,7 +203,7 @@ export function SiteHome() {
       {/* ABOUT — spec-sheet credibility, only what the client publishes */}
       <section className="border-y border-neutral-300 bg-white">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:items-center">
-          <TenantPhoto image={m.about} sizes="(min-width:768px) 45vw, 100vw" className="aspect-[4/5] w-full md:aspect-[3/4]" />
+          <TenantPhoto image={m.about} sizes="(min-width:768px) 45vw, 100vw" className="lo-round aspect-[4/5] w-full md:aspect-[3/4]" />
           <div>
             <p className={`${FIELD} text-[11px] text-neutral-500`}>About {tenant.name}</p>
             <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>{tenant.site.aboutTitle}</h2>
@@ -143,8 +216,8 @@ export function SiteHome() {
                 </div>
               ))}
             </dl>
-            <Link href={osHref(s, '/request')} className="mt-6 inline-flex items-center gap-2 bg-neutral-950 px-5 py-3 font-semibold text-white hover:bg-neutral-800">
-              Request service <ArrowRight className="h-4 w-4" />
+            <Link href={osHref(s, '/request')} className={`lo-btn mt-6 inline-flex items-center gap-2 px-5 py-3 font-semibold text-white ${split ? 'bg-[var(--brand)] hover:bg-[var(--brand-dark)]' : 'bg-neutral-950 hover:bg-neutral-800'}`}>
+              {cta} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -167,7 +240,7 @@ export function SiteHome() {
             {[
               ['Customer', 'Job status, estimate approval, report and invoice', links.status],
               ['Office', 'Requests, callbacks, estimates, reports, invoices', '/office'],
-              [terms.fieldView, `Phone job packet: checklist, ${vertical.flow === 'estimate-first' ? 'crew, materials' : 'readings'}, photos`, links.field],
+              [terms.fieldView, `Phone job packet: checklist, ${terms.fieldView === 'Crew' ? 'crew, materials' : vertical.flow === 'estimate-first' ? 'before/after' : 'readings'}, photos`, links.field],
             ].map(([t, d, p]) => (
               <Link key={t} href={osHref(s, p)} className="group bg-neutral-950 p-6 hover:bg-neutral-900">
                 <p className={`${FIELD} text-[10px] text-[var(--brand)]`}>{t} view</p>

@@ -12,6 +12,7 @@ import { osBase, osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 import { termsOf } from '@/lib/local-os/terms';
 import { getTenant } from '@/lib/local-os/tenants';
+import type { ProspectEntryData } from '@/lib/local-os/prospect/build';
 
 function ResetButton() {
   const { reset } = useDemo();
@@ -34,10 +35,10 @@ function ResetButton() {
  *   tech    /os/[t]/tech/...   — dark compact header with the shield
  * The amber band and the demo tour are on every screen.
  */
-export function TenantShell({ tenant, children }: { tenant: TenantConfig; children: React.ReactNode }) {
+export function TenantShell({ tenant, prospect, children }: { tenant: TenantConfig; prospect?: ProspectEntryData; children: React.ReactNode }) {
   const path = usePathname() ?? '';
   const base = osBase(tenant.slug);
-  const vertical = getTenant(tenant.slug)?.vertical;
+  const vertical = prospect?.vertical ?? getTenant(tenant.slug)?.vertical;
   const fieldView = vertical ? termsOf(vertical).fieldView : 'Technician';
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
   const office: [string, string][] = [
@@ -56,8 +57,8 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
         ['--brand-dark' as string]: tenant.branding.primaryDark,
       }}
     >
-      <PreviewBar tenant={tenant} />
-      <DemoProvider slug={tenant.slug}>
+      <PreviewBar tenant={tenant} fieldView={fieldView} />
+      <DemoProvider slug={tenant.slug} prospect={prospect}>
         {zone === 'site' ? (
           <>
             <div style={{ background: tenant.branding.primary }} className="px-4 py-1.5 text-center text-sm font-medium text-white">
@@ -75,7 +76,7 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
                   <a href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 rounded-md px-3 py-2 font-medium hover:bg-slate-100">
                     <Phone className="h-4 w-4" /> <span className="hidden md:inline">{tenant.phone}</span><span className="md:hidden">Call</span>
                   </a>
-                  <Link href={osHref(tenant.slug, '/request')} className="bg-[var(--brand)] px-3 py-2 font-semibold text-white hover:bg-[var(--brand-dark)]">Request service</Link>
+                  <Link href={osHref(tenant.slug, '/request')} className="lo-btn bg-[var(--brand)] px-3 py-2 font-semibold text-white hover:bg-[var(--brand-dark)]">{tenant.site.ctaLabel ?? 'Request service'}</Link>
                 </nav>
               </div>
             </header>

@@ -29,6 +29,21 @@ export function TenantLogo({
   height: number;
   className?: string;
 }) {
+  // Mark + clean text wordmark (business has a round/square mark but no wide logo file).
+  if (IS_WORDMARK[surface] && tenant.branding.wordmarkText) {
+    const dark = /OnDark|MonoWhite/.test(surface);
+    const markH = Math.round(height * 1.15);
+    return (
+      <span className={`shrink-0 ${className}`}><span className="inline-flex items-center gap-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={tenant.branding.logos.shieldOnLight} alt="" width={markH} height={markH} style={{ width: markH, height: markH }} className={`shrink-0 object-contain ${dark ? 'rounded-full bg-white p-0.5' : ''}`} />
+        <span className="lo-display whitespace-nowrap font-bold leading-none [font-family:var(--font-display,inherit)]" style={{ fontSize: Math.round(height * 0.5), color: dark ? '#fff' : tenant.branding.surface }}>
+          {tenant.branding.wordmarkText}
+        </span>
+        <span className="sr-only">{tenant.name}</span>
+      </span></span>
+    );
+  }
   const aspect = IS_WORDMARK[surface] ? tenant.branding.wordmarkAspect ?? 4 : tenant.branding.markAspect ?? 1;
   // Squarer wordmarks (aspect < 3) read small at a 4:1 wordmark's height; give them more height.
   if (IS_WORDMARK[surface] && aspect < 3) height = Math.round(height * 1.4);
