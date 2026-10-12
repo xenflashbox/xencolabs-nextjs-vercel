@@ -5,7 +5,8 @@ import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } fr
 /**
  * Presentation deployment only (see lib/local-os/presentation.ts). On an allowed host:
  * `/` → 302 /<slug>, /<slug>/* is rewritten to /os/<slug>/*, /os/<slug>/* redirects to the clean
- * path, /os-media/<slug>/* passes to its gated route, everything else is a noindex 404. Any other
+ * path, /os-media/<slug>/* passes to its gated route, /lp/<token>/* (workflow-concept previews) passes
+ * through, everything else is a noindex 404. Any other
  * host is a 404 for every path.
  */
 const NOINDEX = 'noindex, nofollow, noarchive, noimageindex'
@@ -18,6 +19,8 @@ function presentation(req: NextRequest): NextResponse {
   const clean = isPresentationTenant(seg[1] ?? '')
   const legacy = seg[1] === 'os' && isPresentationTenant(seg[2] ?? '')
   const media = seg[1] === 'os-media' && isPresentationTenant(seg[2] ?? '') && seg.length > 3
+  // Local OS workflow-concept previews (/lp/<token>/…): token-addressed, noindex, sample data only.
+  const lp = seg[1] === 'lp' && /^[A-Za-z0-9_-]{16,64}$/.test(seg[2] ?? '')
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
@@ -31,7 +34,7 @@ function presentation(req: NextRequest): NextResponse {
     url.pathname = pathname.slice(3)
     url.search = search
     res = NextResponse.redirect(url, 308)
-  } else if (media || pathname === '/robots.txt') {
+  } else if (media || lp || pathname === '/robots.txt') {
     res = NextResponse.next()
   } else {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })

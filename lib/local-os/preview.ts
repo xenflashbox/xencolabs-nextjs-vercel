@@ -11,6 +11,8 @@ export type PreviewManifest = {
     business: { name: string; city: string; service_area?: string; rating?: number | null; review_count?: number | null; website?: string | null; maps_url?: string | null };
     branding: { theme_color?: string | null; og_image?: string | null; site_title?: string | null };
     services: string[];
+    /** Headline curated from the business's own public site; falls back to the template headline. */
+    hero_title?: string | null;
     sandbox: { demo_phone?: string | null; notice: string };
     booking: { url?: string | null };
   };

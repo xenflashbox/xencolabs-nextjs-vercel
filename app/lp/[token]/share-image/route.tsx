@@ -15,7 +15,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   return renderShareCard(
     {
       eyebrow: [b.city, b.service_area].filter(Boolean).join(' · ') || 'Workflow concept',
-      title: t.heroTitle(b.city),
+      title: m.config.hero_title || t.heroTitle(b.city),
       brandName: b.name,
       accent: m.config.branding?.theme_color || t.accent,
       surface: '#0f172a',

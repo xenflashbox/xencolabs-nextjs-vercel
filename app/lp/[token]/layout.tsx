@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { loadPreview } from '@/lib/local-os/preview';
 import { LABEL, TEMPLATES } from '@/lib/local-os/templates';
+import { PRESENTATION_TENANT, presentationOrigin } from '@/lib/local-os/presentation';
 
 export const dynamic = 'force-dynamic';
 const ROBOTS: Metadata['robots'] = { index: false, follow: false, noarchive: true, nocache: true, googleBot: { index: false, follow: false } };
@@ -13,12 +14,15 @@ export async function generateMetadata({ params }: { params: { token: string } }
   const name = m.config.business.name;
   const title = `${name} · private workflow concept`;
   const description = `${TEMPLATES[m.template].heroSub} A Xenco Labs demonstration for ${name}; sample prices and data.`;
-  const image = { url: `/lp/${params.token}/share-image`, width: 1200, height: 630, alt: `${name} workflow concept preview by Xenco Labs` };
+  // Absolute: the preview host (presentation deployment) is the canonical home of /lp links; on Vercel
+  // preview deployments Next would otherwise resolve relative social images to the branch URL.
+  const origin = PRESENTATION_TENANT ? presentationOrigin() : 'https://xencolabs.com';
+  const image = { url: `${origin}/lp/${params.token}/share-image`, width: 1200, height: 630, alt: `${name} workflow concept preview by Xenco Labs` };
   return {
     title: { absolute: title },
     description,
     robots: ROBOTS,
-    openGraph: { type: 'website', siteName: 'Xenco Labs', url: `/lp/${params.token}`, title, description, images: [image] },
+    openGraph: { type: 'website', siteName: 'Xenco Labs', url: `${origin}/lp/${params.token}`, title, description, images: [image] },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }
