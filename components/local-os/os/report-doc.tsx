@@ -144,6 +144,26 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
           </section>
         ) : null}
 
+        {job && job.photos.some((p) => p.sample && p.url) ? (
+          <section className="mt-5">
+            <h3 className="text-sm font-semibold">Before and after photos</h3>
+            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+              {(['before', 'after'] as const).map((phase) => (
+                <div key={phase}>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{phase === 'before' ? 'Before' : 'After'}</p>
+                  {job.photos.filter((p) => p.phase === phase && p.sample && p.url).map((p) => (
+                    <figure key={p.id} className="relative overflow-hidden rounded-lg bg-slate-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.url as string} alt={p.name} className="aspect-[4/3] w-full object-cover" />
+                      <span className="absolute bottom-1.5 left-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">{p.illustrative ? 'Sample photo · illustrative' : 'Sample photo'}</span>
+                    </figure>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className={`mt-5 grid gap-2 rounded-xl bg-slate-50 p-3 text-sm ${toAhj ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
           <p>Reviewed: <strong>{r.reviewedBy ?? 'not yet'}</strong></p>
           <p>Owner copy: <strong>{r.delivery.owner === 'sent' ? 'sent (sample)' : 'not sent'}</strong></p>

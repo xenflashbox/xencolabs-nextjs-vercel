@@ -6,10 +6,10 @@
  *
  * Nothing here is a claim about the business: service-page copy comes from the business's website, and
  * the workflow text describes how Local OS would run the request in this preview. Every price is a
- * placeholder on a document marked as a fictional sample.
+ * sample price on a document marked as a fictional sample.
  */
 import type { ProspectProfile, ServiceKind } from '@/lib/local-os/prospect/types'
-import type { ChecklistTemplateItem, LineItemFamily, VerticalPack } from '@/lib/local-os/tenant-types'
+import type { ChecklistTemplateItem, IntakeField, LineItemFamily, VerticalPack } from '@/lib/local-os/tenant-types'
 
 const C = (section: ChecklistTemplateItem['section'], label: string): ChecklistTemplateItem => ({ section, label })
 
@@ -50,6 +50,40 @@ const KIND_LINES: Record<ServiceKind, { description: string; unit: string; sampl
   turf: [{ description: 'Artificial turf installation', unit: 'sq ft', sampleUnitPrice: 11 }],
   hardscape: [{ description: 'Paver installation', unit: 'sq ft', sampleUnitPrice: 24 }],
   other: [{ description: 'Service visit', unit: 'visit', sampleUnitPrice: 200 }],
+}
+
+const SEL = (key: string, label: string, options: string[]) => ({ key, label, kind: 'select' as const, options })
+const STORIES = SEL('stories', 'Number of stories', ['1', '2', '3+'])
+/** Estimate questions per kind of service, asked only for the services of that kind. */
+const KIND_FIELDS: Record<ServiceKind, Omit<IntakeField, 'laneIds'>[]> = {
+  windows: [STORIES, SEL('window_count', 'About how many windows?', ['Under 15', '15–30', '30+', 'Not sure']), SEL('window_sides', 'Which sides?', ['Outside only', 'Inside and out'])],
+  gutters: [STORIES, SEL('gutter_guards', 'Gutter guards?', ['No guards', 'Has gutter guards', 'Not sure'])],
+  screens: [SEL('screen_count', 'About how many screens?', ['Under 10', '10–25', '25+', 'Not sure'])],
+  roof: [STORIES, SEL('roof_type', 'Roof type', ['Composition shingle', 'Tile', 'Flat / low slope', 'Not sure'])],
+  solar: [SEL('panel_count', 'About how many panels?', ['Under 15', '15–30', '30+', 'Not sure']), SEL('panel_location', 'Where are the panels?', ['Roof', 'Ground mount', 'Carport / commercial'])],
+  pressure: [{ key: 'surfaces', label: 'Surfaces to wash (driveway, patio, walkways, siding…)', kind: 'text' }],
+  softwash: [STORIES, SEL('siding', 'Siding', ['Stucco', 'Wood', 'Vinyl', 'Brick / stone', 'Other'])],
+  deck_fence: [SEL('deck_size', 'Size of the deck or fence', ['Small', 'Medium', 'Large', 'Not sure'])],
+  dryer_vent: [SEL('vent_location', 'Where does the vent exit?', ['Wall', 'Roof', 'Not sure'])],
+  landscape_build: [SEL('yard_size', 'Size of the area', ['Small (under 500 sq ft)', 'Medium (500–2,000 sq ft)', 'Large (2,000+ sq ft)', 'Not sure']), SEL('design', 'Design', ['I have a plan', 'I need a design'])],
+  landscape_maint: [SEL('frequency', 'How often?', ['Weekly', 'Every two weeks', 'Monthly', 'One-time cleanup'])],
+  irrigation: [{ key: 'irrigation_issue', label: 'What is happening with the system?', kind: 'text' }],
+  turf: [SEL('turf_area', 'Area to cover', ['Under 300 sq ft', '300–1,000 sq ft', '1,000+ sq ft', 'Not sure'])],
+  hardscape: [SEL('hardscape_type', 'Project', ['Patio', 'Walkway', 'Retaining wall', 'Driveway', 'Other'])],
+  other: [],
+}
+
+/** Profile override, else the questions for the business's own kinds of service, plus timing. */
+function intakeFor(p: ProspectProfile): IntakeField[] {
+  if (p.intake?.length) return p.intake
+  const out = new Map<string, IntakeField>()
+  for (const svc of p.services) {
+    for (const f of KIND_FIELDS[svc.kind] ?? []) {
+      const prev = out.get(f.key)
+      out.set(f.key, { ...f, laneIds: [...(prev?.laneIds ?? []), svc.id] })
+    }
+  }
+  return [...out.values(), { key: 'timing', label: 'Preferred timing', kind: 'text' }]
 }
 
 const LABEL: Record<ProspectProfile['template'], string> = {
@@ -101,10 +135,7 @@ export function homeServicesVertical(p: ProspectProfile): VerticalPack {
       { id: 'soon', label: 'As soon as possible', routing: 'The office calls back to schedule.', humanOnly: false },
       { id: 'routine', label: 'Flexible / planning ahead', routing: 'The office calls back to schedule.', humanOnly: false },
     ],
-    intakeFields: [
-      { key: 'stories', label: 'Number of stories', kind: 'select', options: ['1', '2', '3+'] },
-      { key: 'timing', label: 'Preferred timing', kind: 'text' },
-    ],
+    intakeFields: intakeFor(p),
     leadStatuses: [
       { id: 'new', label: 'New' },
       { id: 'callback', label: 'Callback scheduled' },

@@ -126,6 +126,8 @@ export interface TenantMedia {
   lanes: Record<string, MediaImage>
   /** Supporting photos, kept for tenants that want them; not rendered as a media wall. */
   gallery?: MediaImage[]
+  /** Prospect previews: before/after photos for the completed sample job, labelled "Sample photo". */
+  sampleJob?: { laneId: string; before: MediaImage[]; after: MediaImage[] }
   /** Real-work proof cards (video + poster + links into the system). Empty = section hidden. */
   proof: ProofItem[]
   /** Background for the link-preview (OG) card; falls back to `hero`. */

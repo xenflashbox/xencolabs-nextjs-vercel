@@ -79,6 +79,7 @@ export function buildProspect(token: string, p: ProspectProfile): ProspectEntryD
       lanes: Object.fromEntries(p.services.filter((s) => s.image).map((s) => [s.id, img(s.image as ProspectMedia)])),
       gallery: p.gallery.map(img),
       proof: [],
+      sampleJob: p.sample_job ? { laneId: p.sample_job.service_id, before: p.sample_job.before.map(img), after: p.sample_job.after.map(img) } : undefined,
     },
     tour: [
       { label: 'Website', detail: `${p.name}: branded homepage`, path: '' },
@@ -115,8 +116,13 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
     return new Date(guess.getTime() + (utc.getTime() - pacific.getTime())).toISOString()
   }
   const day = (d: number) => at(d, 12).slice(0, 10)
-  const lanes = config.laneIds
+  const sj = config.media.sampleJob
+  // The completed sample job uses the service its before/after photos show.
+  const lanes = sj && config.laneIds.includes(sj.laneId) ? [sj.laneId, ...config.laneIds.filter((l) => l !== sj.laneId)] : config.laneIds
   const L = (i: number) => lanes[i % lanes.length] as string
+  const photos = sj ? [...sj.before.map((m, i) => ({ id: `sp-b${i}`, phase: 'before' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative })), ...sj.after.map((m, i) => ({ id: `sp-a${i}`, phase: 'after' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative }))] : []
+  // Sample answers to the estimate questions asked for a lane (second option of each select).
+  const fieldsFor = (lane: string) => Object.fromEntries(v.intakeFields.filter((f) => f.kind === 'select' && (!f.laneIds || f.laneIds.includes(lane))).map((f) => [f.key, f.options?.[1] ?? f.options?.[0] ?? '']))
   const fam = (lane: string) => v.lineItemFamilies.find((f) => f.id === lane)?.items ?? []
   const svc = (lane: string) => v.services.find((s) => s.laneId === lane)?.title ?? lane
   const city = (i: number) => config.site.serviceAreas[i % Math.max(1, config.site.serviceAreas.length)] ?? 'the service area'
@@ -127,7 +133,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
   const lead = (id: string, i: number, lane: string, extra: Partial<DemoState['leads'][number]>) => ({
     id, sample: true as const, createdAt: at(-i, 9, 10), name: `Sample Customer ${id.slice(2)}`, company: null, phone: `555-01${id.slice(-2)}`,
     email: 'customer@example.com', address: `${100 + i * 10} Sample Lane, ${city(i)}`, buildingType: 'Single-family home', laneId: lane,
-    workType: svc(lane), urgency: 'routine', notes: '', fields: { stories: '2' }, status: 'new', nextAction: 'Call back to confirm details',
+    workType: svc(lane), urgency: 'routine', notes: '', fields: fieldsFor(lane), status: 'new', nextAction: 'Call back to confirm details',
     dueAt: at(0, 15, 0), source: 'website form' as const, ...extra,
   })
   const sr = (lane: string) => (v.reportTemplates[0]?.items ?? []).map((label) => ({ label, result: 'pass' as const, note: '' }))
@@ -147,7 +153,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
       { id: 'Q-605', sample: true, leadId: 'L-605', number: 'EST-605 (sample)', laneId: L(3), scope: `${svc(L(3))} (draft).`, lines: line(L(3), 0), status: 'draft', reviewedBy: null, reviewNote: '', fromReportId: null, customerApproval: null },
     ],
     jobs: [
-      { id: 'J-601', sample: true, number: 'JOB-601 (sample)', leadId: 'L-601', quoteId: 'Q-601', reportId: 'R-603', laneId: L(0), title: svc(L(0)), scheduledStart: at(-6, 9, 0), scheduledEnd: at(-6, 12, 0), technician: TECH, status: 'report_ready', siteContact: 'Sample Customer 601 · 555-0101', accessNotes: 'Side gate; code shared by phone (sample).', scope: [svc(L(0))], checklist: checklist(v, L(0), 20), photos: [], techNotes: 'All areas done; customer walked through (sample).', reportApprovedBy: 'Office (sample sign-off)' },
+      { id: 'J-601', sample: true, number: 'JOB-601 (sample)', leadId: 'L-601', quoteId: 'Q-601', reportId: 'R-603', laneId: L(0), title: svc(L(0)), scheduledStart: at(-6, 9, 0), scheduledEnd: at(-6, 12, 0), technician: TECH, status: 'report_ready', siteContact: 'Sample Customer 601 · 555-0101', accessNotes: 'Side gate; code shared by phone (sample).', scope: [svc(L(0))], checklist: checklist(v, L(0), 20), photos, techNotes: 'All areas done; customer walked through (sample).', reportApprovedBy: 'Office (sample sign-off)' },
       { id: 'J-603', sample: true, number: 'JOB-603 (sample)', leadId: 'L-603', quoteId: 'Q-603', reportId: null, laneId: L(2), title: svc(L(2)), scheduledStart: at(0, 10, 0), scheduledEnd: at(0, 12, 30), technician: TECH, status: 'confirmed', siteContact: 'Sample Customer 603 · 555-0103', accessNotes: 'Dog in the backyard; text before arrival (sample).', scope: [svc(L(2))], checklist: checklist(v, L(2), 0), photos: [], techNotes: '', reportApprovedBy: null },
     ],
     reports: [

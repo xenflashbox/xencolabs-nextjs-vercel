@@ -68,6 +68,10 @@ export interface DemoPhoto {
   name: string
   /** Object URL in this browser only. Preview photos never leave the device. */
   url: string | null
+  /** Seeded sample photo (a served preview image, kept across reloads), labelled "Sample photo". */
+  sample?: boolean
+  /** AI-generated sample photo: labelled "Sample photo · illustrative". */
+  illustrative?: boolean
 }
 
 export interface DemoJob {

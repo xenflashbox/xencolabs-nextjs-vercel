@@ -55,8 +55,8 @@ export function DemoProvider({ slug, prospect, children }: { slug: string; prosp
     } catch {
       initial = null;
     }
-    // Object URLs do not survive a reload; drop them rather than show broken images.
-    if (initial) initial.jobs = initial.jobs.map((j) => ({ ...j, photos: j.photos.map((p) => ({ ...p, url: null })) }));
+    // Object URLs do not survive a reload; drop them rather than show broken images (seeded samples stay).
+    if (initial) initial.jobs = initial.jobs.map((j) => ({ ...j, photos: j.photos.map((p) => (p.sample ? p : { ...p, url: null })) }));
     setState(initial ?? entry.seed());
   }, [entry, key]);
 

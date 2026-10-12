@@ -159,9 +159,10 @@ export function TechJob({ id }: { id: string }) {
             {list.length ? (
               <ul className="grid grid-cols-3 gap-2">
                 {list.map((p) => (
-                  <li key={p.id} className="flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-slate-100 text-center text-[10px] text-slate-500">
+                  <li key={p.id} className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-slate-100 text-center text-[10px] text-slate-500">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {p.url ? <img src={p.url} alt={p.name} className="size-full object-cover" /> : <span className="px-1">{p.name}</span>}
+                    {p.sample ? <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">{p.illustrative ? 'Sample photo · illustrative' : 'Sample photo'}</span> : null}
                   </li>
                 ))}
               </ul>

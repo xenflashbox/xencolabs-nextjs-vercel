@@ -1,3 +1,4 @@
+import type { IntakeField } from '@/lib/local-os/tenant-types'
 /**
  * A prospect's sourced tenant profile, researched from the business's own public website and stored
  * with its preview in LeadIntel (config_json.profile). Every fact and asset carries the public URL it
@@ -71,5 +72,12 @@ export interface ProspectProfile {
   gallery: ProspectMedia[]
   /** Short public facts (e.g. Google rating) with their sources; no guarantees, certifications or promises. */
   facts: ({ text: string } & Sourced)[]
+  /** Estimate questions; omitted → the defaults for the kinds of service the business offers. */
+  intake?: IntakeField[]
+  /**
+   * The completed sample job (J-601) shows these before/after photos, each labelled "Sample photo".
+   * Prefer a before/after pair from the business's own site; otherwise generated (marked `generated`).
+   */
+  sample_job?: { service_id: string; before: ProspectMedia[]; after: ProspectMedia[] }
   researched_at: string
 }
