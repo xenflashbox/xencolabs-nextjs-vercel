@@ -93,9 +93,12 @@ export function SiteRequest() {
                     <button type="button" key={l.id} onClick={() => { setLaneId(l.id); set('workType', l.workTypes[0] ?? ''); }} className={`rounded-lg border px-3 py-3 text-left text-sm ${laneId === l.id ? 'border-[var(--brand)] bg-red-50 font-semibold' : 'border-slate-200'}`}>{l.label}</button>
                   ))}
                 </div>
-                <select value={v.workType ?? lane?.workTypes[0]} onChange={(e) => set('workType', e.target.value)} className={field}>
-                  {lane?.workTypes.map((w) => <option key={w}>{w}</option>)}
-                </select>
+                {/* Only when the chosen service has more than one work type (one-per-service prospects skip it). */}
+                {(lane?.workTypes.length ?? 0) > 1 ? (
+                  <select value={v.workType ?? lane?.workTypes[0]} onChange={(e) => set('workType', e.target.value)} className={field}>
+                    {lane?.workTypes.map((w) => <option key={w}>{w}</option>)}
+                  </select>
+                ) : null}
               </fieldset>
               <fieldset className="space-y-2">
                 <legend className="font-semibold">How urgent?</legend>
