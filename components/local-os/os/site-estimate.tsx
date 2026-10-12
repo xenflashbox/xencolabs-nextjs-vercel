@@ -43,7 +43,7 @@ export function SiteEstimate({ id }: { id: string }) {
             <tfoot><tr className="font-semibold"><td className="py-2" colSpan={3}>Total (sample prices)</td><td className="text-right tabular-nums">{money(total)}</td></tr></tfoot>
           </table>
         </div>
-        <p className="mt-3 text-xs text-slate-500">{vertical.guardrails.quote} Prices are placeholders, not {tenant.name} rates.</p>
+        <p className="mt-3 text-xs text-slate-500">{vertical.guardrails.quote} Sample prices for this preview, not {tenant.name}’s rates.</p>
         <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
           {q.status === 'sent' ? (
             <div className="space-y-2 text-sm">

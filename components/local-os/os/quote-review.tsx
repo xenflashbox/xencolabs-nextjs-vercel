@@ -63,7 +63,7 @@ export function QuoteReview({ id }: { id: string }) {
           <li key={st} className={`rounded-full px-2.5 py-1 ${STEPS.indexOf(q.status as (typeof STEPS)[number]) >= i ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-600'}`}>{i + 1}. {STEP_LABEL[st]}</li>
         ))}
       </ol>
-      <Guardrail>{vertical.guardrails.quote} Prices are sample placeholders, not {tenant.name} rates.</Guardrail>
+      <Guardrail>{vertical.guardrails.quote} Sample prices for this preview, not {tenant.name}’s rates.</Guardrail>
 
       <Card title="Customer and property">
         <p className="text-sm">{lead?.company ?? lead?.name} · {lead?.address} · {lead?.buildingType}</p>

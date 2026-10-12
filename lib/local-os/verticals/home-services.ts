@@ -138,7 +138,7 @@ export function homeServicesVertical(p: ProspectProfile): VerticalPack {
       { id: 'invoiced', label: 'Invoice', detail: 'One invoice linked to the job and its photos.', sample: '/invoice/I-604' },
     ],
     guardrails: {
-      quote: 'Sample estimate. Prices are placeholders for this preview, not the business’s rates.',
+      quote: 'Sample estimate for this preview.',
       compliance: 'Checklist and photos record the work done. They are not a warranty or inspection.',
       emergency: 'Urgent requests go to a person by phone. Online requests never dispatch a technician on their own.',
       completion: 'The service record documents work done and photos taken. It is not a warranty.',
