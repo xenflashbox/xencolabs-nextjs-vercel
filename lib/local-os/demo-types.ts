@@ -19,6 +19,8 @@ export interface DemoLead {
   notes: string
   /** Trade-specific intake answers (system type, risers, assemblies, ...). */
   fields: Record<string, string>
+  /** File names of photos attached to the request (the files never leave the browser). */
+  photos?: string[]
   status: string
   nextAction: string
   /** ISO time of the scheduled callback / follow-up, if any. */
@@ -27,6 +29,8 @@ export interface DemoLead {
 }
 
 export interface DemoQuoteLine {
+  /** Optional section heading the line is grouped under (e.g. 'Patching', 'Striping'). */
+  group?: string
   label: string
   unit: string
   qty: number
@@ -87,6 +91,11 @@ export interface DemoJob {
   techNotes: string
   /** Set only when the contractor signs off the report; never automatic. */
   reportApprovedBy: string | null
+  /** Crew-based trades: who is on the job, equipment, material quantities and site conditions (sample). */
+  crew?: string[]
+  equipment?: string[]
+  materials?: { item: string; qty: string }[]
+  weather?: string
 }
 
 export type ItemResult = 'pass' | 'fail' | 'attention' | 'na' | 'pending'
@@ -131,6 +140,8 @@ export interface DemoReport {
   items: { label: string; result: ItemResult; note: string }[]
   assemblies: DemoAssembly[]
   deficiencies: string[]
+  /** Schematic site markup (percent coordinates on a plan view), e.g. pavement conditions by area. */
+  markup?: { id: string; label: string; x: number; y: number; w: number; h: number; tone: 'red' | 'amber' | 'blue' | 'slate' }[]
   overall: ItemResult
   delivery: { owner: 'not_sent' | 'sent'; ahj: 'not_submitted' | 'submitted' | 'not_required' }
   followUpQuoteId: string | null

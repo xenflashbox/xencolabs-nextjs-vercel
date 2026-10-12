@@ -44,6 +44,10 @@ export interface TenantBranding {
   logos: Record<LogoSurface, string>
   /** Type system for the customer site: 'industrial' = condensed display + mono field labels. */
   typography: 'industrial' | 'standard'
+  /** Width ÷ height of the wordmark artwork (default 4). */
+  wordmarkAspect?: number
+  /** Width ÷ height of the compact mark (default 1, a square shield/icon). */
+  markAspect?: number
 }
 
 /** Customer-facing site copy. Facts must come from the client's own published material. */
@@ -105,8 +109,10 @@ export interface TenantMedia {
   lanes: Record<string, MediaImage>
   /** Supporting photos, kept for tenants that want them; not rendered as a media wall. */
   gallery?: MediaImage[]
-  /** Real-work proof cards (video + poster + links into the system). */
+  /** Real-work proof cards (video + poster + links into the system). Empty = section hidden. */
   proof: ProofItem[]
+  /** Background for the link-preview (OG) card; falls back to `hero`. */
+  share?: MediaImage
 }
 
 /** One stop on the guided demo tour. `path` is relative to /os/[tenant]. */
@@ -134,6 +140,12 @@ export interface TenantConfig {
   tour: TourStop[]
   /** Show the Xenco live AI receptionist panel (a Xenco number, never the client's). */
   aiDemo: boolean
+  /** Heading for the AI panel when a brief asks for specific wording. */
+  aiDemoHeading?: string
+  /** First name used in the office dashboard greeting. */
+  greetingName?: string
+  /** Sample records the site bridges into (paths relative to /os/[tenant]). */
+  links?: { status: string; field: string }
   /** Public website, for reference only; the preview never writes to it. */
   website: string | null
   /** Preview tenants are not live: seeded sample data, nothing leaves the browser. */
@@ -210,6 +222,43 @@ export interface ReportTemplate {
   assemblyTypes?: string[]
   /** Who the finished report is delivered to. */
   deliverTo: ('owner' | 'ahj')[]
+  /** Heading over the scored items (default "Inspection and testing"). */
+  itemsTitle?: string
+  /** Column labels for the per-area/per-system table (default: risers + main drain test). */
+  systemsTable?: { title: string; id: string; type: string; location: string; a: string; b: string; suffix?: string }
+  /** Name for the AHJ copy, when delivered to one (default: water purveyor / fire AHJ). */
+  ahjLabel?: string
+  /** How the service page describes who receives the record. */
+  deliverToText?: string
+  /** Sample record shown from the service page (relative to /os/[tenant]). */
+  samplePath?: string
+}
+
+/** Words the shared screens use for this trade (defaults are the fire-protection wording). */
+export interface VerticalTerms {
+  /** The field role, e.g. 'Technician', 'Crew foreman'. */
+  field: string
+  /** The field app's short name, e.g. 'Technician', 'Crew'. */
+  fieldView: string
+  fieldPacket: string
+  /** Placeholder name used when the office schedules new work. */
+  sampleFieldName: string
+  /** Who signs off reports, e.g. 'Licensed contractor', 'Estimator'. */
+  reviewerRole: string
+  /** "From inspection" / "From site review" on an estimate. */
+  fromReport: string
+  /** Label of the follow-up estimate link on a report. */
+  followUpLabel: string
+  /** Noun for a scored report item. */
+  itemNoun: string
+  /** Placeholder for the notes box on the request form. */
+  requestNotesPlaceholder: string
+  /** Footnote under the field-person line on invoices. */
+  invoiceFieldLine: string
+  /** Homepage heading over the service lanes. */
+  servicesHeading: string
+  /** Secondary hero button text before the phone number. */
+  callCta: string
 }
 
 /**
@@ -239,6 +288,14 @@ export interface VerticalPack {
   reportTemplates: ReportTemplate[]
   /** Lifecycle name shown to customers, e.g. 'Protection lifecycle'. */
   lifecycleName: string
+  /**
+   * 'inspect-first' (fire protection): visit → report → repair estimate → work.
+   * 'estimate-first' (paving, most contractors): request → site review → estimate → approval → crew → completion.
+   */
+  flow?: 'inspect-first' | 'estimate-first'
+  terms?: Partial<VerticalTerms>
+  /** Lane and line-item family used when the office drafts an estimate from a report. */
+  followUp?: { laneId: string; familyId: string }
   customerSteps: CustomerStep[]
   /** Statements the system must never make on its own; shown where they would otherwise appear. */
   guardrails: {

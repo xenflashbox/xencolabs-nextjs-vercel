@@ -78,6 +78,7 @@ export function Requests() {
                     <p><span className="text-slate-500">Urgency:</span> {vertical.urgency.find((u) => u.id === l.urgency)?.label}</p>
                   </div>
                   <p className="rounded-lg bg-slate-50 px-3 py-2">{l.notes}</p>
+                  {l.photos?.length ? <p className="text-xs text-slate-500">Site photos attached: {l.photos.join(', ')} (sample; files stay with the customer’s browser)</p> : null}
                   {l.urgency === 'emergency' ? <Guardrail>{vertical.guardrails.emergency}</Guardrail> : null}
                   <div className="flex flex-wrap gap-2">
                     <button type="button" className="rounded-md bg-white px-3 py-1.5 ring-1 ring-slate-200" onClick={() => updateLead(l.id, { status: 'contacted', nextAction: 'Qualify: confirm scope and access', dueAt: null })}>Logged a call</button>

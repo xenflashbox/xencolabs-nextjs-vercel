@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { lineTotal } from '@/lib/local-os/journey';
 import { Card, Guardrail, NavLink, Pill, SampleBadge, money, osHref, when } from '@/components/local-os/os/ui';
+import { termsOf } from '@/lib/local-os/terms';
 
 /**
  * The scheduled job as the office sees it: when, who, where, scope, live
@@ -23,6 +24,7 @@ export function JobOffice({ id }: { id: string }) {
   const quote = state.quotes.find((q) => q.id === j.quoteId);
   const before = j.photos.filter((p) => p.phase === 'before');
   const after = j.photos.filter((p) => p.phase === 'after');
+  const terms = termsOf(vertical);
 
   return (
     <div className="space-y-4">
@@ -35,13 +37,14 @@ export function JobOffice({ id }: { id: string }) {
           <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-sm">
             <dt className="text-slate-500">Service</dt><dd>{j.title.toLowerCase().startsWith(lane.toLowerCase()) ? j.title : `${lane}: ${j.title}`}</dd>
             <dt className="text-slate-500">When</dt><dd>{when(j.scheduledStart)} – {when(j.scheduledEnd).split(', ').pop()}</dd>
-            <dt className="text-slate-500">Technician</dt><dd>{j.technician} (sample)</dd>
+            <dt className="text-slate-500">{terms.field}</dt><dd>{j.technician} (sample)</dd>
+            {j.weather ? (<><dt className="text-slate-500">Conditions</dt><dd>{j.weather}</dd></>) : null}
             <dt className="text-slate-500">Site contact</dt><dd>{j.siteContact}</dd>
             <dt className="text-slate-500">Access</dt><dd>{j.accessNotes}</dd>
             {quote ? (<><dt className="text-slate-500">Estimate</dt><dd><NavLink href={osHref(s, `/office/quotes/${quote.id}`)}>{quote.number}</NavLink></dd></>) : null}
           </dl>
           <div className="mt-3 flex flex-wrap gap-3">
-            <NavLink href={osHref(s, `/tech/${j.id}`)}>Technician job packet →</NavLink>
+            <NavLink href={osHref(s, `/tech/${j.id}`)}>{terms.fieldPacket} →</NavLink>
             <NavLink href={osHref(s, `/status/${j.leadId}`)}>Customer status view →</NavLink>
             {j.reportId ? <NavLink href={osHref(s, `/office/reports/${j.reportId}`)}>Report →</NavLink> : null}
             {invoice ? <NavLink href={osHref(s, `/office/invoices/${invoice.id}`)}>Invoice →</NavLink> : null}
@@ -55,6 +58,18 @@ export function JobOffice({ id }: { id: string }) {
           <p className="mt-2 text-xs text-slate-500">{before.length} before · {after.length} after photos</p>
           {j.techNotes ? <p className="mt-2 whitespace-pre-wrap rounded-lg bg-slate-50 px-3 py-2 text-sm">{j.techNotes}</p> : null}
         </Card>
+        {j.crew?.length || j.equipment?.length || j.materials?.length ? (
+          <Card title="Crew schedule, equipment and materials">
+            <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-sm">
+              {j.crew?.length ? (<><dt className="text-slate-500">Crew</dt><dd>{j.crew.join(' · ')}</dd></>) : null}
+              {j.equipment?.length ? (<><dt className="text-slate-500">Equipment</dt><dd>{j.equipment.join(' · ')}</dd></>) : null}
+            </dl>
+            {j.materials?.length ? (
+              <table className="mt-3 w-full text-sm"><thead className="text-left text-xs text-slate-500"><tr><th className="py-1">Material</th><th className="py-1 text-right">Planned qty</th></tr></thead><tbody>{j.materials.map((m) => <tr key={m.item} className="border-t border-slate-100"><td className="py-1.5">{m.item}</td><td className="py-1.5 text-right tabular-nums">{m.qty}</td></tr>)}</tbody></table>
+            ) : null}
+            <p className="mt-2 text-xs text-slate-500">Sample quantities. Material tickets are attached to the live job record.</p>
+          </Card>
+        ) : null}
       </div>
 
       {j.status === 'completed' || j.status === 'report_ready' ? (

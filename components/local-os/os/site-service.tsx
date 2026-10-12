@@ -48,8 +48,8 @@ export function SiteService({ slug }: { slug: string }) {
             <div className="mt-10 border border-neutral-300 bg-white p-5">
               <p className={`${FIELD} text-[10px] text-neutral-500`}>Record you receive</p>
               <p className={`${DISPLAY} mt-1 text-2xl font-semibold uppercase`}>{template.title}</p>
-              <p className="mt-1 text-sm text-neutral-600">Delivered to {template.deliverTo.map((d) => (d === 'ahj' ? (svc.laneId === 'backflow' ? 'the water purveyor where required' : 'the fire authority having jurisdiction where required') : 'the property owner')).join(' and ')}, after the licensed contractor reviews it.</p>
-              <Link href={osHref(tenant.slug, svc.reportKind === 'backflow' ? '/report/R-503' : '/report/R-501')} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--brand-dark)] underline underline-offset-4">See a sample record <ArrowRight className="h-4 w-4" /></Link>
+              <p className="mt-1 text-sm text-neutral-600">{template.deliverToText ?? `Delivered to ${template.deliverTo.map((d) => (d === 'ahj' ? (svc.laneId === 'backflow' ? 'the water purveyor where required' : 'the fire authority having jurisdiction where required') : 'the property owner')).join(' and ')}, after the licensed contractor reviews it.`}</p>
+              <Link href={osHref(tenant.slug, template.samplePath ?? (svc.reportKind === 'backflow' ? '/report/R-503' : '/report/R-501'))} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--brand-dark)] underline underline-offset-4">See a sample record <ArrowRight className="h-4 w-4" /></Link>
             </div>
           ) : null}
         </div>

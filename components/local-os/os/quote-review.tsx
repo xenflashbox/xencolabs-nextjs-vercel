@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { termsOf } from '@/lib/local-os/terms';
 import { Card, Guardrail, NavLink, Pill, SampleBadge, money, osHref } from '@/components/local-os/os/ui';
 
 const STEPS = ['draft', 'reviewed', 'approved_to_send', 'sent', 'accepted'] as const;
@@ -45,7 +46,7 @@ export function QuoteReview({ id }: { id: string }) {
     addJob({
       id: jid, sample: true, number: `JOB-${jid.slice(2)} (sample)`, leadId: lead.id, quoteId: q!.id, reportId: null, laneId: q!.laneId,
       title: lead.workType, scheduledStart: start.toISOString(), scheduledEnd: new Date(start.getTime() + 90 * 60e3).toISOString(),
-      technician: 'Sample Technician', status: 'scheduled', siteContact: `${lead.name} · ${lead.phone}`, accessNotes: 'Confirm access with the site contact.',
+      technician: termsOf(vertical).sampleFieldName, status: 'scheduled', siteContact: `${lead.name} · ${lead.phone}`, accessNotes: 'Confirm access with the site contact.',
       scope: [q!.scope], checklist: items, photos: [], techNotes: '', reportApprovedBy: null,
     });
     updateLead(lead.id, { status: 'won', nextAction: 'Job scheduled', dueAt: null });
@@ -77,9 +78,9 @@ export function QuoteReview({ id }: { id: string }) {
             <tbody>
               {q.lines.map((l, i) => (
                 <tr key={i} className="border-t border-slate-100">
-                  <td className="py-2">{l.label}<span className="block text-xs text-slate-500">per {l.unit}</span></td>
-                  <td><input type="number" min={0} value={l.qty} disabled={!editable} onChange={(e) => setLine(i, { qty: Number(e.target.value) })} className="w-16 rounded border border-slate-300 px-2 py-1 disabled:bg-slate-50" /></td>
-                  <td><input type="number" min={0} value={l.unitPrice} disabled={!editable} onChange={(e) => setLine(i, { unitPrice: Number(e.target.value) })} className="w-24 rounded border border-slate-300 px-2 py-1 disabled:bg-slate-50" /></td>
+                  <td className="py-2">{l.group ? <span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">{l.group}</span> : null}{l.label}<span className="block text-xs text-slate-500">per {l.unit}</span></td>
+                  <td><input type="number" min={0} value={l.qty} disabled={!editable} onChange={(e) => setLine(i, { qty: Number(e.target.value) })} className="w-24 rounded border border-slate-300 px-2 py-1 disabled:bg-slate-50" /></td>
+                  <td><input type="number" min={0} value={l.unitPrice} disabled={!editable} step="any" onChange={(e) => setLine(i, { unitPrice: Number(e.target.value) })} className="w-24 rounded border border-slate-300 px-2 py-1 disabled:bg-slate-50" /></td>
                   <td className="text-right tabular-nums">{money(l.qty * l.unitPrice)}</td>
                 </tr>
               ))}

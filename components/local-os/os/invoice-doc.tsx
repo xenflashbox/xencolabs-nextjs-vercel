@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { termsOf } from '@/lib/local-os/terms';
 import { DocFrame } from '@/components/local-os/os/doc-frame';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Guardrail, Pill, money, osHref } from '@/components/local-os/os/ui';
@@ -50,7 +51,7 @@ export function InvoiceDoc({ id, mode }: { id: string; mode: 'customer' | 'offic
           <div>
             <p className="font-semibold text-slate-900">{tenant.name}</p>
             <p>{tenant.license}</p>
-            <p>Technician: {job?.technician ?? '—'} (sample) · technician certifications shown on live invoices</p>
+            <p>{termsOf(vertical).field}: {job?.technician ?? '—'} (sample) · {termsOf(vertical).invoiceFieldLine}</p>
             <p className="mt-2 text-slate-500">Payment instructions appear here on live invoices.</p>
           </div>
           <div className="sm:text-right">

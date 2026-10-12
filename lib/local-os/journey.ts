@@ -25,17 +25,24 @@ export function journeyFor(state: DemoState, vertical: VerticalPack, id: string)
   const reports = state.reports.filter((r) => jobs.some((j) => j.id === r.jobId))
   const invoices = state.invoices.filter((i) => jobs.some((j) => j.id === i.jobId))
 
+  // Estimate-first trades (paving): the site-review visit is not "the work"; only jobs booked
+  // against an estimate count as scheduled/completed work.
+  const estimateFirst = vertical.flow === 'estimate-first'
+  const workJobs = estimateFirst ? jobs.filter((j) => j.quoteId) : jobs
   const reviewedReport = reports.find((r) => r.reviewedBy)
+  const completionReport = estimateFirst ? reports.find((r) => r.reviewedBy && workJobs.some((j) => j.id === r.jobId)) : reviewedReport
   const customerQuote = quotes.find((q) => ['sent', 'accepted', 'declined'].includes(q.status))
   const accepted = quotes.find((q) => q.status === 'accepted')
-  const doneJob = jobs.find((j) => j.status === 'report_ready' || j.status === 'completed')
+  const doneJob = estimateFirst
+    ? workJobs.length > 0 && workJobs.every((j) => j.status === 'report_ready' || j.status === 'completed') ? workJobs[0] : undefined
+    : jobs.find((j) => j.status === 'report_ready' || j.status === 'completed')
   const sentInvoice = invoices.find((i) => i.status !== 'draft')
   // Work that still needs doing after an approved follow-up estimate keeps "Completion" open.
   const openFollowUp = quotes.find((q) => q.fromReportId && q.status === 'accepted' && !jobs.some((j) => j.quoteId === q.id && j.status === 'report_ready'))
 
   const done: Record<CustomerStep['id'], boolean> = {
     received: true,
-    scheduled: jobs.length > 0,
+    scheduled: workJobs.length > 0,
     report: Boolean(reviewedReport || customerQuote),
     approved: Boolean(accepted),
     completed: Boolean(doneJob) && !openFollowUp,
@@ -46,7 +53,7 @@ export function journeyFor(state: DemoState, vertical: VerticalPack, id: string)
     scheduled: null,
     report: reviewedReport ? `/report/${reviewedReport.id}` : customerQuote ? `/estimate/${customerQuote.id}` : null,
     approved: customerQuote ? `/estimate/${customerQuote.id}` : null,
-    completed: reviewedReport ? `/report/${reviewedReport.id}` : null,
+    completed: completionReport ? `/report/${completionReport.id}` : null,
     invoiced: sentInvoice ? `/invoice/${sentInvoice.id}` : null,
   }
   const firstOpen = vertical.customerSteps.find((s) => !done[s.id])?.id

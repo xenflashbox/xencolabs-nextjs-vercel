@@ -5,6 +5,7 @@ import { useDemo } from '@/components/local-os/os/demo-store';
 import { Lifecycle } from '@/components/local-os/os/preview/lifecycle';
 import { SampleBadge, money, osHref, when } from '@/components/local-os/os/ui';
 import { journeyFor, lineTotal } from '@/lib/local-os/journey';
+import { termsOf } from '@/lib/local-os/terms';
 
 /**
  * The customer's job-status page for one request: request received → inspection scheduled →
@@ -25,7 +26,7 @@ export function SiteStatus({ id }: { id: string }) {
         <p className="text-slate-600">{j.lead.workType} · {j.lead.address}</p>
         {next ? (
           <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm">
-            Next visit: <strong>{when(next.scheduledStart)}</strong> · {next.title} · technician {next.technician}
+            Next visit: <strong>{when(next.scheduledStart)}</strong> · {next.title} · {termsOf(vertical).field.toLowerCase()} {next.technician}
           </p>
         ) : null}
       </div>

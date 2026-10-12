@@ -6,7 +6,11 @@ import { osBase } from '@/lib/local-os/presentation';
 
 export { osBase };
 
-export const money = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+// Whole dollars, except per-unit rates under $100 that carry cents (e.g. $0.24 per sq ft).
+export const money = (n: number) => {
+  const cents = !Number.isInteger(n) && Math.abs(n) < 100 ? 2 : 0;
+  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: cents, maximumFractionDigits: cents });
+};
 
 const TZ = 'America/Los_Angeles';
 export const when = (iso: string | null) =>

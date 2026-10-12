@@ -133,6 +133,7 @@ export const NEMESIS_FIRE: TenantConfig = {
     { label: 'Technician app', detail: 'Backflow job: checklist, readings, photos', path: '/tech/J-301' },
   ],
   aiDemo: true,
+  greetingName: 'Alex',
   website: 'https://nemesisfire.com',
   previewOnly: true,
 }

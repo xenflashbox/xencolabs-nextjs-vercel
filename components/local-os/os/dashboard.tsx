@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { termsOf } from '@/lib/local-os/terms';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { lineTotal } from '@/lib/local-os/journey';
@@ -33,7 +34,7 @@ export function Dashboard() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold">Good morning, Alex</h1>
+        <h1 className="text-2xl font-semibold">Good morning{tenant.greetingName ? `, ${tenant.greetingName}` : ''}</h1>
         <p className="text-sm text-slate-500">
           {new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', weekday: 'long', month: 'long', day: 'numeric' })} · {tenant.region}
         </p>
@@ -60,7 +61,7 @@ export function Dashboard() {
                   </div>
                   <div className="flex gap-3 text-sm">
                     <NavLink href={osHref(s, `/office/jobs/${j.id}`)}>Office</NavLink>
-                    <NavLink href={osHref(s, `/tech/${j.id}`)}>Technician</NavLink>
+                    <NavLink href={osHref(s, `/tech/${j.id}`)}>{termsOf(vertical).fieldView}</NavLink>
                   </div>
                 </li>
               ))}
@@ -174,7 +175,7 @@ export function Dashboard() {
           </ul>
         </Card>
       ) : null}
-      {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} variant="compact" /> : null}
+      {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} heading={tenant.aiDemoHeading} variant="compact" /> : null}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { ProofCard } from '@/components/local-os/os/preview/proof-card';
 import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { osHref } from '@/components/local-os/os/ui';
 import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
+import { linksOf, termsOf } from '@/lib/local-os/terms';
 
 /**
  * Customer-facing homepage of a preview tenant, in the "industrial field documentation"
@@ -23,6 +24,8 @@ export function SiteHome() {
   const m = tenant.media;
   const services = vertical.services.filter((x) => tenant.laneIds.includes(x.laneId));
   const tel = `tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`;
+  const terms = termsOf(vertical);
+  const links = linksOf(tenant);
 
   return (
     <div className="bg-[var(--paper)] text-neutral-900">
@@ -41,7 +44,7 @@ export function SiteHome() {
               Request service <ArrowRight className="h-4 w-4" />
             </Link>
             <a href={tel} className="inline-flex items-center gap-2 border border-white/40 px-5 py-3.5 font-semibold text-white hover:bg-white/10">
-              Emergency? Call {tenant.phone}
+              {terms.callCta} {tenant.phone}
             </a>
           </div>
           {tenant.aiDemo ? (
@@ -49,7 +52,7 @@ export function SiteHome() {
               <PhoneCall className="h-5 w-5 shrink-0 text-amber-300" />
               <span>
                 <span className={`${FIELD} block text-[10px] font-semibold text-amber-300`}>{XENCO_AI_DEMO.label} · not {tenant.name}’s line</span>
-                {XENCO_AI_DEMO.heading}: <strong className="text-white">{XENCO_AI_DEMO.display}</strong>
+                {tenant.aiDemoHeading ?? XENCO_AI_DEMO.heading}: <strong className="text-white">{XENCO_AI_DEMO.display}</strong>
               </span>
             </a>
           ) : null}
@@ -61,7 +64,7 @@ export function SiteHome() {
               ['Based in', tenant.region.split(' · ')[0] ?? tenant.region],
               ['Since', tenant.established ? String(tenant.established) : '—'],
               ['Lanes', String(services.length)],
-            ].map(([k, v]) => (
+            ].filter(([, v]) => v !== '—').map(([k, v]) => (
               <div key={k} className="py-3">
                 <dt className={`${FIELD} text-[10px] text-neutral-500`}>{k}</dt>
                 <dd className="text-sm text-neutral-200">{v}</dd>
@@ -74,8 +77,8 @@ export function SiteHome() {
       {/* SERVICE LANES */}
       <section id="services" className="mx-auto max-w-6xl px-4 py-16">
         <p className={`${FIELD} text-[11px] text-neutral-500`}>Service lanes</p>
-        <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>What we inspect, test and repair</h2>
-        <div className="mt-8 grid gap-px border border-neutral-300 bg-neutral-300 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>{terms.servicesHeading}</h2>
+        <div className={`mt-8 grid gap-px border border-neutral-300 bg-neutral-300 sm:grid-cols-2 ${services.length === 5 ? 'lg:grid-cols-5' : services.length === 3 || services.length === 6 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
           {services.map((svc) => (
             <Link key={svc.slug} href={osHref(s, `/services/${svc.slug}`)} className="group flex flex-col bg-white">
               <TenantPhoto image={m.lanes[svc.laneId] ?? m.hero} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
@@ -114,7 +117,7 @@ export function SiteHome() {
                 <p className={`${FIELD} text-[11px] text-neutral-500`}>Real work</p>
                 <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>From the field to your file</h2>
               </div>
-              <p className="max-w-md text-sm text-neutral-600">The work on site, and where it shows up: your request, the office, and the technician’s phone.</p>
+              <p className="max-w-md text-sm text-neutral-600">The work on site, and where it shows up: your request, the office, and the {terms.field.toLowerCase()}’s phone.</p>
             </div>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {m.proof.map((item, i) => <ProofCard key={item.id} slug={s} item={item} index={i} />)}
@@ -149,7 +152,7 @@ export function SiteHome() {
       {/* XENCO LIVE AI DEMONSTRATION */}
       {tenant.aiDemo ? (
         <section className="mx-auto max-w-6xl px-4 py-16">
-          <AiDemoPanel tenantName={tenant.name} />
+          <AiDemoPanel tenantName={tenant.name} heading={tenant.aiDemoHeading} />
         </section>
       ) : null}
 
@@ -158,12 +161,12 @@ export function SiteHome() {
         <div className="mx-auto max-w-6xl px-4 py-16">
           <p className={`${FIELD} text-[11px] text-amber-300`}>Private Xenco Labs concept preview</p>
           <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>Behind this website: the operating system</h2>
-          <p className="mt-3 max-w-2xl text-neutral-400">The same records, seen by the customer, the office and the technician. Sample data only.</p>
+          <p className="mt-3 max-w-2xl text-neutral-400">The same records, seen by the customer, the office and the {terms.field.toLowerCase()}. Sample data only.</p>
           <div className="mt-8 grid gap-px bg-neutral-800 md:grid-cols-3">
             {[
-              ['Customer', 'Job status, estimate approval, report and invoice', '/status/L-107'],
+              ['Customer', 'Job status, estimate approval, report and invoice', links.status],
               ['Office', 'Requests, callbacks, estimates, reports, invoices', '/office'],
-              ['Technician', 'Phone job packet: checklist, readings, photos', '/tech/J-301'],
+              [terms.fieldView, `Phone job packet: checklist, ${vertical.flow === 'estimate-first' ? 'crew, materials' : 'readings'}, photos`, links.field],
             ].map(([t, d, p]) => (
               <Link key={t} href={osHref(s, p)} className="group bg-neutral-950 p-6 hover:bg-neutral-900">
                 <p className={`${FIELD} text-[10px] text-[var(--brand)]`}>{t} view</p>

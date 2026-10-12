@@ -29,7 +29,10 @@ export function TenantLogo({
   height: number;
   className?: string;
 }) {
-  const width = IS_WORDMARK[surface] ? height * 4 : height;
+  const aspect = IS_WORDMARK[surface] ? tenant.branding.wordmarkAspect ?? 4 : tenant.branding.markAspect ?? 1;
+  // Squarer wordmarks (aspect < 3) read small at a 4:1 wordmark's height; give them more height.
+  if (IS_WORDMARK[surface] && aspect < 3) height = Math.round(height * 1.4);
+  const width = Math.round(height * aspect);
   return (
     // Client brand asset served from the tenant's own folder.
     // eslint-disable-next-line @next/next/no-img-element

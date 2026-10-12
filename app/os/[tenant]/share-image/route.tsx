@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { renderShareCard, toDataUrl } from '@/lib/local-os/og/card';
-import { PRESENTATION_TENANT, presentationHostAllowed } from '@/lib/local-os/presentation';
+import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation';
 import { presignR2Get, tenantMediaConfig } from '@/lib/local-os/r2-presign';
 import { MEDIA_ROUTE, mediaObjectKey } from '@/lib/local-os/tenant-media';
 import { getTenant, tenantPreviewsEnabled } from '@/lib/local-os/tenants';
@@ -25,7 +25,7 @@ function signedAsset(slug: string, src: string): string | null {
  */
 export async function GET(req: Request, { params }: { params: { tenant: string } }) {
   const presentationOk =
-    !PRESENTATION_TENANT || (params.tenant === PRESENTATION_TENANT && presentationHostAllowed(req.headers.get('host')));
+    !PRESENTATION_TENANT || (isPresentationTenant(params.tenant) && presentationHostAllowed(req.headers.get('host')));
   const entry = presentationOk && tenantPreviewsEnabled() ? getTenant(params.tenant) : null;
   if (!entry) return new NextResponse('Not found', { status: 404, headers: NOINDEX });
   const t = entry.config;

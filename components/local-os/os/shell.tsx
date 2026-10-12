@@ -10,6 +10,8 @@ import { FIELD } from '@/components/local-os/os/preview/type';
 import { TenantLogo } from '@/components/local-os/os/tenant-logo';
 import { osBase, osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
+import { termsOf } from '@/lib/local-os/terms';
+import { getTenant } from '@/lib/local-os/tenants';
 
 function ResetButton() {
   const { reset } = useDemo();
@@ -35,6 +37,8 @@ function ResetButton() {
 export function TenantShell({ tenant, children }: { tenant: TenantConfig; children: React.ReactNode }) {
   const path = usePathname() ?? '';
   const base = osBase(tenant.slug);
+  const vertical = getTenant(tenant.slug)?.vertical;
+  const fieldView = vertical ? termsOf(vertical).fieldView : 'Technician';
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
   const office: [string, string][] = [
     ['/office', 'Dashboard'],
@@ -88,8 +92,8 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
                   <p>{tenant.region}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-white">Licence</p>
-                  <p className="mt-1">{tenant.license}</p>
+                  <p className="font-semibold text-white">{tenant.license ? 'Licence' : 'About this preview'}</p>
+                  {tenant.license ? <p className="mt-1">{tenant.license}</p> : null}
                   <p className="mt-3 text-xs text-white/60">Preview of a customer website by Xenco Labs. Sample content; not the live {tenant.website?.replace('https://', '')}.</p>
                 </div>
               </div>
@@ -110,7 +114,7 @@ export function TenantShell({ tenant, children }: { tenant: TenantConfig; childr
                   )}
                   <div className="min-w-0 text-white">
                     <p className={`truncate font-semibold ${zone === 'tech' ? '' : 'sm:sr-only'}`}>
-                      {tenant.name} · {zone === 'tech' ? 'Technician' : 'Office'}
+                      {tenant.name} · {zone === 'tech' ? fieldView : 'Office'}
                     </p>
                     <p className="truncate text-xs text-white/70">
                       {zone === 'tech' ? null : <span className="hidden sm:inline">Office · </span>}

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import type { DemoAssembly } from '@/lib/local-os/demo-types';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Guardrail, SampleBadge, timeOnly } from '@/components/local-os/os/ui';
+import { termsOf } from '@/lib/local-os/terms';
 
 const SECTION_TITLE = { prep: 'Arrival', safety: 'Safety and notifications', work: 'Work and observations', completion: 'Completion' } as const;
 
@@ -19,6 +20,7 @@ export function TechJob({ id }: { id: string }) {
   const inputs = { before: useRef<HTMLInputElement>(null), after: useRef<HTMLInputElement>(null) };
   if (!j) return <p className="text-sm">No such sample job.</p>;
   const report = state.reports.find((r) => r.id === j.reportId) ?? null;
+  const terms = termsOf(vertical);
   const before = j.photos.filter((p) => p.phase === 'before');
   const after = j.photos.filter((p) => p.phase === 'after');
   const openCompletion = j.checklist.filter((c) => c.section === 'completion' && !c.done).length;
@@ -27,7 +29,7 @@ export function TechJob({ id }: { id: string }) {
     after.length < 1 && 'Add at least one after photo.',
     openCompletion > 0 && 'Tick the completion items.',
     report && report.assemblies.some((a) => a.result === 'pending') && 'Record readings and a result for every assembly.',
-    report && report.items.some((i) => i.result === 'pending') && 'Score every inspection item.',
+    report && report.items.some((i) => i.result === 'pending') && `Score every ${terms.itemNoun}.`,
   ].filter(Boolean) as string[];
   const readOnly = j.status === 'completed' || j.status === 'report_ready';
 
@@ -61,6 +63,7 @@ export function TechJob({ id }: { id: string }) {
         <p className="mt-1 text-sm">{state.leads.find((l) => l.id === j.leadId)?.address}</p>
         <p className="text-sm text-slate-600">{j.siteContact}</p>
         <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-sm">{j.accessNotes}</p>
+        {j.weather ? <p className="mt-2 text-sm"><span className="font-semibold">Site conditions:</span> {j.weather}</p> : null}
       </div>
 
       {primary ? (
@@ -77,6 +80,17 @@ export function TechJob({ id }: { id: string }) {
         <ul className="list-disc space-y-1 pl-5 text-sm">{j.scope.map((x) => <li key={x}>{x}</li>)}</ul>
       </div>
 
+      {j.crew?.length || j.equipment?.length || j.materials?.length ? (
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-2 text-sm font-semibold">Crew, equipment and materials</h2>
+          {j.crew?.length ? <p className="text-sm"><span className="text-slate-500">Crew:</span> {j.crew.join(' · ')}</p> : null}
+          {j.equipment?.length ? <p className="mt-1 text-sm"><span className="text-slate-500">Equipment:</span> {j.equipment.join(' · ')}</p> : null}
+          {j.materials?.length ? (
+            <table className="mt-2 w-full text-sm"><tbody>{j.materials.map((m) => <tr key={m.item} className="border-t border-slate-100"><td className="py-1.5 pr-2">{m.item}</td><td className="py-1.5 text-right tabular-nums">{m.qty}</td></tr>)}</tbody></table>
+          ) : null}
+          <p className="mt-2 text-xs text-slate-500">Planned quantities (sample). Record actual tickets and quantities in the notes.</p>
+        </div>
+      ) : null}
       <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-sm font-semibold">Checklist</h2>
         <Guardrail>{vertical.guardrails.compliance}</Guardrail>
@@ -104,7 +118,7 @@ export function TechJob({ id }: { id: string }) {
       {report ? (
         <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-semibold">{vertical.reportTemplates.find((t) => t.kind === report.kind)?.title} · {report.number}</h2>
-          <Guardrail>Readings recorded here go to the office for the certified tester’s / contractor’s review. They are not a certification or a filing.</Guardrail>
+          <Guardrail>{report.assemblies.length ? 'Readings recorded here go to the office for the certified tester’s / contractor’s review. They are not a certification or a filing.' : `Observations recorded here go to the office for the ${terms.reviewerRole.toLowerCase()}’s review.`}</Guardrail>
           {report.assemblies.map((a) => (
             <div key={a.id} className="rounded-lg border border-slate-200 p-3">
               <p className="text-sm font-semibold">{a.id} · {a.type} {a.size} · {a.location}</p>
@@ -167,7 +181,7 @@ export function TechJob({ id }: { id: string }) {
         <h2 className="mb-2 text-sm font-semibold">Notes for the office</h2>
         <textarea value={j.techNotes} disabled={readOnly} onChange={(e) => updateJob(j.id, { techNotes: e.target.value })} rows={4} placeholder="Parts used, readings, anything the contractor should review" className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base disabled:bg-slate-50" />
       </div>
-      <p className="text-center text-xs text-slate-500">{tenant.name} · technician view (sample)</p>
+      <p className="text-center text-xs text-slate-500">{tenant.name} · {terms.fieldView.toLowerCase()} view (sample)</p>
     </div>
   );
 }

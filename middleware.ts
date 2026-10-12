@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse, type NextRequest } from 'next/server'
-import { PRESENTATION_TENANT, presentationHostAllowed } from '@/lib/local-os/presentation'
+import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation'
 
 /**
  * Presentation deployment only (see lib/local-os/presentation.ts). On an allowed host:
@@ -11,23 +11,27 @@ import { PRESENTATION_TENANT, presentationHostAllowed } from '@/lib/local-os/pre
 const NOINDEX = 'noindex, nofollow, noarchive, noimageindex'
 
 function presentation(req: NextRequest): NextResponse {
-  const slug = PRESENTATION_TENANT
   const { pathname, search } = req.nextUrl
   const url = req.nextUrl.clone()
+  const seg = pathname.split('/')
+  // /<slug>/…  ·  /os/<slug>/…  ·  /os-media/<slug>/…
+  const clean = isPresentationTenant(seg[1] ?? '')
+  const legacy = seg[1] === 'os' && isPresentationTenant(seg[2] ?? '')
+  const media = seg[1] === 'os-media' && isPresentationTenant(seg[2] ?? '') && seg.length > 3
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
   } else if (pathname === '/') {
-    url.pathname = `/${slug}`
+    url.pathname = `/${PRESENTATION_TENANT}`
     res = NextResponse.redirect(url, 302)
-  } else if (pathname === `/${slug}` || pathname.startsWith(`/${slug}/`)) {
+  } else if (clean) {
     url.pathname = `/os${pathname}`
     res = NextResponse.rewrite(url)
-  } else if (pathname === `/os/${slug}` || pathname.startsWith(`/os/${slug}/`)) {
+  } else if (legacy) {
     url.pathname = pathname.slice(3)
     url.search = search
     res = NextResponse.redirect(url, 308)
-  } else if (pathname.startsWith(`/os-media/${slug}/`) || pathname === '/robots.txt') {
+  } else if (media || pathname === '/robots.txt') {
     res = NextResponse.next()
   } else {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { termsOf } from '@/lib/local-os/terms';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Card, Guardrail, NavLink, osHref } from '@/components/local-os/os/ui';
 
@@ -39,7 +40,7 @@ export function Intake() {
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <h1 className="text-2xl font-semibold">New service request</h1>
-      <Guardrail>Preview form: submitting adds a sample request to this browser’s queue only. Nothing is emailed, and the live nemesisfire.com contact form is not used.</Guardrail>
+      <Guardrail>Preview form: submitting adds a sample request to this browser’s queue only. Nothing is emailed, and the live {tenant.website ? new URL(tenant.website).hostname.replace(/^www\./, '') : 'business'} contact form is not used.</Guardrail>
       {done ? (
         <Card>
           <p className="text-sm">Sample request {done} added to the queue.</p>
@@ -91,7 +92,7 @@ export function Intake() {
             <input name="phone" required type="tel" placeholder="Phone" className={field} />
             <input name="email" type="email" placeholder="Email (optional)" className={field} />
           </fieldset>
-          <textarea name="notes" rows={4} placeholder="What is happening? Number of buildings, extinguishers, system type, access…" className={field} />
+          <textarea name="notes" rows={4} placeholder={termsOf(vertical).requestNotesPlaceholder} className={field} />
           <button type="submit" className="h-12 w-full rounded-lg bg-[var(--brand)] font-semibold text-white">Add sample request</button>
         </form>
       )}

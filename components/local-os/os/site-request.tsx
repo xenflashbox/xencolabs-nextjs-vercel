@@ -6,6 +6,7 @@ import { Fragment, useState } from 'react';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { Guardrail, osHref } from '@/components/local-os/os/ui';
+import { termsOf } from '@/lib/local-os/terms';
 
 const STEPS = ['Service', 'Property', 'Contact', 'Review'] as const;
 
@@ -22,6 +23,8 @@ export function SiteRequest() {
   const [laneId, setLaneId] = useState(params?.get('lane') && lanes.some((l) => l.id === params.get('lane')) ? (params.get('lane') as string) : lanes[0]?.id ?? '');
   const [v, setV] = useState<Record<string, string>>({ urgency: 'routine' });
   const [done, setDone] = useState<string | null>(null);
+  // Site photos stay in this browser (object URLs); only their names are kept on the sample request.
+  const [photos, setPhotos] = useState<{ name: string; url: string }[]>([]);
   const lane = lanes.find((l) => l.id === laneId);
   const set = (k: string, val: string) => setV((x) => ({ ...x, [k]: val }));
   const emergency = v.urgency === 'emergency' || laneId === 'emergency' && /leak|activated|frozen/i.test(v.workType ?? '');
@@ -36,6 +39,7 @@ export function SiteRequest() {
       email: v.email || null, address: v.address ?? '', buildingType: v.buildingType ?? '', laneId, workType: v.workType ?? lane?.workTypes[0] ?? '',
       urgency: emergency ? 'emergency' : v.urgency ?? 'routine', notes: v.notes ?? '',
       fields: Object.fromEntries(extra.map((f) => [f.key, v[f.key] ?? '']).filter(([, x]) => x)),
+      photos: photos.map((p) => p.name),
       status: 'new', nextAction: emergency ? 'Emergency: call the customer now' : 'Call back to qualify',
       dueAt: new Date(Date.now() + (emergency ? 0 : 4 * 3600e3)).toISOString(), source: 'website form',
     });
@@ -64,7 +68,7 @@ export function SiteRequest() {
           </div>
           <p className="mt-4 text-xs text-slate-500">Preview: nothing was emailed or texted, and the live website form was not used.</p>
         </div>
-        {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} variant="compact" /> : null}
+        {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} heading={tenant.aiDemoHeading} variant="compact" /> : null}
       </div>
     );
   }
@@ -121,6 +125,21 @@ export function SiteRequest() {
                   <input key={f.key} type={f.kind === 'number' ? 'number' : 'text'} min={0} value={v[f.key] ?? ''} onChange={(e) => set(f.key, e.target.value)} placeholder={f.label} className={field} />
                 ),
               )}
+              <div className="rounded-lg border border-dashed border-slate-300 p-3">
+                <label className="block text-sm font-medium">
+                  Site photos (optional)
+                  <input type="file" accept="image/*" multiple onChange={(e) => setPhotos((x) => [...x, ...Array.from(e.target.files ?? []).map((f) => ({ name: f.name, url: URL.createObjectURL(f) }))])} className="mt-2 block w-full text-sm" />
+                </label>
+                {photos.length ? (
+                  <ul className="mt-2 grid grid-cols-4 gap-2">
+                    {photos.map((p) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <li key={p.url} className="aspect-square overflow-hidden rounded bg-slate-100"><img src={p.url} alt={p.name} className="size-full object-cover" /></li>
+                    ))}
+                  </ul>
+                ) : null}
+                <p className="mt-1 text-xs text-slate-500">Preview: photos stay on this device and are not uploaded.</p>
+              </div>
             </>
           ) : null}
           {step === 2 ? (
@@ -129,7 +148,7 @@ export function SiteRequest() {
               <input value={v.company ?? ''} onChange={(e) => set('company', e.target.value)} placeholder="Company / property (optional)" className={field} />
               <input value={v.phone ?? ''} onChange={(e) => set('phone', e.target.value)} type="tel" placeholder="Phone" className={field} />
               <input value={v.email ?? ''} onChange={(e) => set('email', e.target.value)} type="email" placeholder="Email (optional)" className={field} />
-              <textarea value={v.notes ?? ''} onChange={(e) => set('notes', e.target.value)} rows={4} placeholder="Anything we should know: access, system age, recent inspection notices…" className={`${field} sm:col-span-2`} />
+              <textarea value={v.notes ?? ''} onChange={(e) => set('notes', e.target.value)} rows={4} placeholder={termsOf(vertical).requestNotesPlaceholder} className={`${field} sm:col-span-2`} />
             </div>
           ) : null}
           {step === 3 ? (
@@ -137,6 +156,7 @@ export function SiteRequest() {
               <dt className="text-slate-500">Service</dt><dd>{lane?.label}: {v.workType ?? lane?.workTypes[0]}</dd>
               <dt className="text-slate-500">Urgency</dt><dd>{vertical.urgency.find((u) => u.id === (emergency ? 'emergency' : v.urgency))?.label}</dd>
               <dt className="text-slate-500">Property</dt><dd>{v.address} · {v.buildingType}</dd>
+              {photos.length ? (<><dt className="text-slate-500">Photos</dt><dd>{photos.length} attached (kept on this device)</dd></>) : null}
               {extra.filter((f) => v[f.key]).map((f) => (<Fragment key={f.key}><dt className="text-slate-500">{f.label}</dt><dd>{v[f.key]}</dd></Fragment>))}
               <dt className="text-slate-500">Contact</dt><dd>{v.name}{v.company ? `, ${v.company}` : ''} · {v.phone}{v.email ? ` · ${v.email}` : ''}</dd>
               {v.notes ? (<><dt className="text-slate-500">Notes</dt><dd>{v.notes}</dd></>) : null}
@@ -155,7 +175,7 @@ export function SiteRequest() {
       </div>
       <aside className="space-y-4">
         <Guardrail>{vertical.guardrails.emergency} Call {tenant.phone}.</Guardrail>
-        {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} variant="compact" /> : null}
+        {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} heading={tenant.aiDemoHeading} variant="compact" /> : null}
       </aside>
     </div>
   );
