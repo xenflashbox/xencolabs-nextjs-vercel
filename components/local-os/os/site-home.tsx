@@ -203,7 +203,7 @@ export function SiteHome() {
       {/* ABOUT — spec-sheet credibility, only what the client publishes */}
       <section className="border-y border-neutral-300 bg-white">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:items-center">
-          <TenantPhoto image={m.about} sizes="(min-width:768px) 45vw, 100vw" className="lo-round aspect-[4/5] w-full md:aspect-[3/4]" />
+          <TenantPhoto image={m.about} sizes="(min-width:768px) 45vw, 100vw" className={`lo-round w-full ${split ? 'aspect-[4/3]' : 'aspect-[4/5] md:aspect-[3/4]'}`} />
           <div>
             <p className={`${FIELD} text-[11px] text-neutral-500`}>About {tenant.name}</p>
             <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>{tenant.site.aboutTitle}</h2>

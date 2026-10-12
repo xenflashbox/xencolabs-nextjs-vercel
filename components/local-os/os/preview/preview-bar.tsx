@@ -26,7 +26,7 @@ export function PreviewBar({ tenant, fieldView = 'Technician', tour }: { tenant:
   return (
     <div role="navigation" aria-label="Private preview" className="sticky top-0 z-40 border-b border-amber-500/40 bg-amber-300 text-amber-950">
       <div className="relative mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5 text-xs">
-        <span className={`${FIELD} text-[10px] font-semibold`}>{tour ? <><span className="sm:hidden">Private Xenco Labs concept preview · sample data</span><span className="hidden sm:inline">Private Xenco Labs concept preview for {tenant.name} · sample data only</span></> : <>Private Xenco Labs concept preview for {tenant.name} · sample data only</>}</span>
+        <span className={`${FIELD} text-[10px] font-semibold`}>{tour ? 'Private Xenco Labs concept preview · sample data' : `Private Xenco Labs concept preview for ${tenant.name} · sample data only`}</span>
         <nav className="flex items-center gap-1">
           {links.map(([z, p, label]) => (
             <Link key={z} href={osHref(tenant.slug, p)} className={`rounded px-2 py-0.5 font-semibold ${zone === z ? 'bg-amber-950 text-amber-100' : 'hover:bg-amber-200'}`}>
