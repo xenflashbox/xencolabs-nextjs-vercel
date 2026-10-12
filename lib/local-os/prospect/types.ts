@@ -31,6 +31,10 @@ export interface ProspectService extends Sourced {
   summary: string
   kind: ServiceKind
   image?: ProspectMedia
+  /** Sample estimate lines in this service's own terms (fictional prices); overrides the kind's defaults. */
+  lines?: { description: string; unit: string; sampleUnitPrice: number }[]
+  /** Technician checklist work steps for this service; overrides the kind's defaults. */
+  steps?: string[]
 }
 
 export interface ProspectProfile {

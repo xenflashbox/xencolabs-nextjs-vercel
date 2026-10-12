@@ -108,7 +108,9 @@ export function homeServicesVertical(p: ProspectProfile): VerticalPack {
     ],
     reportKind: 'service_record',
   }))
-  const lineItemFamilies: LineItemFamily[] = p.services.map((s) => ({ id: s.id, label: s.title, items: KIND_LINES[s.kind] ?? KIND_LINES.other }))
+  const linesOf = (s: ProspectProfile['services'][number]) => (s.lines?.length ? s.lines : KIND_LINES[s.kind] ?? KIND_LINES.other)
+  const stepsOf = (s: ProspectProfile['services'][number]) => (s.steps?.length ? s.steps.map((l) => C('work', l)) : KIND_STEPS[s.kind] ?? KIND_STEPS.other)
+  const lineItemFamilies: LineItemFamily[] = p.services.map((s) => ({ id: s.id, label: s.title, items: linesOf(s) }))
   return {
     key: `home-services:${p.template}`,
     label: LABEL[p.template],
@@ -145,8 +147,8 @@ export function homeServicesVertical(p: ProspectProfile): VerticalPack {
       { id: 'won', label: 'Booked' },
       { id: 'lost', label: 'Closed: not proceeding' },
     ],
-    checklists: Object.fromEntries(p.services.map((s) => [s.id, [...ARRIVAL, ...(KIND_STEPS[s.kind] ?? KIND_STEPS.other), ...WRAP]])),
-    quoteLines: p.services.flatMap((s) => (KIND_LINES[s.kind] ?? KIND_LINES.other).map((l) => ({ laneId: s.id, label: l.description, unit: l.unit, sampleUnitPrice: l.sampleUnitPrice }))),
+    checklists: Object.fromEntries(p.services.map((s) => [s.id, [...ARRIVAL, ...stepsOf(s), ...WRAP]])),
+    quoteLines: p.services.flatMap((s) => linesOf(s).map((l) => ({ laneId: s.id, label: l.description, unit: l.unit, sampleUnitPrice: l.sampleUnitPrice }))),
     lineItemFamilies,
     reportTemplates: [
       {

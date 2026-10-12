@@ -128,7 +128,10 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
   const city = (i: number) => config.site.serviceAreas[i % Math.max(1, config.site.serviceAreas.length)] ?? 'the service area'
   // Sample quantities that read sensibly per unit (a whole home's windows, a typical array, a patio).
   const QTY: Record<string, number> = { window: 24, panel: 20, 'sq ft': 400, hour: 2 }
-  const line = (lane: string, k = 0) => { const it = fam(lane)[k] ?? fam(lane)[0]; return it ? [{ group: svc(lane), label: it.description, unit: it.unit, qty: QTY[it.unit] ?? 1, unitPrice: it.sampleUnitPrice }] : [] }
+  // A line item from a service's family; an index the family lacks yields nothing (never a duplicate).
+  const line = (lane: string, k = 0) => { const it = fam(lane)[k]; return it ? [{ group: svc(lane), label: it.description, unit: it.unit, qty: QTY[it.unit] ?? 1, unitPrice: it.sampleUnitPrice }] : [] }
+  // The completed job bills only its own service (one or two lines, never repeated).
+  const doneLines = () => [...line(L(0), 0), ...line(L(0), 1)]
   const TECH = 'Sample Technician'
   const lead = (id: string, i: number, lane: string, extra: Partial<DemoState['leads'][number]>) => ({
     id, sample: true as const, createdAt: at(-i, 9, 10), name: `Sample Customer ${id.slice(2)}`, company: null, phone: `555-01${id.slice(-2)}`,
@@ -147,7 +150,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
       lead('L-606', 9, L(1), { status: 'lost', nextAction: 'None', dueAt: null, notes: 'Decided to wait until spring (sample).' }),
     ],
     quotes: [
-      { id: 'Q-601', sample: true, leadId: 'L-601', number: 'EST-601 (sample)', laneId: L(0), scope: `${svc(L(0))} for a two-story home (sample).`, lines: [...line(L(0), 0), ...line(L(0), 1)], status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 601 (sample)' },
+      { id: 'Q-601', sample: true, leadId: 'L-601', number: 'EST-601 (sample)', laneId: L(0), scope: `${svc(L(0))} for a two-story home (sample).`, lines: doneLines(), status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 601 (sample)' },
       { id: 'Q-602', sample: true, leadId: 'L-602', number: 'EST-602 (sample)', laneId: L(1), scope: `${svc(L(1))} (sample scope).`, lines: [...line(L(1), 0), ...line(L(2), 0)], status: 'sent', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: null },
       { id: 'Q-603', sample: true, leadId: 'L-603', number: 'EST-603 (sample)', laneId: L(2), scope: `${svc(L(2))} (sample scope).`, lines: line(L(2), 0), status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 603 (sample)' },
       { id: 'Q-605', sample: true, leadId: 'L-605', number: 'EST-605 (sample)', laneId: L(3), scope: `${svc(L(3))} (draft).`, lines: line(L(3), 0), status: 'draft', reviewedBy: null, reviewNote: '', fromReportId: null, customerApproval: null },
@@ -160,7 +163,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
       { id: 'R-603', sample: true, kind: 'service_record', number: 'REC-603 (sample)', jobId: 'J-601', property: { name: 'Sample Customer 601 (sample)', address: `114 Sample Lane, ${city(14)}`, occupancy: 'Residential', buildingType: 'Single-family home', details: 'Two stories (sample)' }, technician: { name: TECH, credential: 'Technician (sample)' }, systems: [], items: sr(L(0)), assemblies: [], deficiencies: [], overall: 'pass', delivery: { owner: 'sent', ahj: 'not_required' }, followUpQuoteId: null, reviewedBy: 'Office (sample review)' },
     ],
     invoices: [
-      { id: 'I-604', sample: true, jobId: 'J-601', number: 'INV-604 (sample)', siteAddress: `114 Sample Lane, ${city(14)}`, billTo: 'Sample Customer 601 (sample)', issueDate: day(-5), dueDate: day(25), lines: [...line(L(0), 0), ...line(L(0), 1)].map((l) => ({ category: l.group, description: l.label, unitPrice: l.unitPrice, qty: l.qty })), amountPaid: 0, status: 'sent', reportIds: ['R-603'], followUp: 'Reminder 7 days before due (a person sends it)' },
+      { id: 'I-604', sample: true, jobId: 'J-601', number: 'INV-604 (sample)', siteAddress: `114 Sample Lane, ${city(14)}`, billTo: 'Sample Customer 601 (sample)', issueDate: day(-5), dueDate: day(25), lines: doneLines().map((l) => ({ category: l.group, description: l.label, unitPrice: l.unitPrice, qty: l.qty })), amountPaid: 0, status: 'sent', reportIds: ['R-603'], followUp: 'Reminder 7 days before due (a person sends it)' },
     ],
   }
 }
