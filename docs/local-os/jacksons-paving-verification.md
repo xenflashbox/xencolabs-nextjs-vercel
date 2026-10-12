@@ -234,3 +234,94 @@ www.xencolabs.com/os-media/jacksons-paving/media/jacksons-paving-rolling.mp4 307
   404. Production (`www`) does not serve `/os-media` or `/jacksons-paving`.
 - No Nemesis asset, Nemesis copy or Xenco production route changed. Jackson's live website,
   forms, email, DNS, calendar, customer data and billing were not touched.
+
+
+---
+
+## Mockup logo system, poster corrections (2026-10-12, later)
+
+### Logo assets
+
+These are mockup branding, not approved as Jackson's final logo. The SVGs were supplied in a
+local folder inside the repo (`docs/jacksons-paving-logos/`). That folder is excluded via
+`.git/info/exclude` and is **not** committed. The files are delivered from the private bucket
+only.
+
+| Variant | Key (`tenants/jacksons-paving/…`) | sha256 | Proportions | Placements |
+|---|---|---|---|---|
+| Horizontal wordmark | `brand/jacksons-paving-horizontal-wordmark.svg` | `bbedeab4c71a88403740690f3be892b976c9675f511c3000af504dd187d0c4aa` | 4:1 (viewBox 4000×1000) | site header (desktop), office header (desktop), footer, document letterheads, share card |
+| Stacked wordmark | `brand/jacksons-paving-stacked-wordmark.svg` | `6552922401e508a898fde4d07f4a5a59860c2f06449bd7ca5bffc7d869289f58` | 1:1 (viewBox 2000×2000) | site header (phone), office header (phone), crew app header |
+| Icon | `brand/jacksons-paving-icon.svg` | `e0cd82409dafa73260a7966c5b4ae05aec0a62841f2eb8ad5d93ed172593fc52` | 1:1 | tab icon, Jackson pages only (`<link rel=icon>` is tenant-scoped; the Xenco favicon is unchanged) |
+
+- The SVGs are used as supplied: no scripts, embedded images or external references.
+- The artwork is drawn for light backgrounds, so on dark surfaces (office/crew headers, footer,
+  share card) it sits on a light `#F7F7F5` plate. It is never recoloured.
+- The compact mark renders at 1.4× height (56 px) so "JACKSON'S PAVING" stays legible.
+- The previous PNG logo keys are no longer referenced; the allowlist returns 404 for them.
+
+```
+desktop site   horizontal-wordmark.svg 160x40px loaded | horizontal-wordmark.svg 144x36px loaded on-plate rgb(247, 247, 245)
+desktop office horizontal-wordmark.svg 144x36px loaded on-plate rgb(247, 247, 245)
+desktop crew   stacked-wordmark.svg 56x56px loaded on-plate rgb(247, 247, 245)
+desktop doc    horizontal-wordmark.svg 160x40px loaded | horizontal-wordmark.svg 160x40px loaded | horizontal-wordmark.svg 144x36px loaded on-plate rgb(247, 247, 245)
+desktop favicon /os-media/jacksons-paving/brand/jacksons-paving-icon.svg
+phone   site   stacked-wordmark.svg 56x56px loaded | horizontal-wordmark.svg 144x36px loaded on-plate rgb(247, 247, 245)
+phone   office stacked-wordmark.svg 56x56px loaded on-plate rgb(247, 247, 245)
+phone   crew   stacked-wordmark.svg 56x56px loaded on-plate rgb(247, 247, 245)
+phone   doc    stacked-wordmark.svg 56x56px loaded | horizontal-wordmark.svg 160x40px loaded | horizontal-wordmark.svg 144x36px loaded on-plate rgb(247, 247, 245)
+phone   favicon /os-media/jacksons-paving/brand/jacksons-paving-icon.svg
+```
+
+### Final media mapping (changed items)
+
+| Published key | Change | New sha256 | Source |
+|---|---|---|---|
+| `media/jacksons-paving-onthe-job-poster.png` | Replaced. The supplied still came from the foreman footage; now a clean frame of its own clip | `9532ab4ad77b63cc08675feee404d237c6eaf9624d8e9cbb54cd6e8af22db1f6` | frame at 4.0 s of `jacksons-paving-onthe-job.mp4` (crew with cones; no plates or house numbers visible) |
+| `media/jacksons-paving-asphalt-pouring-poster.png` | Truck plate blurred (pixelate + blur, box x445–510 / y516–558). Only that box changed | `7ae9b0b71d4237ebfe0e4d7a4a35f7f6786bed071a5c50c0b30d154b5cd2e122` | supplied still. **The supplied original is untouched** |
+
+All other clips and posters, and the content-verified mapping, are unchanged (see the table above):
+
+- asphalt-pouring → homepage 01
+- foreman → homepage 02
+- rolling, from source `finished-road.mp4` → homepage 03
+- finished-road, from source `rolling.mp4` → commercial paving page
+- on-the-job → pavement repair page
+
+### Checks (live, deployment `70a8c51`, signed-out, Google Chrome 155)
+
+```
+Clips (normal and reduced motion, desktop and phone): RESULT: all clip/poster/reduced-motion checks OK
+Jackson routes: RESULT: all 40 checks OK
+Nemesis routes: RESULT: all 38 checks OK
+Nemesis media:  RESULT: all media loaded through the private route
+== served bytes vs uploaded (sha256) + share card
+  media/jacksons-paving-asphalt-pouring-poster.png 302 sha256=7ae9b0b71d4237eb
+  media/jacksons-paving-onthe-job-poster.png       302 sha256=9532ab4ad77b63cc
+  brand/jacksons-paving-horizontal-wordmark.svg    302 sha256=bbedeab4c71a8840
+  brand/jacksons-paving-stacked-wordmark.svg       302 sha256=6552922401e508a8
+  brand/jacksons-paving-icon.svg                   302 sha256=e0cd82409dafa732
+  brand/jacksons-paving-logo-on-light.png          404 (old key, no longer referenced)
+  brand/jacksons-paving-icon.png                   404 (old key, no longer referenced)
+  share-image: 200 image/jpeg 83721B
+  <meta property="og:image" content="https://preview.xencolabs.com/jacksons-paving/share-image"
+  <link rel="icon" href="/os-media/jacksons-paving/brand/jacksons-paving-icon.svg"
+== Nemesis untouched
+  <meta property="og:image" content="https://preview.xencolabs.com/nemesis-fire/share-image"
+  <link rel="icon" href="/os-media/nemesis-fire/brand/nemesis-shield-color-dark.svg"
+  nemesis share-image: 200 89174B
+  /os/other    404
+  /about       404
+  www.xencolabs.com/jacksons-paving 307 https://www.xencolabs.com/sign-in
+```
+
+- The share card now carries the horizontal wordmark on a light plate (1200×630 JPEG, about
+  84 KB). `og:image` is absolute on preview.xencolabs.com.
+- Nemesis content, logos, favicon, share card and media are unchanged.
+- No other tenant, no Xenco production path, and nothing on Jackson's live systems changed.
+
+### Open notes
+
+- **Video frames:** the poster plate is blurred, but the first seconds of
+  `jacksons-paving-asphalt-pouring.mp4` still show the same truck plate. Seconds 10–12 of
+  `jacksons-paving-onthe-job.mp4` show a residential house-number sign. Blurring these needs a
+  re-encode of the supplied clip, so it was not done without approval.
