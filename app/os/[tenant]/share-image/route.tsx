@@ -39,6 +39,8 @@ export async function GET(req: Request, { params }: { params: { tenant: string }
       title: t.site.heroTitle,
       brandName: t.name,
       logo,
+      logoPlate: t.branding.logoPlate,
+      logoAspect: t.branding.wordmarkAspect ?? 4,
       photo,
       accent: t.branding.primary,
       surface: t.branding.surface,

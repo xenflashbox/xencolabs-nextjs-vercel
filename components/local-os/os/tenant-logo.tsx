@@ -32,10 +32,20 @@ export function TenantLogo({
   const aspect = IS_WORDMARK[surface] ? tenant.branding.wordmarkAspect ?? 4 : tenant.branding.markAspect ?? 1;
   // Squarer wordmarks (aspect < 3) read small at a 4:1 wordmark's height; give them more height.
   if (IS_WORDMARK[surface] && aspect < 3) height = Math.round(height * 1.4);
+  if (!IS_WORDMARK[surface] && tenant.branding.markScale) height = Math.round(height * tenant.branding.markScale);
   const width = Math.round(height * aspect);
-  return (
+  const img = (
     // Client brand asset served from the tenant's own folder.
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={tenant.branding.logos[surface]} alt={tenant.name} width={width} height={height} style={{ height, width }} className={`shrink-0 ${className}`} />
+    <img src={tenant.branding.logos[surface]} alt={tenant.name} width={width} height={height} style={{ height, width }} className={`shrink-0 ${tenant.branding.logoPlate && /OnDark|MonoWhite/.test(surface) ? '' : className}`} />
   );
+  // Light-only artwork on a dark surface: a light plate behind it, artwork untouched.
+  if (tenant.branding.logoPlate && /OnDark|MonoWhite/.test(surface)) {
+    return (
+      <span className={`inline-flex shrink-0 rounded-md px-2 py-1 ${className}`} style={{ background: tenant.branding.logoPlate }}>
+        {img}
+      </span>
+    );
+  }
+  return img;
 }

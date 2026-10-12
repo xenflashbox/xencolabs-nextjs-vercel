@@ -48,6 +48,13 @@ export interface TenantBranding {
   wordmarkAspect?: number
   /** Width ÷ height of the compact mark (default 1, a square shield/icon). */
   markAspect?: number
+  /** Height multiplier for the compact mark (a stacked wordmark needs more height than a shield to stay legible). */
+  markScale?: number
+  /**
+   * Background for a light plate behind the logo on dark surfaces, for artwork drawn only for light
+   * backgrounds. The artwork itself is never recoloured.
+   */
+  logoPlate?: string
 }
 
 /** Customer-facing site copy. Facts must come from the client's own published material. */

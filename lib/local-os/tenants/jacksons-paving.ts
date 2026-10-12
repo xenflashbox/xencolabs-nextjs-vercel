@@ -20,8 +20,11 @@ import { COMMERCIAL_PAVING } from '@/lib/local-os/verticals/commercial-paving'
 
 const BRAND = tenantAsset('jacksons-paving', 'brand')
 const MEDIA = tenantAsset('jacksons-paving', 'media')
-const LOGO_LIGHT = `${BRAND}/jacksons-paving-logo-on-light.png`
-const LOGO_DARK = `${BRAND}/jacksons-paving-logo-on-dark.png`
+// Mockup logo system supplied 2026-10-12 (not approved as Jackson's final logo): horizontal wordmark
+// for wide placements, stacked wordmark for compact/mobile, icon for the tenant favicon. Drawn for
+// light backgrounds only, so dark surfaces get a light plate (branding.logoPlate); never recoloured.
+const HORIZONTAL = `${BRAND}/jacksons-paving-horizontal-wordmark.svg`
+const STACKED = `${BRAND}/jacksons-paving-stacked-wordmark.svg`
 
 export const JACKSONS_PAVING: TenantConfig = {
   slug: 'jacksons-paving',
@@ -39,18 +42,20 @@ export const JACKSONS_PAVING: TenantConfig = {
     surface: '#1F1F1F',
     light: '#F7F7F5',
     typography: 'industrial',
-    wordmarkAspect: 400 / 185,
-    markAspect: 400 / 185,
+    wordmarkAspect: 4,
+    markAspect: 1,
+    markScale: 1.4,
+    logoPlate: '#F7F7F5',
     logos: {
-      wordmarkOnLight: LOGO_LIGHT,
-      wordmarkOnDark: LOGO_DARK,
-      shieldOnLight: LOGO_LIGHT,
-      shieldOnDark: LOGO_DARK,
-      wordmarkMonoBlack: LOGO_LIGHT,
-      wordmarkMonoWhite: LOGO_DARK,
-      shieldMonoBlack: LOGO_LIGHT,
-      shieldMonoWhite: LOGO_DARK,
-      favicon: `${BRAND}/jacksons-paving-icon.png`,
+      wordmarkOnLight: HORIZONTAL,
+      wordmarkOnDark: HORIZONTAL,
+      shieldOnLight: STACKED,
+      shieldOnDark: STACKED,
+      wordmarkMonoBlack: HORIZONTAL,
+      wordmarkMonoWhite: HORIZONTAL,
+      shieldMonoBlack: STACKED,
+      shieldMonoWhite: STACKED,
+      favicon: `${BRAND}/jacksons-paving-icon.svg`,
     },
   },
   laneIds: ['commercial', 'repair', 'sealcoat', 'striping', 'milling'],
@@ -90,6 +95,8 @@ export const JACKSONS_PAVING: TenantConfig = {
     // Clips from Jackson's public social channel (supplied 2026-10-12): illustrative footage of the
     // trade, not a record of the sample project or of any specific customer, site or result.
     // Lossless remux only (container metadata removed); decoded frames identical to the supplied files.
+    // Posters: supplied stills, except on-the-job (a clean frame at 4 s of its own clip; the supplied still
+    // came from the foreman footage) and asphalt-pouring (truck plate blurred in this preview copy only).
     proofHeading: {
       eyebrow: 'On the job',
       title: 'Paving, start to finish',
@@ -141,7 +148,7 @@ export const JACKSONS_PAVING: TenantConfig = {
       repair: {
         title: 'Crew on site',
         body: 'Crews working an asphalt drive and rolling it smooth.',
-        video: { src: `${MEDIA}/jacksons-paving-onthe-job.mp4`, poster: `${MEDIA}/jacksons-paving-onthe-job-poster.png`, alt: 'Asphalt crew working a shaded drive, with a roller compacting the surface' },
+        video: { src: `${MEDIA}/jacksons-paving-onthe-job.mp4`, poster: `${MEDIA}/jacksons-paving-onthe-job-poster.png`, alt: 'Crew members with cones beside a freshly paved, tree-shaded drive; a roller compacts it later in the clip' },
       },
     },
   },
