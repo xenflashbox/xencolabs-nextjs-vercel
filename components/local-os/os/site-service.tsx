@@ -16,18 +16,36 @@ export function SiteService({ slug }: { slug: string }) {
   const template = vertical.reportTemplates.find((r) => r.kind === svc.reportKind);
   const image = tenant.media.lanes[svc.laneId] ?? tenant.media.hero;
   const clip = tenant.media.laneVideos?.[svc.laneId];
+  const split = tenant.branding.theme?.heroLayout === 'split';
   return (
     <div className="bg-[var(--paper)]">
-      <section className="relative isolate overflow-hidden bg-neutral-950 text-white">
-        <TenantPhoto image={image} sizes="100vw" priority className="absolute inset-0 -z-10 h-full w-full opacity-60" />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/30" />
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <Link href={osHref(tenant.slug, '/#services')} className={`${FIELD} text-[11px] text-neutral-300 hover:text-white`}>← Service lanes</Link>
-          <p className={`${FIELD} mt-6 text-[11px] text-[var(--brand)]`}>Lane {svc.code}</p>
-          <h1 className={`${DISPLAY} mt-1 max-w-3xl text-5xl font-bold uppercase leading-[0.95] md:text-6xl`}>{svc.title}</h1>
-          <p className="mt-4 max-w-2xl text-lg text-neutral-300">{svc.summary}</p>
-        </div>
-      </section>
+      {split ? (
+        // Brand themes: the photo shown whole beside the copy (as on the business's own site), with its credit.
+        <section className="border-b border-neutral-200 bg-white">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-2 md:items-center md:py-16">
+            <div className="order-2 md:order-1">
+              <Link href={osHref(tenant.slug, '/#services')} className="text-sm font-medium text-neutral-500 hover:text-neutral-900">← All services</Link>
+              <h1 className={`${DISPLAY} mt-4 text-4xl font-bold leading-tight md:text-5xl`}>{svc.title}</h1>
+              <p className="mt-4 max-w-xl text-lg text-neutral-600">{svc.summary}</p>
+            </div>
+            <figure className="order-1 md:order-2">
+              <TenantPhoto image={image} sizes="(min-width:768px) 50vw, 100vw" priority className="lo-round aspect-[4/3] w-full shadow-lg" />
+              <figcaption className="mt-2 text-right text-xs text-neutral-500">{image.illustrative ? 'Illustrative concept image, not a photo of this business’s work' : tenant.site.photoCredit ? `Photo: ${tenant.site.photoCredit}` : null}</figcaption>
+            </figure>
+          </div>
+        </section>
+      ) : (
+        <section className="relative isolate overflow-hidden bg-neutral-950 text-white">
+          <TenantPhoto image={image} sizes="100vw" priority className="absolute inset-0 -z-10 h-full w-full opacity-60" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/30" />
+          <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+            <Link href={osHref(tenant.slug, '/#services')} className={`${FIELD} text-[11px] text-neutral-300 hover:text-white`}>← Service lanes</Link>
+            <p className={`${FIELD} mt-6 text-[11px] text-[var(--brand)]`}>Lane {svc.code}</p>
+            <h1 className={`${DISPLAY} mt-1 max-w-3xl text-5xl font-bold uppercase leading-[0.95] md:text-6xl`}>{svc.title}</h1>
+            <p className="mt-4 max-w-2xl text-lg text-neutral-300">{svc.summary}</p>
+          </div>
+        </section>
+      )}
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1.5fr_1fr]">
         <div>
           {svc.includes.length ? (
@@ -76,7 +94,7 @@ export function SiteService({ slug }: { slug: string }) {
           </div>
           {svc.laneId === 'emergency' ? <Guardrail>{vertical.guardrails.emergency} Call {tenant.phone}.</Guardrail> : null}
           <div className="border border-neutral-300 bg-white p-5">
-            <p className={`${FIELD} text-[10px] text-neutral-500`}>Other lanes</p>
+            <p className={`${FIELD} text-[10px] text-neutral-500`}>{split ? 'Other services' : 'Other lanes'}</p>
             <ul className="mt-2 space-y-2 text-sm">{others.map((o) => <li key={o.slug}><Link className="font-medium hover:text-[var(--brand-dark)]" href={osHref(tenant.slug, `/services/${o.slug}`)}><span className={`${FIELD} mr-2 text-[10px] text-[var(--brand)]`}>{o.code}</span>{o.title}</Link></li>)}</ul>
           </div>
         </aside>
