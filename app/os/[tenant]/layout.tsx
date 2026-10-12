@@ -32,7 +32,9 @@ export function generateMetadata({ params }: { params: { tenant: string } }): Me
   const base = osBase(t.slug);
   const title = `${t.name} · Private Xenco Labs concept preview`;
   const description = `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
-  const image = { url: `${base}/share-image`, width: 1200, height: 630, alt: `${t.name} concept preview by Xenco Labs` };
+  // Absolute: on Vercel *preview* deployments Next resolves relative social-image URLs against the
+  // branch URL (ignoring metadataBase), which the presentation host gate answers with 404.
+  const image = { url: `${origin}${base}/share-image`, width: 1200, height: 630, alt: `${t.name} concept preview by Xenco Labs` };
   return {
     metadataBase: new URL(origin),
     title: { absolute: `${t.name} · private preview` },
