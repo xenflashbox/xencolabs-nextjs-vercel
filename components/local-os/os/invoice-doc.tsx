@@ -60,7 +60,7 @@ export function InvoiceDoc({ id, mode }: { id: string; mode: 'customer' | 'offic
             <p>Payment / follow-up: {inv.followUp}</p>
           </div>
         </div>
-        <p className="mt-4 text-xs text-slate-500">Sample prices for this preview, not {tenant.name}’s rates. There is no pay link: this preview never takes a payment.</p>
+        <p className="mt-4 text-xs text-slate-500">{tenant.branding.typography === 'brand' ? `Sample prices for this preview, not ${tenant.name}’s rates.` : `Sample prices are placeholders, not ${tenant.name} rates.`} There is no pay link: this preview never takes a payment.</p>
       </DocFrame>
       {mode === 'office' ? (
         <div className="mx-auto max-w-3xl space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
