@@ -14,7 +14,7 @@ import { linksOf } from '@/lib/local-os/terms';
  * with sample data, bridges the customer site ↔ office ↔ technician, and carries the Xenco live AI
  * receptionist number (a Xenco line, never the tenant's).
  */
-export function PreviewBar({ tenant, fieldView = 'Technician' }: { tenant: TenantConfig; fieldView?: string }) {
+export function PreviewBar({ tenant, fieldView = 'Technician', tour }: { tenant: TenantConfig; fieldView?: string; tour?: React.ReactNode }) {
   const path = usePathname() ?? '';
   const base = osBase(tenant.slug);
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';
@@ -25,7 +25,7 @@ export function PreviewBar({ tenant, fieldView = 'Technician' }: { tenant: Tenan
   ];
   return (
     <div role="navigation" aria-label="Private preview" className="sticky top-0 z-40 border-b border-amber-500/40 bg-amber-300 text-amber-950">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5 text-xs">
+      <div className="relative mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5 text-xs">
         <span className={`${FIELD} text-[10px] font-semibold`}>Private Xenco Labs concept preview for {tenant.name} · sample data only</span>
         <nav className="flex items-center gap-1">
           {links.map(([z, p, label]) => (
@@ -34,6 +34,7 @@ export function PreviewBar({ tenant, fieldView = 'Technician' }: { tenant: Tenan
             </Link>
           ))}
         </nav>
+        {tour}
         {tenant.aiDemo ? (
           <a href={`tel:${XENCO_AI_DEMO.tel}`} className="ml-auto inline-flex items-center gap-1.5 rounded bg-amber-950 px-2 py-0.5 font-semibold text-amber-100" title={XENCO_AI_DEMO.disclaimer(tenant.name)}>
             <PhoneCall className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{tenant.aiDemoHeading ?? XENCO_AI_DEMO.heading} ·</span> {XENCO_AI_DEMO.display}

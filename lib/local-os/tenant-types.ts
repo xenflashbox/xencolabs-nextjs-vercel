@@ -87,6 +87,8 @@ export interface MediaImage {
   /** CSS object-position for cropping, e.g. '50% 40%'. */
   focus?: string
   caption?: string
+  /** AI-generated concept image, not the business's own photo: labelled on the image wherever shown. */
+  illustrative?: boolean
 }
 
 /**

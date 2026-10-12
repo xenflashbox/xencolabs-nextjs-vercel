@@ -22,7 +22,7 @@ export interface ProspectEntryData {
 export function buildProspect(token: string, p: ProspectProfile): ProspectEntryData {
   const slug = prospectSlug(token)
   const asset = (m?: ProspectMedia): string => (m ? `${tenantAsset(slug, m.key)}` : '')
-  const img = (m: ProspectMedia): MediaImage => ({ src: asset(m), alt: m.alt, focus: m.focus, caption: m.caption })
+  const img = (m: ProspectMedia): MediaImage => ({ src: asset(m), alt: m.alt, focus: m.focus, caption: m.caption, illustrative: m.generated || undefined })
   const vertical = homeServicesVertical(p)
   const mark = asset(p.brand.logo_mark)
   const wide = asset(p.brand.logo_wide) || mark

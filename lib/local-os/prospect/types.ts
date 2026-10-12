@@ -16,7 +16,12 @@ export type ServiceKind =
 
 export interface Sourced { source: string }
 
-export interface ProspectMedia { key: string; alt: string; source: string; focus?: string; caption?: string }
+/**
+ * `source` is the page URL a site photo came from; for an AI-generated gap-filler set `generated: true`
+ * and record the generator and prompt in `source` (shown as "Illustrative concept image", never as the
+ * business's work).
+ */
+export interface ProspectMedia { key: string; alt: string; source: string; focus?: string; caption?: string; generated?: boolean }
 
 export interface ProspectService extends Sourced {
   id: string

@@ -13,6 +13,9 @@ export function TenantPhoto({ image, sizes, priority = false, className = '' }: 
       {/* unoptimized: tenant media is served by the gated /os-media route (redirect to a short-lived
           signed URL), which the image optimizer must not fetch or cache; files are pre-sized. */}
       <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} unoptimized className="object-cover" style={{ objectPosition: image.focus ?? '50% 50%' }} />
+      {image.illustrative ? (
+        <span className="absolute bottom-2 left-2 rounded bg-black/70 px-2 py-0.5 text-[11px] font-medium text-white">Illustrative concept image</span>
+      ) : null}
     </div>
   );
 }

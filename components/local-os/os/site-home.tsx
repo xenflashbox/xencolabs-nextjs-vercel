@@ -128,12 +128,7 @@ export function SiteHome() {
               <Link key={svc.slug} href={osHref(s, `/services/${svc.slug}`)} className={`group flex flex-col bg-white ${split ? 'lo-round overflow-hidden shadow-sm ring-1 ring-black/5 transition hover:shadow-md' : ''}`}>
                 {photo ? (
                   <TenantPhoto image={photo} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
-                ) : (
-                  // No site photo for this service: a branded panel, never an empty box or a stock image.
-                  <div aria-hidden className="flex aspect-[4/3] w-full items-end p-5 text-white" style={{ background: `linear-gradient(135deg, ${tenant.branding.primary}, var(--accent, ${tenant.branding.primaryDark}))` }}>
-                    <span className={`${DISPLAY} text-3xl font-bold leading-tight`}>{svc.title}</span>
-                  </div>
-                )}
+                ) : null /* no photo: a text-only card; the prospect QA gate fails the page instead */}
                 <div className="flex flex-1 flex-col p-5">
                   {split ? null : <p className={`${FIELD} text-[11px] text-[var(--brand)]`}>Lane {svc.code}</p>}
                   <h3 className={`${DISPLAY} mt-1 text-2xl font-semibold uppercase leading-tight`}>{svc.title}</h3>
@@ -146,6 +141,11 @@ export function SiteHome() {
             );
           })}
         </div>
+        {split && tenant.site.photoCredit ? (
+          <p className="mt-4 text-xs text-neutral-500">
+            Photos from {tenant.site.photoCredit}{Object.values(m.lanes).some((x) => x.illustrative) ? ', except those marked “Illustrative concept image”' : ''}.
+          </p>
+        ) : null}
       </section>
 
       {/* RECENT WORK — photos the business's own site presents as its work, credited to the source */}

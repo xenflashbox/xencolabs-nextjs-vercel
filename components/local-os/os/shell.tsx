@@ -57,8 +57,9 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
         ['--brand-dark' as string]: tenant.branding.primaryDark,
       }}
     >
-      <PreviewBar tenant={tenant} fieldView={fieldView} />
       <DemoProvider slug={tenant.slug} prospect={prospect}>
+      {/* Prospect previews dock the tour in the preview bar; registry tenants keep the floating pill. */}
+      <PreviewBar tenant={tenant} fieldView={fieldView} tour={prospect ? <DemoTour tenant={tenant} variant="bar" /> : undefined} />
         {zone === 'site' ? (
           <>
             <div style={{ background: tenant.branding.primary }} className="px-4 py-1.5 text-center text-sm font-medium text-white">
@@ -147,7 +148,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
             </footer>
           </>
         )}
-        <DemoTour tenant={tenant} />
+        {prospect ? null : <DemoTour tenant={tenant} />}
       </DemoProvider>
     </div>
   );
