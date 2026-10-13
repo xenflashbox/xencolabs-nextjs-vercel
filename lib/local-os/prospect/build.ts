@@ -90,8 +90,8 @@ export function buildProspect(token: string, p: ProspectProfile): ProspectEntryD
       { label: 'Office dashboard', detail: 'Callbacks, estimates, today’s jobs', path: '/office' },
       { label: 'Request queue', detail: 'New requests and follow-ups', path: '/office/requests' },
       { label: 'Technician app', detail: 'Today’s job: checklist and before/after photos', path: '/tech/J-603' },
-      { label: 'Service record', detail: 'Completed job with photos (sample)', path: '/report/R-603' },
-      { label: 'Invoice', detail: 'Invoice linked to the job (sample)', path: '/invoice/I-604' },
+      { label: 'Service record', detail: 'Completed job with photos (sample)', path: '/report/R-601' },
+      { label: 'Invoice', detail: 'Invoice linked to the job (sample)', path: '/invoice/I-601' },
     ],
     aiDemo: true,
     aiDemoHeading: 'Try the live AI receptionist',
@@ -120,7 +120,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
   // The completed sample job uses the service its before/after photos show.
   const lanes = sj && config.laneIds.includes(sj.laneId) ? [sj.laneId, ...config.laneIds.filter((l) => l !== sj.laneId)] : config.laneIds
   const L = (i: number) => lanes[i % lanes.length] as string
-  const photos = sj ? [...sj.before.map((m, i) => ({ id: `sp-b${i}`, phase: 'before' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative })), ...sj.after.map((m, i) => ({ id: `sp-a${i}`, phase: 'after' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative }))] : []
+  const photos = sj ? [...sj.before.map((m, i) => ({ id: `sp-b${i}`, phase: 'before' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative, credit: m.illustrative ? undefined : config.site.photoCredit })), ...sj.after.map((m, i) => ({ id: `sp-a${i}`, phase: 'after' as const, name: m.alt, url: m.src, sample: true, illustrative: m.illustrative, credit: m.illustrative ? undefined : config.site.photoCredit }))] : []
   // Sample answers to the estimate questions asked for a lane (second option of each select).
   const fieldsFor = (lane: string) => Object.fromEntries(v.intakeFields.filter((f) => f.kind === 'select' && (!f.laneIds || f.laneIds.includes(lane))).map((f) => [f.key, f.options?.[1] ?? f.options?.[0] ?? '']))
   const fam = (lane: string) => v.lineItemFamilies.find((f) => f.id === lane)?.items ?? []
@@ -158,14 +158,14 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
       { id: 'Q-605', sample: true, leadId: 'L-605', number: 'EST-605 (sample)', laneId: L(3), scope: `${svc(L(3))} (draft).`, lines: line(L(3), 0), status: 'draft', reviewedBy: null, reviewNote: '', fromReportId: null, customerApproval: null },
     ],
     jobs: [
-      { id: 'J-601', sample: true, number: 'JOB-601 (sample)', leadId: 'L-601', quoteId: 'Q-601', reportId: 'R-603', laneId: L(0), title: svc(L(0)), scheduledStart: at(-6, 9, 0), scheduledEnd: at(-6, 12, 0), technician: TECH, status: 'report_ready', siteContact: 'Sample Customer 601 · 555-0101', accessNotes: 'Side gate; code shared by phone (sample).', scope: [svc(L(0))], checklist: checklist(v, L(0), 20), photos, techNotes: 'All areas done; customer walked through (sample).', reportApprovedBy: 'Office (sample sign-off)' },
+      { id: 'J-601', sample: true, number: 'JOB-601 (sample)', leadId: 'L-601', quoteId: 'Q-601', reportId: 'R-601', laneId: L(0), title: svc(L(0)), scheduledStart: at(-6, 9, 0), scheduledEnd: at(-6, 12, 0), technician: TECH, status: 'report_ready', siteContact: 'Sample Customer 601 · 555-0101', accessNotes: 'Side gate; code shared by phone (sample).', scope: [svc(L(0))], checklist: checklist(v, L(0), 20), photos, techNotes: 'All areas done; customer walked through (sample).', reportApprovedBy: 'Office (sample sign-off)' },
       { id: 'J-603', sample: true, number: 'JOB-603 (sample)', leadId: 'L-603', quoteId: 'Q-603', reportId: null, laneId: L(2), title: svc(L(2)), scheduledStart: at(0, 10, 0), scheduledEnd: at(0, 12, 30), technician: TECH, status: 'confirmed', siteContact: 'Sample Customer 603 · 555-0103', accessNotes: 'Dog in the backyard; text before arrival (sample).', scope: [svc(L(2))], checklist: checklist(v, L(2), 0), photos: [], techNotes: '', reportApprovedBy: null },
     ],
     reports: [
-      { id: 'R-603', sample: true, kind: 'service_record', number: 'REC-603 (sample)', jobId: 'J-601', property: { name: 'Sample Customer 601 (sample)', address: `114 Sample Lane, ${city(14)}`, occupancy: 'Residential', buildingType: 'Single-family home', details: asksStories(L(0)) ? 'Two stories (sample)' : 'Sample property' }, technician: { name: TECH, credential: 'Technician (sample)' }, systems: [], items: sr(L(0)), assemblies: [], deficiencies: [], overall: 'pass', delivery: { owner: 'sent', ahj: 'not_required' }, followUpQuoteId: null, reviewedBy: 'Office (sample review)' },
+      { id: 'R-601', sample: true, kind: 'service_record', number: 'REC-601 (sample)', jobId: 'J-601', property: { name: 'Sample Customer 601 (sample)', address: `240 Sample Lane, ${city(14)}`, occupancy: 'Residential', buildingType: 'Single-family home', details: asksStories(L(0)) ? 'Two stories (sample)' : 'Sample property' }, technician: { name: TECH, credential: 'Technician (sample)' }, systems: [], items: sr(L(0)), assemblies: [], deficiencies: [], overall: 'pass', delivery: { owner: 'sent', ahj: 'not_required' }, followUpQuoteId: null, reviewedBy: 'Office (sample review)' },
     ],
     invoices: [
-      { id: 'I-604', sample: true, jobId: 'J-601', number: 'INV-604 (sample)', siteAddress: `114 Sample Lane, ${city(14)}`, billTo: 'Sample Customer 601 (sample)', issueDate: day(-5), dueDate: day(25), lines: doneLines().map((l) => ({ category: l.group, description: l.label, unitPrice: l.unitPrice, qty: l.qty })), amountPaid: 0, status: 'sent', reportIds: ['R-603'], followUp: 'Reminder 7 days before due (a person sends it)' },
+      { id: 'I-601', sample: true, jobId: 'J-601', number: 'INV-601 (sample)', siteAddress: `240 Sample Lane, ${city(14)}`, billTo: 'Sample Customer 601 (sample)', issueDate: day(-5), dueDate: day(25), lines: doneLines().map((l) => ({ category: l.group, description: l.label, unitPrice: l.unitPrice, qty: l.qty })), amountPaid: 0, status: 'sent', reportIds: ['R-601'], followUp: 'Reminder 7 days before due (a person sends it)' },
     ],
   }
 }

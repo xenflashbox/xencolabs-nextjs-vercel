@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { DocFrame } from '@/components/local-os/os/doc-frame';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { SamplePhotoNote, samplePhotoTag } from '@/components/local-os/os/sample-photos';
 import { Guardrail, Pill, osHref, when } from '@/components/local-os/os/ui';
 import type { ItemResult } from '@/lib/local-os/demo-types';
 import { termsOf } from '@/lib/local-os/terms';
@@ -155,12 +156,13 @@ export function ReportDoc({ id, mode }: { id: string; mode: 'customer' | 'office
                     <figure key={p.id} className="relative overflow-hidden rounded-lg bg-slate-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={p.url as string} alt={p.name} className="aspect-[4/3] w-full object-cover" />
-                      <span className="absolute bottom-1.5 left-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">{p.illustrative ? 'Sample photo · illustrative' : 'Sample photo'}</span>
+                      <span className="absolute bottom-1.5 left-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">{samplePhotoTag(p)}</span>
                     </figure>
                   ))}
                 </div>
               ))}
             </div>
+            <SamplePhotoNote photos={job.photos} business={tenant.name} />
           </section>
         ) : null}
 

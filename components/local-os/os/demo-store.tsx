@@ -43,7 +43,8 @@ export function DemoProvider({ slug, prospect, children }: { slug: string; prosp
     () => (prospect ? { config: prospect.config, vertical: prospect.vertical, seed: (now?: Date) => seedProspect(prospect.config, prospect.vertical, now) } : getTenant(slug)),
     [prospect, slug],
   );
-  const key = `local-os:${slug}:v2`;
+  // Prospect samples were renumbered (completed job = 601 throughout); registry tenants keep their saved state.
+  const key = `local-os:${slug}:${prospect ? 'v3' : 'v2'}`;
   const [state, setState] = useState<DemoState | null>(null);
 
   useEffect(() => {

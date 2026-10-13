@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import type { DemoAssembly } from '@/lib/local-os/demo-types';
 import { useDemo } from '@/components/local-os/os/demo-store';
+import { SamplePhotoNote, samplePhotoTag } from '@/components/local-os/os/sample-photos';
 import { Guardrail, SampleBadge, timeOnly } from '@/components/local-os/os/ui';
 import { termsOf } from '@/lib/local-os/terms';
 
@@ -162,11 +163,12 @@ export function TechJob({ id }: { id: string }) {
                   <li key={p.id} className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-slate-100 text-center text-[10px] text-slate-500">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {p.url ? <img src={p.url} alt={p.name} className="size-full object-cover" /> : <span className="px-1">{p.name}</span>}
-                    {p.sample ? <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">{p.illustrative ? 'Sample photo · illustrative' : 'Sample photo'}</span> : null}
+                    {p.sample ? <span className="absolute bottom-1 left-1 max-w-[calc(100%-0.5rem)] rounded bg-black/70 px-1.5 py-0.5 text-left text-[10px] font-medium leading-tight text-white">{samplePhotoTag(p)}</span> : null}
                   </li>
                 ))}
               </ul>
-            ) : <p className="rounded-lg border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500">No {phase} photos yet.</p>}
+            ) : null}
+            {list.length ? <SamplePhotoNote photos={list} business={tenant.name} /> : <p className="rounded-lg border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500">No {phase} photos yet.</p>}
             {readOnly ? null : (
               <>
                 <input ref={inputs[phase]} type="file" accept="image/*" multiple className="hidden" onChange={(e) => pick(phase, e.target.files)} />

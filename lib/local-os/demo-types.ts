@@ -70,8 +70,10 @@ export interface DemoPhoto {
   url: string | null
   /** Seeded sample photo (a served preview image, kept across reloads), labelled "Sample photo". */
   sample?: boolean
-  /** AI-generated sample photo: labelled "Sample photo · illustrative". */
+  /** AI-generated sample photo (an illustrative concept image). */
   illustrative?: boolean
+  /** Site photo used on a sample job: the public website it came from (e.g. "quickywindows.com"). */
+  credit?: string
 }
 
 export interface DemoJob {
