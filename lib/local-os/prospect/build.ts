@@ -139,18 +139,20 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
     workType: svc(lane), urgency: 'routine', notes: '', fields: fieldsFor(lane), status: 'new', nextAction: 'Call back to confirm details',
     dueAt: at(0, 15, 0), source: 'website form' as const, ...extra,
   })
+  // Story-count wording only where the service actually asks for it (windows, gutters, roofs); not for turf or landscaping.
+  const asksStories = (lane: string) => v.intakeFields.some((f) => f.key === 'stories' && (!f.laneIds || f.laneIds.includes(lane)))
   const sr = (lane: string) => (v.reportTemplates[0]?.items ?? []).map((label) => ({ label, result: 'pass' as const, note: '' }))
   return {
     leads: [
-      lead('L-601', 14, L(0), { status: 'won', nextAction: 'Invoice sent; payment follow-up in 7 days', dueAt: null, notes: 'Two-story home; side gate code shared by phone (sample).' }),
+      lead('L-601', 14, L(0), { status: 'won', nextAction: 'Invoice sent; payment follow-up in 7 days', dueAt: null, notes: asksStories(L(0)) ? 'Two-story home; side gate code shared by phone (sample).' : 'Side gate code shared by phone (sample).' }),
       lead('L-602', 2, L(1), { status: 'quoted', nextAction: 'Estimate sent: waiting for customer approval', notes: 'Wants it done before family visits (sample).' }),
       lead('L-603', 5, L(2), { status: 'won', nextAction: 'Visit today', notes: 'Dog in the backyard; text before arrival (sample).' }),
-      lead('L-604', 0, L(0), { status: 'new', nextAction: 'Call back to confirm stories and access', createdAt: at(0, 7, 45) }),
+      lead('L-604', 0, L(0), { status: 'new', nextAction: asksStories(L(0)) ? 'Call back to confirm stories and access' : 'Call back to confirm the scope and access', createdAt: at(0, 7, 45) }),
       lead('L-605', 3, L(3), { status: 'follow_up', nextAction: 'Follow up: no answer on first call', source: 'phone', dueAt: at(-1, 16, 0) }),
       lead('L-606', 9, L(1), { status: 'lost', nextAction: 'None', dueAt: null, notes: 'Decided to wait until spring (sample).' }),
     ],
     quotes: [
-      { id: 'Q-601', sample: true, leadId: 'L-601', number: 'EST-601 (sample)', laneId: L(0), scope: `${svc(L(0))} for a two-story home (sample).`, lines: doneLines(), status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 601 (sample)' },
+      { id: 'Q-601', sample: true, leadId: 'L-601', number: 'EST-601 (sample)', laneId: L(0), scope: asksStories(L(0)) ? `${svc(L(0))} for a two-story home (sample).` : `${svc(L(0))} (sample scope).`, lines: doneLines(), status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 601 (sample)' },
       { id: 'Q-602', sample: true, leadId: 'L-602', number: 'EST-602 (sample)', laneId: L(1), scope: `${svc(L(1))} (sample scope).`, lines: [...line(L(1), 0), ...line(L(2), 0)], status: 'sent', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: null },
       { id: 'Q-603', sample: true, leadId: 'L-603', number: 'EST-603 (sample)', laneId: L(2), scope: `${svc(L(2))} (sample scope).`, lines: line(L(2), 0), status: 'accepted', reviewedBy: 'Office (sample)', reviewNote: '', fromReportId: null, customerApproval: 'Sample Customer 603 (sample)' },
       { id: 'Q-605', sample: true, leadId: 'L-605', number: 'EST-605 (sample)', laneId: L(3), scope: `${svc(L(3))} (draft).`, lines: line(L(3), 0), status: 'draft', reviewedBy: null, reviewNote: '', fromReportId: null, customerApproval: null },
@@ -160,7 +162,7 @@ export function seedProspect(config: TenantConfig, v: VerticalPack, now: Date = 
       { id: 'J-603', sample: true, number: 'JOB-603 (sample)', leadId: 'L-603', quoteId: 'Q-603', reportId: null, laneId: L(2), title: svc(L(2)), scheduledStart: at(0, 10, 0), scheduledEnd: at(0, 12, 30), technician: TECH, status: 'confirmed', siteContact: 'Sample Customer 603 · 555-0103', accessNotes: 'Dog in the backyard; text before arrival (sample).', scope: [svc(L(2))], checklist: checklist(v, L(2), 0), photos: [], techNotes: '', reportApprovedBy: null },
     ],
     reports: [
-      { id: 'R-603', sample: true, kind: 'service_record', number: 'REC-603 (sample)', jobId: 'J-601', property: { name: 'Sample Customer 601 (sample)', address: `114 Sample Lane, ${city(14)}`, occupancy: 'Residential', buildingType: 'Single-family home', details: 'Two stories (sample)' }, technician: { name: TECH, credential: 'Technician (sample)' }, systems: [], items: sr(L(0)), assemblies: [], deficiencies: [], overall: 'pass', delivery: { owner: 'sent', ahj: 'not_required' }, followUpQuoteId: null, reviewedBy: 'Office (sample review)' },
+      { id: 'R-603', sample: true, kind: 'service_record', number: 'REC-603 (sample)', jobId: 'J-601', property: { name: 'Sample Customer 601 (sample)', address: `114 Sample Lane, ${city(14)}`, occupancy: 'Residential', buildingType: 'Single-family home', details: asksStories(L(0)) ? 'Two stories (sample)' : 'Sample property' }, technician: { name: TECH, credential: 'Technician (sample)' }, systems: [], items: sr(L(0)), assemblies: [], deficiencies: [], overall: 'pass', delivery: { owner: 'sent', ahj: 'not_required' }, followUpQuoteId: null, reviewedBy: 'Office (sample review)' },
     ],
     invoices: [
       { id: 'I-604', sample: true, jobId: 'J-601', number: 'INV-604 (sample)', siteAddress: `114 Sample Lane, ${city(14)}`, billTo: 'Sample Customer 601 (sample)', issueDate: day(-5), dueDate: day(25), lines: doneLines().map((l) => ({ category: l.group, description: l.label, unitPrice: l.unitPrice, qty: l.qty })), amountPaid: 0, status: 'sent', reportIds: ['R-603'], followUp: 'Reminder 7 days before due (a person sends it)' },
