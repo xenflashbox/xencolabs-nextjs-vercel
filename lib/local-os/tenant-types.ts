@@ -171,6 +171,11 @@ export interface TenantConfig {
   links?: { status: string; field: string }
   /** Public website, for reference only; the preview never writes to it. */
   website: string | null
+  /** Tenant kind: service businesses (default) or an animal shelter / rescue (its own screens). */
+  kind?: 'service' | 'shelter'
+  /** Shelter tenants: private R2 key of the dated demo snapshot + sourced content (attached at request time). */
+  shelterDataKey?: string
+  shelter?: import('@/lib/local-os/shelter/types').ShelterData
   /** Preview tenants are not live: seeded sample data, nothing leaves the browser. */
   previewOnly: true
 }

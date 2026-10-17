@@ -5,6 +5,7 @@
  */
 import { buildProspect, isProspectSlug, seedProspect, tokenOf, type ProspectEntryData } from '@/lib/local-os/prospect/build'
 import { loadPreview } from '@/lib/local-os/preview'
+import { loadShelterData } from '@/lib/local-os/shelter/load'
 import type { TenantEntry } from '@/lib/local-os/tenants'
 import { getTenant, tenantPreviewsEnabled } from '@/lib/local-os/tenants'
 
@@ -18,7 +19,14 @@ export async function resolveTenant(slug: string): Promise<ResolvedTenant | null
   if (!tenantPreviewsEnabled()) return null
   if (!isProspectSlug(slug)) {
     const entry = getTenant(slug)
-    return entry ? { entry } : null
+    if (!entry) return null
+    // Shelter tenants: attach the dated demo snapshot from the private bucket (null if it cannot be read).
+    if (entry.config.kind === 'shelter' && entry.config.shelterDataKey) {
+      const shelter = await loadShelterData(slug, entry.config.shelterDataKey)
+      if (!shelter) return null
+      return { entry: { ...entry, config: { ...entry.config, shelter } } }
+    }
+    return { entry }
   }
   const token = tokenOf(slug)
   if (!/^[A-Za-z0-9_-]{16,64}$/.test(token)) return null

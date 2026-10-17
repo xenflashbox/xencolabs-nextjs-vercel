@@ -3,6 +3,7 @@ import { Barlow_Condensed, IBM_Plex_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { TenantShell } from '@/components/local-os/os/shell';
+import { ShelterShell } from '@/components/local-os/shelter/shelter-shell';
 import { PRESENTATION_TENANT, osBase, presentationOrigin } from '@/lib/local-os/presentation';
 import { resolveTenant } from '@/lib/local-os/tenants/resolve';
 
@@ -75,7 +76,11 @@ export default async function TenantLayout({ children, params }: { children: Rea
     <div className={fonts} style={style} data-theme={b.typography === 'brand' ? 'brand' : undefined} data-heading-case={th?.headingCase === 'none' ? 'none' : undefined}>
       {fontHref ? <link rel="stylesheet" href={fontHref} /> : null}
       {b.typography === 'brand' ? <style dangerouslySetInnerHTML={{ __html: BRAND_CSS }} /> : null}
-      <TenantShell tenant={r.entry.config} prospect={r.prospect}>{children}</TenantShell>
+      {r.entry.config.kind === 'shelter' ? (
+        <ShelterShell tenant={r.entry.config}>{children}</ShelterShell>
+      ) : (
+        <TenantShell tenant={r.entry.config} prospect={r.prospect}>{children}</TenantShell>
+      )}
     </div>
   );
 }
