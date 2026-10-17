@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { CalendarCheck, CheckCircle2, ExternalLink, PhoneCall } from 'lucide-react';
 import { useAnimalParam } from '@/components/local-os/shelter/animal-pages';
 import { DemoLine, SnapshotCaveat, captured } from '@/components/local-os/shelter/shelter-shell';
@@ -17,7 +18,7 @@ const ext = { target: '_blank', rel: 'noopener noreferrer nofollow' } as const;
 function Cite({ href, children = 'Source' }: { href: string; children?: React.ReactNode }) {
   return href.startsWith('http') ? (
     <a href={href} {...ext} className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand)] underline underline-offset-2">{children} <ExternalLink className="h-3 w-3" aria-hidden /></a>
-  ) : <span className="text-xs text-slate-500">{children}: {href}</span>;
+  ) : <span className="break-words text-xs text-slate-500">{children}: {href}</span>;
 }
 
 function DemoNotice({ children }: { children: React.ReactNode }) {
@@ -140,9 +141,11 @@ export function AskForm() {
 export function MeetForm() {
   const { tenant, addMeeting, animal, state } = useShelter();
   const initial = useAnimalParam();
-  const inquiryId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('inquiry') : null;
+  const inquiryId = useSearchParams()?.get('inquiry') ?? null;
   const fromInquiry = state.inquiries.find((q) => q.id === inquiryId);
   const [v, setV] = useState({ name: fromInquiry?.name ?? '', animalSlug: animal(initial) ? initial : '', slots: ['', ''] });
+  // Arriving from a just-sent inquiry: carry its name over once it is known.
+  useEffect(() => { if (fromInquiry && !v.name) setV((x) => ({ ...x, name: fromInquiry.name })); }, [fromInquiry, v.name]);
   const [done, setDone] = useState<string | null>(null);
   const a = animal(v.animalSlug);
   if (done) {
