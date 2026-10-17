@@ -25,12 +25,15 @@ export function SnapshotCaveat({ at, className = '' }: { at: string; className?:
 }
 
 export function DemoLine({ compact = false }: { compact?: boolean }) {
-  const { tenant } = useShelter();
+  const { tenant, data } = useShelter();
+  const live = data.content.voice_shelter_branch_live === true;
   return (
     <section className={`rounded-2xl bg-[var(--surface)] text-white ${compact ? 'p-4' : 'p-6'}`}>
       <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-300">{XENCO_AI_DEMO.label} · not {tenant.name}’s phone line</p>
-      <h2 className="mt-1 font-[family-name:var(--font-display)] text-xl font-semibold">Ask the AI guide about an animal</h2>
-      <p className="mt-1 text-sm text-white/80">Call the Xenco Labs demo line, say you’re asking about a shelter, and try “Do you have any small dogs?”. It searches only this dated snapshot and can book a meeting with Xenco Labs, never a shelter appointment.</p>
+      <h2 className="mt-1 font-[family-name:var(--font-display)] text-xl font-semibold">{live ? 'Ask the AI guide about an animal' : 'Call the live Xenco AI guide'}</h2>
+      <p className="mt-1 text-sm text-white/80">{live
+        ? 'Call the Xenco Labs demo line, say you’re asking about a shelter, and try “Do you have any small dogs?”. It searches only this dated snapshot and can book a meeting with Xenco Labs, never a shelter appointment.'
+        : 'Hear how an AI receptionist answers a call, explains the workflow and books a real walkthrough with Xenco Labs. It never books or confirms a shelter appointment.'}</p>
       <a href={`tel:${XENCO_AI_DEMO.tel}`} className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 font-semibold text-slate-900">
         <PhoneCall className="h-4 w-4" aria-hidden /> {XENCO_AI_DEMO.display}
       </a>

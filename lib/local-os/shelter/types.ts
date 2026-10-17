@@ -51,6 +51,8 @@ export interface ShelterContent {
   desk: { source: string; text: string }
   availability: { source: string; text: string }
   faq: { q: string; a: string; source: string }[]
+  /** True once the demo line's shelter branch (snapshot lookup + reviewed FAQ) is live on the AI agent. */
+  voice_shelter_branch_live?: boolean
 }
 
 export interface ShelterData {
