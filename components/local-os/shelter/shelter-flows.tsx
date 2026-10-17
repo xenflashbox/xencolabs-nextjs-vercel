@@ -250,7 +250,7 @@ export function ShelterOffice() {
           {state.meetings.length ? state.meetings.map((m) => (
             <li key={m.id} className="flex flex-wrap items-center gap-3 py-3 text-sm">
               <span className="rounded bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">SAMPLE</span>
-              <span className="min-w-0 flex-1"><span className="font-semibold">{m.name}</span> · {animal(m.animalSlug)?.name ?? m.animalSlug} · prefers {m.preferredSlots.join(' or ')}</span>
+              <span className="order-first min-w-0 basis-full sm:order-none sm:basis-auto sm:flex-1"><span className="font-semibold">{m.name}</span> · {animal(m.animalSlug)?.name ?? m.animalSlug} · prefers {m.preferredSlots.join(' or ')}</span>
               <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-900">{m.status === 'awaiting_staff_confirmation' ? 'Awaiting staff confirmation' : m.status === 'staff_contacted' ? 'Staff contacted adopter' : 'Withdrawn'}</span>
               {m.status === 'awaiting_staff_confirmation' ? <button type="button" onClick={() => updateMeeting(m.id, { status: 'staff_contacted' })} className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold">Mark staff contacted (sample)</button> : null}
             </li>
