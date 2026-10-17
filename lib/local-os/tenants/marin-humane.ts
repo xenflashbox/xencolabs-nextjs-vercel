@@ -22,7 +22,7 @@ export const MARIN_HUMANE: TenantConfig = {
   established: null,
   verticalKey: 'shelter-rescue',
   kind: 'shelter',
-  shelterDataKey: 'data/shelter-20261017.json',
+  shelterDataKey: 'data/shelter-20261017b.json',
   branding: {
     primary: '#0E6B5C',
     primaryDark: '#0A4F44',

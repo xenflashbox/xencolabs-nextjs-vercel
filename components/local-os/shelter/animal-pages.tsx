@@ -8,6 +8,7 @@ import { ArrowRight, ExternalLink, Search } from 'lucide-react';
 import { DemoLine, SnapshotCaveat } from '@/components/local-os/shelter/shelter-shell';
 import { ageMonths, field, readableAge, useShelter } from '@/components/local-os/shelter/shelter-store';
 import { osHref } from '@/components/local-os/os/ui';
+import { normalizeQuery, searchAnimals, type BreedMatch } from '@/lib/local-os/shelter/match';
 import type { ShelterAnimal } from '@/lib/local-os/shelter/types';
 
 const H = 'font-[family-name:var(--font-display)]';
@@ -22,7 +23,7 @@ function Photo({ a, i = 0, sizes, priority = false, className = '' }: { a: Shelt
   );
 }
 
-function AnimalCard({ a }: { a: ShelterAnimal }) {
+function AnimalCard({ a, match }: { a: ShelterAnimal; match?: BreedMatch | null }) {
   const { tenant } = useShelter();
   const breed = [field(a, 'Breed'), field(a, 'Second breed')].filter(Boolean).join(' / ');
   return (
@@ -30,6 +31,7 @@ function AnimalCard({ a }: { a: ShelterAnimal }) {
       <Link href={osHref(tenant.slug, `/animals/${a.slug}`)} className="block">
         <Photo a={a} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="aspect-[4/5]" />
         <div className="p-4">
+          {match ? <p className={`mb-1.5 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${match.kind === 'exact' ? 'bg-emerald-100 text-emerald-900' : 'bg-slate-100 text-slate-700'}`}>{match.label}</p> : null}
           <h3 className={`${H} text-xl font-semibold`}>{a.name}</h3>
           <p className="mt-0.5 text-sm text-slate-600">{breed}</p>
           <p className="mt-1 text-sm text-slate-600">{field(a, 'Sex')} · {readableAge(field(a, 'Age'))}{field(a, 'Size') ? ` · ${field(a, 'Size')}` : ''}</p>
@@ -97,10 +99,24 @@ export function ShelterHome() {
 
 const AGE_BANDS: [string, (m: number) => boolean][] = [
   ['Under 1 year', (m) => m < 12],
-  ['1–3 years', (m) => m >= 12 && m < 36],
-  ['3–8 years', (m) => m >= 36 && m < 96],
+  ['1 to under 3 years', (m) => m >= 12 && m < 36],
+  ['3 to under 8 years', (m) => m >= 36 && m < 96],
   ['8 years and older', (m) => m >= 96],
 ];
+
+/** One sentence that says exactly what was searched and how the results relate to it. */
+function describe(q: string, sex: string, age: string, size: string, results: { match: BreedMatch | null }[], total: number): string {
+  const filters = [sex, age && `${age.charAt(0).toLowerCase()}${age.slice(1)} (from the published age)`, size && `${size.toLowerCase()} size`].filter(Boolean).join(', ');
+  const n = results.length;
+  const head = `${n} of ${total} dogs`;
+  if (!normalizeQuery(q)) return filters ? `${head} match: ${filters}.` : `${head} shown.`;
+  const exact = results.filter((r) => r.match?.kind === 'exact').length;
+  const names = results.filter((r) => r.match?.kind === 'name').length;
+  const close = n - exact - names;
+  const parts = [exact && `${exact} exact breed ${exact === 1 ? 'match' : 'matches'}`, names && `${names} name ${names === 1 ? 'match' : 'matches'}`, close && `${close} close ${close === 1 ? 'match' : 'matches'} (mixes that include it)`].filter(Boolean).join(', ');
+  const noExact = n && !exact && !names ? ' No exact breed match: the listings describe these dogs as mixes.' : '';
+  return n ? `“${q.trim()}”${filters ? ` · ${filters}` : ''}: ${parts}.${noExact}` : `No dogs in this snapshot match “${q.trim()}”${filters ? ` with ${filters}` : ''}.`;
+}
 
 export function AnimalSearch() {
   const { animals, data } = useShelter();
@@ -110,9 +126,7 @@ export function AnimalSearch() {
   const [age, setAge] = useState('');
   const [size, setSize] = useState('');
   const opts = (label: string) => Array.from(new Set(animals.map((a) => field(a, label)).filter(Boolean) as string[])).sort();
-  const shown = useMemo(() => animals.filter((a) => {
-    const breed = `${field(a, 'Breed') ?? ''} ${field(a, 'Second breed') ?? ''}`.toLowerCase();
-    if (q && !`${a.name.toLowerCase()} ${breed}`.includes(q.toLowerCase().trim())) return false;
+  const shown = useMemo(() => searchAnimals(animals, q).filter(({ animal: a }) => {
     if (species && a.species !== species) return false;
     if (sex && field(a, 'Sex') !== sex) return false;
     if (size && field(a, 'Size') !== size) return false;
@@ -129,7 +143,7 @@ export function AnimalSearch() {
       <SnapshotCaveat at={data.snapshot.captured_at} />
       <form className="grid gap-2 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]" onSubmit={(e) => e.preventDefault()} role="search">
         <label className="sr-only" htmlFor="q">Name or breed</label>
-        <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or breed (e.g. terrier)" className={sel} />
+        <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or breed (e.g. lab, terrier)" className={sel} />
         <label className="sr-only" htmlFor="species">Species</label>
         <select id="species" value={species} onChange={(e) => setSpecies(e.target.value)} className={sel}><option value="">Any species</option>{Array.from(new Set(animals.map((a) => a.species))).map((s) => <option key={s}>{s}</option>)}</select>
         <label className="sr-only" htmlFor="sex">Sex</label>
@@ -139,10 +153,10 @@ export function AnimalSearch() {
         <label className="sr-only" htmlFor="size">Size</label>
         <select id="size" value={size} onChange={(e) => setSize(e.target.value)} className={sel}><option value="">Any size</option>{opts('Size').map((s) => <option key={s}>{s}</option>)}</select>
       </form>
-      <p className="text-sm text-slate-600" aria-live="polite">{shown.length} of {animals.length} shown · age groups are calculated from each listing’s published age</p>
+      <p className="text-sm text-slate-700" aria-live="polite" data-testid="search-summary">{describe(q, sex, age, size, shown, animals.length)}</p>
       {shown.length ? (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{shown.map((a) => <AnimalCard key={a.slug} a={a} />)}</ul>
-      ) : <p className="rounded-2xl bg-white p-8 text-center text-slate-600">No animals in this snapshot match. Try fewer filters.</p>}
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{shown.map(({ animal: a, match }) => <AnimalCard key={a.slug} a={a} match={match} />)}</ul>
+      ) : <p className="rounded-2xl bg-white p-8 text-center text-slate-600">Try a broader breed word (for example “terrier” or “shepherd”) or fewer filters.</p>}
     </div>
   );
 }
