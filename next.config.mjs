@@ -10,6 +10,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'cms.xencolabs.com', pathname: '/**' },
       { protocol: 'https', hostname: 'publish.xencolabs.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'media.xencolabs.com', pathname: '/**' },
     ],
   },
 
