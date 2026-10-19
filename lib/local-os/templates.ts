@@ -12,7 +12,6 @@ export type Line = { label: string; amount: number };
 
 export type Template = {
   key: TemplateKey;
-  accent: string;
   heroTitle: (city: string) => string;
   heroSub: string;
   promises: string[];
@@ -28,7 +27,7 @@ const r = (n: number) => Math.round(n);
 
 export const TEMPLATES: Record<TemplateKey, Template> = {
   exterior_cleaning: {
-    key: 'exterior_cleaning', accent: '#0f766e',
+    key: 'exterior_cleaning',
     heroTitle: (city) => `House washing, concrete and solar panel cleaning in ${city}`,
     heroSub: 'Get a written estimate in under a minute and pick a time that works, without waiting for a call back.',
     promises: ['Instant written estimate', 'Book a time online', 'Photos before and after every job'],
@@ -51,7 +50,7 @@ export const TEMPLATES: Record<TemplateKey, Template> = {
     videoSrc: '/lp-videos/exterior_cleaning.mp4',
   },
   window_gutter: {
-    key: 'window_gutter', accent: '#1d4ed8',
+    key: 'window_gutter',
     heroTitle: (city) => `Window cleaning, screens and gutters in ${city}`,
     heroSub: 'Count your windows, get a price right away, and book the visit online.',
     promises: ['Price by window count, no visit needed', 'Online booking', 'Reminders before every visit'],
@@ -76,7 +75,7 @@ export const TEMPLATES: Record<TemplateKey, Template> = {
     videoSrc: '/lp-videos/window_gutter.mp4',
   },
   pool_service: {
-    key: 'pool_service', accent: '#0369a1',
+    key: 'pool_service',
     heroTitle: (city) => `Weekly pool service and repairs in ${city}`,
     heroSub: 'See your monthly price, start service online and get a report after every visit.',
     promises: ['Monthly price up front', 'Start service online', 'Visit report with photos'],
@@ -100,7 +99,7 @@ export const TEMPLATES: Record<TemplateKey, Template> = {
     videoSrc: '/lp-videos/pool_service.mp4',
   },
   landscaping: {
-    key: 'landscaping', accent: '#15803d',
+    key: 'landscaping',
     heroTitle: (city) => `Pavers, turf and yard maintenance in ${city}`,
     heroSub: 'Get a ballpark estimate, book a site visit online, and approve the final quote from your phone.',
     promises: ['Ballpark estimate in a minute', 'Book the site visit online', 'Approve and sign from your phone'],

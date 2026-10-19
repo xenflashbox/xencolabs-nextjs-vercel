@@ -16,14 +16,14 @@ const STEPS = [
 ] as const;
 const SAMPLE = { customer: 'Jordan Sample (sandbox customer)', address: '100 Sample Lane', number: 'Q-1042 (sample)' };
 
-function Surface({ dirty, accent }: { dirty: boolean; accent: string }) {
+function Surface({ dirty }: { dirty: boolean }) {
   // Generic illustration, not a customer photo.
   return (
     <svg viewBox="0 0 160 100" className="h-full w-full" role="img" aria-label={dirty ? 'Illustration: before' : 'Illustration: after'}>
       <rect width="160" height="100" fill={dirty ? '#8a8577' : '#e8eef3'} />
       {Array.from({ length: 6 }).map((_, i) => <line key={i} x1="0" y1={16 * i + 8} x2="160" y2={16 * i + 8} stroke={dirty ? '#6f6a5d' : '#cfd9e2'} strokeWidth="2" />)}
       {dirty && Array.from({ length: 14 }).map((_, i) => <circle key={i} cx={(i * 37) % 160} cy={(i * 23) % 100} r={4 + (i % 5)} fill="#4d5a3a" opacity="0.55" />)}
-      {!dirty && <circle cx="140" cy="18" r="10" fill={accent} opacity="0.85" />}
+      {!dirty && <circle cx="140" cy="18" r="10" style={{ fill: 'var(--accent)' }} opacity="0.85" />}
     </svg>
   );
 }
@@ -60,7 +60,6 @@ export function Walkthrough({ template, eventsUrl, business, bookingUrl, videoSr
   const [done, setDone] = useState<Record<number, boolean>>({});
   const lines = t.estimate(Object.fromEntries(t.fields.map((f) => [f.key, f.default])));
   const total = lines.reduce((a, l) => a + l.amount, 0);
-  const accent = t.accent;
   const go = (k: typeof step) => { setStep(k); track('walkthrough_step', 'system', { step: k }); };
   const src = videoSrc || t.videoSrc;
 
@@ -78,7 +77,7 @@ export function Walkthrough({ template, eventsUrl, business, bookingUrl, videoSr
         ))}
       </ol>
 
-      <section className="mt-4 rounded-xl border border-slate-200 p-5">
+      <section className="mt-4 lp-panel p-5">
         {step === 'quote' && (
           <div className="grid gap-3">
             <p className="text-sm text-slate-500">Quote {SAMPLE.number} · {SAMPLE.customer} · {SAMPLE.address}</p>
@@ -110,7 +109,7 @@ export function Walkthrough({ template, eventsUrl, business, bookingUrl, videoSr
             <div className="grid grid-cols-2 gap-2">
               {[true, false].map((dirty, i) => (
                 <figure key={i} className="overflow-hidden rounded-md border border-slate-200">
-                  <div className="aspect-[16/10]"><Surface dirty={dirty} accent={accent} /></div>
+                  <div className="aspect-[16/10]"><Surface dirty={dirty} /></div>
                   <figcaption className="px-2 py-1 text-xs text-slate-500">{t.photoLabels[i]} (illustration)</figcaption>
                 </figure>
               ))}
@@ -147,15 +146,15 @@ export function Walkthrough({ template, eventsUrl, business, bookingUrl, videoSr
         )}
       </section>
 
-      <div className="mt-6 grid gap-3 rounded-xl bg-slate-900 p-5 text-white md:grid-cols-[1fr_auto] md:items-center">
+      <div className="mt-6 grid gap-3 lp-band p-5 md:grid-cols-[1fr_auto] md:items-center">
         <div>
           <p className="font-semibold">Want to see this set up for {business}?</p>
-          <p className="text-sm text-slate-300">20-minute walkthrough with Xenco Labs.</p>
+          <p className="text-sm opacity-80">20-minute walkthrough with Xenco Labs.</p>
         </div>
         {bookingUrl ? (
           <a href={bookingUrl} target="_blank" rel="noopener" onClick={() => track('booking_click', 'system')}
-            className="rounded-lg bg-white px-4 py-2.5 text-center font-semibold text-slate-900">Book the walkthrough</a>
-        ) : <p className="text-sm text-slate-400">Booking link is being set up.</p>}
+            className="lp-btn-light text-center">Book the walkthrough</a>
+        ) : <p className="text-sm opacity-70">Booking link is being set up.</p>}
       </div>
     </div>
   );
