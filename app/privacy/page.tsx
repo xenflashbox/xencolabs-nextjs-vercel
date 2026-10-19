@@ -15,7 +15,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-center mb-16">
-            Last updated: March 11, 2025
+            Last updated: October 19, 2026
           </p>
 
           <div className="prose prose-lg dark:prose-invert max-w-none space-y-12">
@@ -39,6 +39,11 @@ export default function PrivacyPage() {
               <h3 className="text-xl font-medium mt-6 mb-3">Usage Data</h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 We automatically collect certain information when you visit our site, including your IP address, browser type, operating system, referring URLs, and pages viewed. This helps us improve our services and understand how our products are used.
+              </p>
+
+              <h3 className="text-xl font-medium mt-6 mb-3">Advertising and measurement</h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                On the public Xenco Labs website, we use Google Analytics 4 and the OpenAI Ads Measurement Pixel to understand page visits and measure advertising performance. These tools may use browser storage and process information such as page and referring URLs, browser or device information, and advertising attribution identifiers. Our OpenAI Pixel configuration does not send names, email addresses, phone numbers, or form contents.
               </p>
 
               <h3 className="text-xl font-medium mt-6 mb-3">Application Data</h3>
