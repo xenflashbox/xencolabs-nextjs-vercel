@@ -49,7 +49,7 @@ const supportCards = [
 export default function SupportPage() {
   return (
     <MarketingLayout>
-      <main className="relative overflow-hidden bg-[#0B1F3A] text-white">
+      <div className="relative overflow-hidden bg-[#0B1F3A] text-white">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(232,163,61,0.14),transparent_42%)]"
@@ -129,7 +129,7 @@ export default function SupportPage() {
             </a>
           </div>
         </section>
-      </main>
+      </div>
     </MarketingLayout>
   );
 }
