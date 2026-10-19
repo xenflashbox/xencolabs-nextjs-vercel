@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, PlayCircle } from 'lucide-react';
 import { MarketingLayout } from '@/components/layout/marketing-layout';
 import { CALENDLY_URL } from '@/app/advisory/config';
 import { SonomaWashShowcase } from '@/components/marketing/sonoma-wash-showcase';
@@ -87,6 +87,12 @@ export default function LocalServiceBusinessOSPage() {
               See the Live Example
             </Link>
           </div>
+          <Link
+            href="/presentations/local-service-business-os?src=product-page"
+            className="inline-flex items-center gap-2 mt-5 text-sm font-semibold text-[var(--brand-primary)] hover:underline underline-offset-4"
+          >
+            <PlayCircle className="w-4 h-4" aria-hidden="true" /> Watch the 2-minute presentation
+          </Link>
           <p className="text-sm text-[var(--text-tertiary)] mt-6">
             Built for owner-operated service businesses and small field teams that need growth without adding office overhead.
           </p>
