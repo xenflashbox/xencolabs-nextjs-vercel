@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { captureFirstTouch, type Attribution } from '@/lib/attribution';
+import { useFormGuard } from '@/lib/use-form-guard';
 
 const companySizes = [
   'Under $5M',
@@ -20,6 +22,12 @@ export function GrowthAuditForm() {
     workEmail: '',
     companySize: '',
   });
+  const [consent, setConsent] = useState(false);
+  const guard = useFormGuard('dark');
+  const attributionRef = useRef<Attribution>({});
+  useEffect(() => {
+    attributionRef.current = captureFirstTouch();
+  }, []);
 
   if (status === 'success') {
     return (
@@ -44,7 +52,12 @@ export function GrowthAuditForm() {
       const res = await fetch('/api/growth-audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          consent,
+          attribution: attributionRef.current,
+          ...guard.guardFields(),
+        }),
       });
 
       const data = await res.json();
@@ -54,6 +67,7 @@ export function GrowthAuditForm() {
       } else {
         setStatus('error');
         setErrorMessage(data.error || 'Something went wrong. Please try again.');
+        guard.reset();
       }
     } catch {
       setStatus('error');
@@ -148,6 +162,36 @@ export function GrowthAuditForm() {
           ))}
         </select>
       </div>
+
+      <label className="flex items-start gap-3 text-sm text-gray-300 font-body cursor-pointer">
+        <input
+          type="checkbox"
+          className="mt-1 h-4 w-4 shrink-0"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+        />
+        <span>
+          Email me occasional follow-ups about my audit and search visibility. Optional; unsubscribe any time.
+        </span>
+      </label>
+
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', top: 'auto', width: 1, height: 1, overflow: 'hidden' }}
+      >
+        <label htmlFor="growth_company_url">Company website (leave blank)</label>
+        <input
+          id="growth_company_url"
+          name="company_url"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={guard.honeypot}
+          onChange={(e) => guard.setHoneypot(e.target.value)}
+        />
+      </div>
+
+      {guard.turnstileEnabled && <div ref={guard.turnstileElRef} />}
 
       <button
         type="submit"
