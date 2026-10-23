@@ -38,10 +38,10 @@ export async function generateMetadata({ params }: { params: { tenant: string } 
     : `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
   // Absolute: on Vercel *preview* deployments Next resolves relative social-image URLs against the
   // branch URL (ignoring metadataBase), which the presentation host gate answers with 404.
-  const image = { url: `${origin}${base}/share-image`, width: 1200, height: 630, alt: `${t.name} concept preview by Xenco Labs` };
+  const image = { url: `${origin}${base}/share-image`, width: 1200, height: 630, alt: nemesis ? 'Nemesis Fire' : `${t.name} concept preview by Xenco Labs` };
   return {
     metadataBase: new URL(origin),
-    title: { absolute: `${t.name} · private preview` },
+    title: { absolute: nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · private preview` },
     description,
     robots: ROBOTS,
     icons: { icon: [{ url: icon, type: icon.endsWith('.svg') ? 'image/svg+xml' : 'image/png' }], apple: [{ url: icon }] },
