@@ -230,12 +230,12 @@ export function SiteHome() {
         </section>
       ) : null}
 
-      {/* BRIDGE — the operating system behind the site (private preview) */}
+      {/* BRIDGE — the office and field workflow behind the customer site */}
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <p className={`${FIELD} text-[11px] text-amber-300`}>Private Xenco Labs concept preview</p>
+          <p className={`${FIELD} text-[11px] text-amber-300`}>Connected office and field workflow</p>
           <h2 className={`${DISPLAY} mt-2 text-4xl font-bold uppercase`}>Behind this website: the operating system</h2>
-          <p className="mt-3 max-w-2xl text-neutral-400">The same records, seen by the customer, the office and the {terms.field.toLowerCase()}. Sample data only.</p>
+          <p className="mt-3 max-w-2xl text-neutral-400">One service record connects the customer, the office and the {terms.field.toLowerCase()}. Workspace screens use fictional sample records.</p>
           <div className="mt-8 grid gap-px bg-neutral-800 md:grid-cols-3">
             {[
               ['Customer', 'Job status, estimate approval, report and invoice', links.status],

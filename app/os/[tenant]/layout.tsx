@@ -31,8 +31,11 @@ export async function generateMetadata({ params }: { params: { tenant: string } 
     ? presentationOrigin()
     : `${host.startsWith('localhost') || host.startsWith('127.') ? 'http' : 'https'}://${host}`;
   const base = osBase(t.slug);
-  const title = `${t.name} · Private Xenco Labs concept preview`;
-  const description = `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
+  const nemesis = t.slug === 'nemesis-fire';
+  const title = nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · Private Xenco Labs concept preview`;
+  const description = nemesis
+    ? t.site.heroSubtitle
+    : `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
   // Absolute: on Vercel *preview* deployments Next resolves relative social-image URLs against the
   // branch URL (ignoring metadataBase), which the presentation host gate answers with 404.
   const image = { url: `${origin}${base}/share-image`, width: 1200, height: 630, alt: `${t.name} concept preview by Xenco Labs` };
@@ -42,7 +45,7 @@ export async function generateMetadata({ params }: { params: { tenant: string } 
     description,
     robots: ROBOTS,
     icons: { icon: [{ url: icon, type: icon.endsWith('.svg') ? 'image/svg+xml' : 'image/png' }], apple: [{ url: icon }] },
-    openGraph: { type: 'website', siteName: 'Xenco Labs', url: base, title, description, images: [image] },
+    openGraph: { type: 'website', siteName: nemesis ? 'Nemesis Fire' : 'Xenco Labs', url: base, title, description, images: [image] },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }

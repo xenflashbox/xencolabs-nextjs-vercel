@@ -59,7 +59,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
     >
       <DemoProvider slug={tenant.slug} prospect={prospect}>
       {/* Prospect previews dock the tour in the preview bar; registry tenants keep the floating pill. */}
-      <PreviewBar tenant={tenant} fieldView={fieldView} tour={prospect ? <DemoTour tenant={tenant} variant="bar" /> : undefined} />
+      {tenant.slug === 'nemesis-fire' && zone === 'site' ? null : <PreviewBar tenant={tenant} fieldView={fieldView} tour={prospect ? <DemoTour tenant={tenant} variant="bar" /> : undefined} />}
         {zone === 'site' ? (
           <>
             <div style={{ background: tenant.branding.primary }} className="px-4 py-1.5 text-center text-sm font-medium text-white">
@@ -96,7 +96,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
                 <div>
                   <p className="font-semibold text-white">{tenant.license ? 'Licence' : 'About this preview'}</p>
                   {tenant.license ? <p className="mt-1">{tenant.license}</p> : null}
-                  <p className="mt-3 text-xs text-white/60">Preview of a customer website by Xenco Labs. Sample content; not the live {tenant.website?.replace('https://', '')}.</p>
+                  {tenant.slug === 'nemesis-fire' ? null : <p className="mt-3 text-xs text-white/60">Preview of a customer website by Xenco Labs. Sample content; not the live {tenant.website?.replace('https://', '')}.</p>}
                 </div>
               </div>
             </footer>
@@ -148,7 +148,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
             </footer>
           </>
         )}
-        {prospect ? null : <DemoTour tenant={tenant} />}
+        {prospect || (tenant.slug === 'nemesis-fire' && zone === 'site') ? null : <DemoTour tenant={tenant} />}
       </DemoProvider>
     </div>
   );
