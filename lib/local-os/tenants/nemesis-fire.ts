@@ -60,7 +60,7 @@ export const NEMESIS_FIRE: TenantConfig = {
       'Inspection, testing, maintenance and repair for residential and commercial properties',
     ],
     serviceAreas: ['Santa Rosa', 'Sonoma County', 'the greater North Bay'],
-    emergencyLine: 'Sprinkler leaking or system activated? Call the office now.',
+    emergencyLine: 'Need fire protection service? Call Nemesis Fire.',
     aboutTitle: 'Providing Solutions, Not Just Services.',
     aboutBody:
       'Nemesis Fire is a team of licensed fire protection professionals serving Santa Rosa, Sonoma County, and the greater North Bay area. We provide fire prevention solutions — from system installation to inspection, testing, maintenance and repair.',

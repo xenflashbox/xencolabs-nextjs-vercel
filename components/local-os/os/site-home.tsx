@@ -25,6 +25,7 @@ export function SiteHome() {
   const services = vertical.services.filter((x) => tenant.laneIds.includes(x.laneId));
   const tel = `tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`;
   const terms = termsOf(vertical);
+  const callCta = s === 'nemesis-fire' ? 'Call Nemesis Fire' : terms.callCta;
   const links = linksOf(tenant);
   const split = tenant.branding.theme?.heroLayout === 'split';
   const cta = tenant.site.ctaLabel ?? 'Request service';
@@ -46,7 +47,7 @@ export function SiteHome() {
                   {cta} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <a href={tel} className="lo-btn inline-flex items-center gap-2 bg-white px-6 py-3.5 font-semibold text-neutral-900 ring-1 ring-neutral-300 hover:bg-neutral-50">
-                  <Phone className="h-4 w-4" /> {terms.callCta} {tenant.phone}
+                  <Phone className="h-4 w-4" /> {callCta} {tenant.phone}
                 </a>
               </div>
               {tenant.site.credibility.length ? (
@@ -86,7 +87,7 @@ export function SiteHome() {
               {cta} <ArrowRight className="h-4 w-4" />
             </Link>
             <a href={tel} className="inline-flex items-center gap-2 border border-white/40 px-5 py-3.5 font-semibold text-white hover:bg-white/10">
-              {terms.callCta} {tenant.phone}
+              {callCta} {tenant.phone}
             </a>
           </div>
           {tenant.aiDemo ? (
