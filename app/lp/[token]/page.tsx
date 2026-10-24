@@ -17,7 +17,7 @@ export default async function PreviewServicePage({ params }: { params: { token: 
       <section className="border-b border-slate-200" style={{ background: 'linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, white), white)' }}>
         <div className="mx-auto grid max-w-5xl gap-6 px-4 py-12 md:grid-cols-[1.4fr_1fr] md:py-16">
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold leading-tight md:text-4xl">{t.heroTitle(b.city)}</h1>
+            <h1 className="text-3xl font-bold leading-tight md:text-4xl">{m.config.hero_title || t.heroTitle(b.city)}</h1>
             <p className="max-w-prose text-lg text-slate-600">{t.heroSub}</p>
             {b.rating ? (
               <p className="inline-flex items-center gap-1.5 text-sm text-slate-700"><Star className="h-4 w-4 fill-amber-400 text-amber-400" />

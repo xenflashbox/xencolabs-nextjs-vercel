@@ -1,0 +1,190 @@
+# Local OS: vertical sales preview (tenants + trade modules)
+
+A prospect preview is the whole business in one connected system: **branded customer website →
+customer journey (request, estimate approval, status, report, invoice) → office operating system →
+technician mobile workflow → live Xenco AI receptionist demo**. All of it is configuration plus a
+trade module; nothing is built per prospect.
+
+## Routes (shared by every tenant)
+
+| Zone | Route | Screen |
+|---|---|---|
+| Customer site | `/os/[t]` | Homepage: positioning, credibility, services, emergency direction, request CTA, AI demo |
+| | `/os/[t]/services/[slug]` | Service detail from the trade module |
+| | `/os/[t]/request` | Guided intake (service → property → contact → review); emergencies become "call now" |
+| | `/os/[t]/status/[leadId]` | Customer status: received → scheduled → report/estimate → approved → completed → invoiced |
+| | `/os/[t]/estimate/[id]` | Customer estimate review and approval (only contractor-approved, sent estimates) |
+| | `/os/[t]/report/[id]` | Report from a template (only contractor-reviewed reports) |
+| | `/os/[t]/invoice/[id]` | Invoice (only sent invoices) |
+| Office | `/os/[t]/office` · `/requests` · `/intake` | Dashboard, request queue, phone intake |
+| | `/os/[t]/office/quotes/[id]` · `/jobs/[id]` · `/reports/[id]` · `/invoices/[id]` | Estimate review, job, report review/delivery, invoice actions |
+| Technician | `/os/[t]/tech/[id]` | Job packet: checklist, report readings/scoring, before/after photos, notes |
+
+Every screen carries the amber "sample data only" band and a guided **demo tour** (from `tenant.tour`).
+Every generated document renders in `DocFrame`: tenant letterhead, a "Sample preview — not a
+certification, invoice, or official filing" banner top and bottom, and a diagonal watermark.
+
+The **Xenco AI receptionist panel** (`lib/local-os/xenco-demo.ts`, `(415) 338-9949`) is shown when
+`tenant.aiDemo` is on. It is always labelled "Xenco Labs live demonstration · not <tenant>'s line" and
+is never offered for emergencies; emergencies always point to the tenant's own office number.
+
+## Reusable preview primitives (`components/local-os/os/preview/`)
+
+| Primitive | What it does |
+|---|---|
+| `PreviewBar` | Sticky private-preview navigation on every screen: "Private Xenco preview · sample data only", Website / Office / Technician, and the Xenco AI receptionist `tel:` link |
+| `Lifecycle` | The tenant's lifecycle (`vertical.lifecycleName` + `customerSteps`): `showcase` on the homepage (each stage opens its sample record), `status` for one customer's progress |
+| `TenantPhoto` | Client photo via `next/image` (responsive srcset), cropped by the configured focus point |
+| `FieldVideo` | Silent square clip: poster first, source attached only near the viewport, muted inline loop while visible, controls instead of autoplay under reduced motion. Never a hero |
+| `AiDemoPanel` | The Xenco live AI receptionist (`lib/local-os/xenco-demo.ts`), card or compact; always labelled as Xenco's demonstration |
+| `DocFrame` | Letterhead + top/bottom banner + watermark for every sample document |
+| `type.ts` | `DISPLAY` / `FIELD` type tokens; with `branding.typography: 'industrial'` they resolve to Barlow Condensed + IBM Plex Mono (loaded only under `/os`) |
+
+Tenant media lives in `tenant.media` (hero, about, one image per lane, proof clips) as **logical
+keys only** — `tenantAsset(slug, 'media')` → `/os-media/<slug>/media/<file>`. No tenant photo,
+video, poster or logo is committed to this public repository. The bytes live in the private R2
+bucket `xenco-tenant-media` at `tenants/<slug>/<key>` (no public access, no r2.dev, no custom
+domain, no CORS).
+
+`/os-media/[tenant]/[...key]` serves them: 404 in production unless previews are enabled, 404 for
+any key the tenant config does not reference (no enumeration), otherwise a 302 to a SigV4
+presigned GET valid for 300 s, with `X-Robots-Tag: noindex`, `Cache-Control: private, no-store`
+and `Referrer-Policy: no-referrer`. It reads `R2_TENANT_MEDIA_ACCOUNT_ID`, `_BUCKET`,
+`_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` — a **bucket-scoped, read-only** token, Preview env only;
+without them it returns 503. Never put an account-wide R2 token in Vercel.
+
+Import rule: resize photos for the web without re-cropping, strip EXIF/GPS from photos and all
+container metadata from video (lossless remux, `-map_metadata -1 -c copy`), keep supplied final
+clips and posters pixel/frame-identical, H.264 with no audio track. Upload to the bucket with an
+admin credential, then reference the key from the tenant file.
+
+## Trade-module contents (VerticalPack)
+
+`lanes`, `services` (customer-facing pages), `buildingTypes`, `urgency`, `intakeFields` (trade
+questions per lane), `leadStatuses`, `checklists` (technician families), `quoteLines`,
+`lineItemFamilies` (inspection / parts / device testing / admin; placeholder prices),
+`reportTemplates` (scored items and/or multi-assembly readings, delivery to owner / AHJ),
+`customerSteps`, `guardrails` (quote, compliance, emergency, completion, document), `reportSections`.
+
+## Tenant contents
+
+Identity (name, owner, licence, phone, region, established), branding (palette + per-surface logo
+map), `laneIds`, `site` copy (from the client's own published material only), `tour`, `aiDemo`,
+public website (reference only), and a SAMPLE seed that tells one connected story.
+
+## Adding the next prospect (e.g. HVAC, exterior cleaning, asphalt)
+
+1. New trade? Add `lib/local-os/verticals/<trade>.ts` with the fields above.
+2. Add `lib/local-os/tenants/<slug>.ts`: identity, brand assets uploaded to `xenco-tenant-media` under
+   `tenants/<slug>/brand` and referenced via `tenantAsset`,
+   site copy, tour, sample seed. Register it in `tenants/index.ts`.
+3. No new routes or components.
+
+---
+
+# Tenants and vertical packs (reference)
+
+The Local OS is one set of screens configured per client. A client is a **tenant**; the
+trade vocabulary comes from a **vertical pack**. Adding a contractor means adding
+configuration, not copying screens into their website repository.
+
+```
+lib/local-os/tenant-types.ts           shapes: TenantConfig, VerticalPack, ServiceLane, ...
+lib/local-os/demo-types.ts             preview records (every one has sample: true)
+lib/local-os/verticals/<vertical>.ts   reusable trade vocabulary + guardrails
+lib/local-os/tenants/<tenant>.ts       branding, lanes sold, sample seed
+lib/local-os/tenants/index.ts          registry + production gate
+app/os/[tenant]/...                    shared screens
+components/local-os/os/...             shared UI
+```
+
+## What a vertical pack holds (reusable across contractors in the trade)
+
+| Field | Fire-protection example | Notes |
+|---|---|---|
+| `lanes` | sprinkler, emergency, extinguisher, each with work types | A tenant sells a subset (`laneIds`). |
+| `buildingTypes` | single-family … healthcare | Drives intake and, later, pricing rules. |
+| `urgency` | emergency / soon / routine, each with a routing sentence | `humanOnly` levels are routed to a phone call; the system never dispatches. |
+| `leadStatuses` | new → callback → contacted → follow-up → qualified → estimate drafted → won / lost | Shared queue states. |
+| `checklists` | per lane, sections prep / safety / work / completion | Lines describe what the technician *records*, never a conclusion. |
+| `quoteLines` | inspection per riser, head replacement, call-out, … | `sampleUnitPrice` is a placeholder; real rates come from the client. |
+| `guardrails` | quote, compliance, emergency, completion | Shown wherever the system would otherwise appear to make that statement. |
+| `reportSections` | scope performed, observations, photos, follow-up | Completion report outline. |
+
+## What a tenant holds
+
+Name, owner, licence line exactly as the client publishes it, phone, region, branding
+(primary colour, dark surface, logos from the client's own site), the lanes they sell,
+a link to their public site (read-only reference), and a sample seed. `previewOnly: true`
+means nothing leaves the browser.
+
+## Founder decisions for prospect previews (2026-10-11, Nemesis Fire)
+
+1. Use the client's real job imagery only. No stock fire imagery.
+2. Never use selfies, food or personal photos, photos of children, TikTok screenshots, or near-duplicates.
+3. The client's current live site (e.g. www.nemesisfire.com) is a sound rescue-site foundation — hero, service lanes, quote CTA, local positioning — but it is only the website layer.
+4. Fire protection carries **Backflow Testing & Certification** as a fourth real service lane.
+5. Do not promise "24-hour response", "24/7", specific credentials, or ratings unless the client confirms each one for the paid/live version.
+6. Every preview document is visibly sample-only. The client's real invoices and reports are private workflow references; they are never copied into public documents or the repository.
+7. The Xenco AI demo number is mandatory and visible on every prospect preview.
+
+## Guardrails every vertical must keep
+
+1. **No binding quotes.** Estimates are drafts until the licensed contractor confirms the
+   scope and approves by name. The flow is draft → scope reviewed → approved to send → sent.
+2. **No compliance conclusions.** Inspection results, tags and certifications are issued by
+   the licensed contractor on their own forms. Checklists record observations only.
+3. **No automatic emergency dispatch.** Emergency urgency turns into "call the office now".
+4. **Completion reports are records of work, not certifications,** and need sign-off.
+5. **Sample data is labelled** on every record (SAMPLE badge + "(sample)" names) and every
+   screen (amber band).
+
+## Privacy and exposure
+
+- `/os/*` is noindex, disallowed in `robots.ts`, and public only to Clerk (like `/lp/*`).
+- **Production:** `tenantPreviewsEnabled()` returns false unless `LOCAL_OS_TENANT_PREVIEWS=on`,
+  so merging cannot expose a tenant preview.
+- **Vercel preview deployments** of this project redirect to Vercel login, which is what
+  keeps the alpha private. Sharing it outside the team needs a Vercel shareable link,
+  which is a deliberate step.
+- The repository is public. Never put client secrets or real customer data in a tenant file.
+
+## Converting a preview tenant to live (not done for any tenant yet)
+
+Persistence (a tenant-scoped schema in the shared Local OS backend), auth for the owner and
+technicians, the real intake source (their website form posting to the shared intake API),
+photo storage (private bucket per tenant, signed URLs, the same pattern as the Sonoma Wash
+field workflow), messaging, and invoicing — each only after the client answers the
+conversion questions below and the founder approves.
+
+## Nemesis Fire: questions for Alex before going live
+
+**Intake and leads**
+1. Which requests should reach this system: the website form only, or also phone calls and texts? Who enters phone requests?
+2. What do you need on every request before you call back (address, building type, system type, number of risers or extinguishers, occupancy, access)?
+3. What is your callback promise for routine, soon and emergency requests, and who covers emergencies after hours?
+4. Should emergency web requests do anything besides telling the customer to call you? (The system will never dispatch on its own.)
+
+**Estimates**
+5. Your real line items and rates per lane (inspection per riser or per building, head replacement, call-out, hourly labour, extinguisher per unit, recharge, hydro test), and minimums or trip charges.
+6. Which estimates can be priced from a phone call, and which always need a site visit or drawings?
+7. Who may approve an estimate besides you? Do you need deposits, and on which jobs?
+8. Your standard exclusions and terms (permits, engineering, patching, after-hours rates, warranty).
+
+**Jobs and technicians**
+9. Who are your technicians, and should each see only their own jobs?
+10. The checklist you actually use for NFPA 25 sprinkler inspections, NFPA 10 extinguisher service and emergency repairs; which items are required before a job can be closed?
+11. Impairment and monitoring-company notification: what is your procedure, and should the job page prompt for it?
+12. Which photos are mandatory (riser, gauges, failure before and after, tags)?
+
+**Reports, compliance and money**
+13. Which official forms do you issue for inspections and tags? (The system will attach to them, not replace them.)
+14. Who signs completion reports, and should customers receive them automatically after sign-off?
+15. How do you invoice and take payment today (QuickBooks, Stripe, cheques)? What are the terms, and who chases overdue invoices?
+16. Recurring work: should annual and semi-annual inspection reminders be created automatically for each property?
+
+**Customers and data**
+17. Do your customers want a status link by text or email, and from which number or address?
+18. Do you have existing customer, property or inspection-due lists to import?
+19. Which email and phone number should customer-facing messages come from?
+20. Who besides you should have access to the office view?
