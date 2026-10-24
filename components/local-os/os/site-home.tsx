@@ -186,7 +186,7 @@ export function SiteHome() {
         </>
       )}
       {/* REAL WORK — field proof tied to the system, not a gallery */}
-      {m.proof.length ? (
+      {s === 'nemesis-fire' ? null : m.proof.length ? (
         <section>
           <div className="mx-auto max-w-6xl px-4 py-16">
             <div className="flex flex-wrap items-end justify-between gap-4">
