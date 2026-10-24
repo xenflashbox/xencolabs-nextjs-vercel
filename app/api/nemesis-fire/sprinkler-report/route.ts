@@ -3,6 +3,7 @@ import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-re
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 const DOCS_BASE = (process.env.DOCUMENT_SERVICE_URL || 'https://docs.xencolabs.com').replace(/\/+$/, '')
 const ALLOWED_RESULTS = new Set(['', 'pass', 'fail', 'na'])
@@ -71,21 +72,73 @@ export async function POST(request: NextRequest) {
       const comment = typeof input?.comment === 'string' ? input.comment.slice(0, 240).replace(/[\u0000-\u001f\u007f]/g, ' ') : ''
       items[item.id] = { result, comment }
     }
+    const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
+    if (!apiKey) return NextResponse.json({ detail: 'Document generation is not configured.' }, { status: 503 })
+
     const generatedResponse = await fetch(DOCS_BASE + '/api/documents/generate', {
-      method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15_000),
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-API-Key': apiKey },
       body: JSON.stringify({
-        html_content: buildHtml(values, items),
-        format: 'pdf',
-        options: { format: 'Letter', margin: { top: '0.35in', right: '0.35in', bottom: '0.35in', left: '0.35in' }, printBackground: true, preferCSSPageSize: true, displayHeaderFooter: false },
-        metadata: { title: 'Nemesis Fire Sprinkler Inspection Sample - ' + (values.jobNumber || 'New Report'), filename: 'nemesis-fire-sprinkler-inspection-sample.pdf', source: 'nemesis-fire-preview' },
+        html: buildHtml(values, items),
+        output_format: 'pdf',
+        app_name: 'nemesis-fire',
+        metadata: {
+          title: 'Nemesis Fire Sprinkler Inspection Sample - ' + (values.jobNumber || 'New Report'),
+          filename: 'nemesis-fire-sprinkler-inspection-sample.pdf',
+          source: 'nemesis-fire-preview',
+        },
       }),
     })
     if (!generatedResponse.ok) return NextResponse.json({ detail: 'The document service did not accept the report. Please try again shortly.' }, { status: 502 })
-    const generated = await generatedResponse.json() as { document_id?: string }
-    if (!generated.document_id || !/^[a-zA-Z0-9_-]{8,80}$/.test(generated.document_id)) return NextResponse.json({ detail: 'The document service returned an invalid report reference.' }, { status: 502 })
-    const pdf = await fetch(DOCS_BASE + '/api/documents/' + encodeURIComponent(generated.document_id) + '/download', { cache: 'no-store' })
-    if (!pdf.ok) return NextResponse.json({ detail: 'The PDF was generated, but could not be downloaded.' }, { status: 502 })
-    return new NextResponse(pdf.body, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="nemesis-fire-sprinkler-inspection-sample.pdf"', 'Cache-Control': 'no-store' } })
+
+    const accepted = await generatedResponse.json() as { job_id?: unknown }
+    if (typeof accepted.job_id !== 'string' || !/^[a-zA-Z0-9_-]{8,100}$/.test(accepted.job_id)) {
+      return NextResponse.json({ detail: 'The document service returned an invalid report reference.' }, { status: 502 })
+    }
+
+    const deadline = Date.now() + 50_000
+    let completed: { status: string; output_url?: unknown } | undefined
+    while (Date.now() < deadline) {
+      const jobResponse = await fetch(DOCS_BASE + '/api/jobs/' + encodeURIComponent(accepted.job_id), {
+        method: 'GET',
+        cache: 'no-store',
+        signal: AbortSignal.timeout(10_000),
+        headers: { Accept: 'application/json', 'X-API-Key': apiKey },
+      })
+      if (!jobResponse.ok) return NextResponse.json({ detail: 'The document service could not confirm report generation.' }, { status: 502 })
+
+      const job = await jobResponse.json() as { status?: unknown; output_url?: unknown }
+      if (job.status === 'completed') {
+        completed = { status: 'completed', output_url: job.output_url }
+        break
+      }
+      if (job.status === 'failed' || job.status === 'error') {
+        return NextResponse.json({ detail: 'The document service could not generate the report.' }, { status: 502 })
+      }
+      if (job.status !== 'pending' && job.status !== 'processing') {
+        return NextResponse.json({ detail: 'The document service returned an unknown report status.' }, { status: 502 })
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1_000))
+    }
+    if (!completed || typeof completed.output_url !== 'string') {
+      return NextResponse.json({ detail: 'Report generation timed out. Please try again.' }, { status: 504 })
+    }
+
+    const outputUrl = new URL(completed.output_url)
+    if (outputUrl.origin !== new URL(DOCS_BASE).origin || outputUrl.protocol !== 'https:') {
+      return NextResponse.json({ detail: 'The document service returned an unsafe report URL.' }, { status: 502 })
+    }
+    const pdf = await fetch(outputUrl, { cache: 'no-store', signal: AbortSignal.timeout(15_000) })
+    if (!pdf.ok || !pdf.headers.get('content-type')?.toLowerCase().includes('application/pdf')) {
+      return NextResponse.json({ detail: 'The PDF was generated, but could not be downloaded.' }, { status: 502 })
+    }
+    const bytes = new Uint8Array(await pdf.arrayBuffer())
+    if (bytes.byteLength < 5 || bytes.byteLength > 20_000_000 || new TextDecoder().decode(bytes.slice(0, 5)) !== '%PDF-') {
+      return NextResponse.json({ detail: 'The document service returned an invalid PDF.' }, { status: 502 })
+    }
+    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="nemesis-fire-sprinkler-inspection-sample.pdf"', 'Cache-Control': 'no-store' } })
   } catch {
     return NextResponse.json({ detail: 'The report could not be generated. Please try again.' }, { status: 500 })
   }
