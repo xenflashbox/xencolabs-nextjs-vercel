@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { SPRINKLER_REPORT_ITEMS, type ReportResult } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
 
 type Values = Record<string, string>
@@ -72,7 +72,7 @@ export function SprinklerReportForm() {
   function setItem(id: string, patch: Partial<ItemValue>) {
     setItems((current) => ({ ...current, [id]: { result: '', comment: '', ...current[id], ...patch } }))
   }
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setBusy(true)
     setError('')

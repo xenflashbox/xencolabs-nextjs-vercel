@@ -13,7 +13,8 @@ const VALUE_LIMITS: Record<string, number> = {
   initialStatic: 30, residualPressure: 30, finalStatic: 30, waterSupplyBelow: 30, waterSupplyAbove: 30,
   waterflowTime: 30, technicianName: 100, deficiencies: 2500,
 }
-const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
 const resultLabel = (value: string) => value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : '—'
 const safeDate = (value: string) => esc(value || '—')
 const field = (values: Record<string, string>, key: string) => esc(values[key] || '—')
