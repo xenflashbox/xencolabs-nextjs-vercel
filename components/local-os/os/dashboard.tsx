@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { termsOf } from '@/lib/local-os/terms';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
 import { Lifecycle } from '@/components/local-os/os/preview/lifecycle';
+import { ProofCard } from '@/components/local-os/os/preview/proof-card';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { lineTotal } from '@/lib/local-os/journey';
 import { Card, NavLink, Pill, SampleBadge, isToday, leadTone, money, osHref, timeOnly, when } from '@/components/local-os/os/ui';
@@ -48,6 +49,19 @@ export function Dashboard() {
             <p className="mt-2 max-w-2xl text-sm text-slate-300">A connected view of the customer conversation, follow-up, site work, and report delivery.</p>
           </div>
           <Lifecycle slug={s} name={vertical.lifecycleName} stages={vertical.customerSteps} variant="showcase" />
+          {tenant.media.proof.length ? (
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-lg font-semibold">Workflow examples</h3>
+                <p className="text-sm text-slate-300">Illustrative views of the customer, office, and technician workflow.</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {tenant.media.proof.map((item, index) => (
+                  <ProofCard key={item.id} slug={s} item={item} index={index} label="Office walkthrough" />
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Sample inbound call</p>
