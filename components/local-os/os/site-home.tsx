@@ -170,6 +170,7 @@ export function SiteHome() {
       ) : null}
 
       {s === 'nemesis-fire' ? null : (
+        <>
       {/* PROTECTION LIFECYCLE — the signature */}
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
@@ -234,6 +235,7 @@ export function SiteHome() {
       ) : null}
 
       {s === 'nemesis-fire' ? null : (
+        <>
       {/* BRIDGE — the office and field workflow behind the customer site */}
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
@@ -256,6 +258,7 @@ export function SiteHome() {
           </div>
         </div>
       </section>
+        </>
       )}
     </div>
   );
