@@ -59,15 +59,15 @@ export function SiteRequest() {
     return (
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-10">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold text-emerald-700">Request received (sample)</p>
-          <h1 className="mt-1 text-2xl font-bold">Thanks — the {tenant.name} office will call you back.</h1>
+          <p className="text-sm font-semibold text-emerald-700">{tenant.slug === 'nemesis-fire' ? 'Request received' : 'Request received (sample)'}</p>
+          <h1 className="mt-1 text-2xl font-bold">{tenant.slug === 'nemesis-fire' ? 'Thanks — this request is in the office queue.' : `Thanks — the ${tenant.name} office will call you back.`}</h1>
           <p className="mt-2 text-slate-600">Reference {done}. {emergency ? 'For an emergency, please also call the office now.' : 'You can follow your request on its status page.'}</p>
           {emergency ? <div className="mt-4">{callCard}</div> : null}
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href={osHref(tenant.slug, `/status/${done}`)} className="rounded-lg bg-[var(--brand)] px-4 py-2.5 font-semibold text-white">View request status</Link>
             <Link href={osHref(tenant.slug, `/office/requests?open=${done}`)} className="rounded-lg border border-slate-300 px-4 py-2.5 font-semibold">See it arrive in the office queue →</Link>
           </div>
-          <p className="mt-4 text-xs text-slate-500">Preview: nothing was emailed or texted, and the live website form was not used.</p>
+          <p className="mt-4 text-xs text-slate-500">{tenant.slug === 'nemesis-fire' ? 'This presentation request is stored in this browser and does not notify the office.' : 'Preview: nothing was emailed or texted, and the live website form was not used.'}</p>
         </div>
         {tenant.aiDemo ? <AiDemoPanel tenantName={tenant.name} heading={tenant.aiDemoHeading} variant="compact" /> : null}
       </div>
@@ -142,7 +142,7 @@ export function SiteRequest() {
                     ))}
                   </ul>
                 ) : null}
-                <p className="mt-1 text-xs text-slate-500">Preview: photos stay on this device and are not uploaded.</p>
+                <p className="mt-1 text-xs text-slate-500">{tenant.slug === 'nemesis-fire' ? 'Photos stay on this device and are not uploaded.' : 'Preview: photos stay on this device and are not uploaded.'}</p>
               </div>
             </>
           ) : null}
@@ -171,11 +171,11 @@ export function SiteRequest() {
             {step < 3 ? (
               <button type="button" disabled={!can} onClick={() => setStep((x) => x + 1)} className="rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white disabled:opacity-40">Continue</button>
             ) : (
-              <button type="button" onClick={submit} className="rounded-lg bg-[var(--brand)] px-5 py-2.5 font-semibold text-white">Send request (sample)</button>
+              <button type="button" onClick={submit} className="rounded-lg bg-[var(--brand)] px-5 py-2.5 font-semibold text-white">{tenant.slug === 'nemesis-fire' ? 'Submit request' : 'Send request (sample)'}</button>
             )}
           </div>
         </div>
-        <p className="mt-3 text-xs text-slate-500">Preview form: it adds a sample request to this browser only. Nothing is emailed, and the live website form is not used.</p>
+        <p className="mt-3 text-xs text-slate-500">{tenant.slug === 'nemesis-fire' ? 'This presentation form stores a sample request in this browser only; it does not notify the office.' : 'Preview form: it adds a sample request to this browser only. Nothing is emailed, and the live website form is not used.'}</p>
       </div>
       <aside className="space-y-4">
         <Guardrail>{vertical.guardrails.emergency} Call {tenant.phone}.</Guardrail>

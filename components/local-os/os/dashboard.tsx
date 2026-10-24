@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { termsOf } from '@/lib/local-os/terms';
 import { AiDemoPanel } from '@/components/local-os/os/ai-demo-panel';
+import { Lifecycle } from '@/components/local-os/os/preview/lifecycle';
 import { useDemo } from '@/components/local-os/os/demo-store';
 import { lineTotal } from '@/lib/local-os/journey';
 import { Card, NavLink, Pill, SampleBadge, isToday, leadTone, money, osHref, timeOnly, when } from '@/components/local-os/os/ui';
@@ -39,6 +40,37 @@ export function Dashboard() {
           {new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', weekday: 'long', month: 'long', day: 'numeric' })} · {tenant.region}
         </p>
       </div>
+      {s === 'nemesis-fire' ? (
+        <section className="space-y-4 rounded-2xl bg-slate-950 p-5 text-white">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-300">Office workflow</p>
+            <h2 className="mt-1 text-2xl font-semibold">From first call to signed report</h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate-300">A connected view of the customer conversation, follow-up, site work, and report delivery.</p>
+          </div>
+          <Lifecycle slug={s} name={vertical.lifecycleName} stages={vertical.customerSteps} variant="showcase" />
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Sample inbound call</p>
+              <p className="mt-2 font-medium">Five-year sprinkler inspection · Wet-pipe system</p>
+              <p className="mt-1 text-sm text-slate-300">Caller mentions an older inspection and a separate provider’s repair list. Intake notes capture the property, findings, and questions for Alex.</p>
+              <p className="mt-3 text-xs text-amber-300">Fictional sample activity</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Sample appointment</p>
+              <p className="mt-2 font-medium">15-minute introductory call with Alex</p>
+              <p className="mt-1 text-sm text-slate-300">A sample calendar entry shows the handoff from the call assistant to the office.</p>
+              <p className="mt-3 text-xs text-amber-300">Fictional sample activity</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div>
+              <p className="font-medium">Create a five-year sprinkler report</p>
+              <p className="mt-1 text-sm text-slate-300">Enter a sample inspection record and generate a form-style PDF for review.</p>
+            </div>
+            <Link href={osHref(s, '/office/reports/new')} className="rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-amber-300">Start report</Link>
+          </div>
+        </section>
+      ) : null}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         {stat('New requests', fresh.length, fresh.length ? 'text-[var(--brand)]' : undefined)}
         {stat('Callbacks / follow-ups due', due.length)}

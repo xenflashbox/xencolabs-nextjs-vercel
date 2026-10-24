@@ -57,8 +57,8 @@ export function SiteService({ slug }: { slug: string }) {
             </ul>
             </>
           ) : null}
-          <p className={`${FIELD} ${svc.includes.length ? 'mt-10' : ''} text-[11px] text-neutral-500`}>{svc.includes.length ? 'On site' : 'Local OS preview'}</p>
-          <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>{svc.includes.length ? 'What to expect' : 'How it works in this preview'}</h2>
+          <p className={`${FIELD} ${svc.includes.length ? 'mt-10' : ''} text-[11px] text-neutral-500`}>{svc.includes.length ? 'On site' : tenant.slug === 'nemesis-fire' ? 'Service details' : 'Local OS preview'}</p>
+          <h2 className={`${DISPLAY} mt-1 text-3xl font-bold uppercase`}>{svc.includes.length ? 'What to expect' : tenant.slug === 'nemesis-fire' ? 'What to expect' : 'How it works in this preview'}</h2>
           <ol className="mt-4 space-y-3">
             {svc.whatToExpect.map((i, k) => (
               <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-2">
