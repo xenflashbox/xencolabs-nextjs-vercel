@@ -183,7 +183,7 @@ export function SiteHome() {
           </div>
         </div>
       </section>
-
+        </>
       )}
       {/* REAL WORK — field proof tied to the system, not a gallery */}
       {m.proof.length ? (
