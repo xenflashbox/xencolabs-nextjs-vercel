@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SprinklerReportForm } from '@/components/local-os/os/nemesis-sprinkler-report-form'
 import { osBase } from '@/lib/local-os/presentation'
+import type { Route } from 'next'
 
 export default async function NewSprinklerReportPage({ params }: { params: { tenant: string } }) {
   const { tenant } = params
@@ -10,7 +11,7 @@ export default async function NewSprinklerReportPage({ params }: { params: { ten
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-5xl">
-        <Link href={`${osBase(tenant)}/office`} className="text-sm font-medium text-slate-600 hover:text-slate-950">← Office</Link>
+        <Link href={`${osBase(tenant)}/office` as Route} className="text-sm font-medium text-slate-600 hover:text-slate-950">← Office</Link>
         <header className="mt-5 mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">Nemesis Fire · Office</p>
           <h1 className="mt-2 text-3xl font-bold">Five-year sprinkler inspection report</h1>
