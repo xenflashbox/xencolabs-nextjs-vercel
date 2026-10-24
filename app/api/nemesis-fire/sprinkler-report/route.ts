@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Pool } from '@neondatabase/serverless'
+import { createHash, randomUUID } from 'node:crypto'
 import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
 
 export const runtime = 'nodejs'
@@ -49,8 +51,42 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   return html
 }
 
+async function persistGeneratedReport(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, pdf: Uint8Array, jobId: string) {
+  const connectionString = process.env.NEMESIS_FIRE_DATABASE_URL
+  if (!connectionString) throw new Error('Nemesis report database is not configured')
+  const pool = new Pool({ connectionString, max: 1 })
+  const client = await pool.connect()
+  const reportId = randomUUID()
+  const reportNumber = 'NF-' + (values.testDate || new Date().toISOString().slice(0, 10)).replace(/-/g, '') + '-' + reportId.slice(0, 6).toUpperCase()
+  try {
+    await client.query('BEGIN')
+    const template = await client.query('SELECT id FROM nemesis_fire.report_templates WHERE template_key=$1 AND active=true', ['aes-2.2-ca-title19-five-year-wet-pipe'])
+    if (!template.rows[0]) throw new Error('Report template unavailable')
+    const sample = await client.query('SELECT id FROM nemesis_fire.clients WHERE business_name=$1 AND active=true ORDER BY created_at LIMIT 1', ['Redwood Court Apartments (Sample Client)'])
+    if (!sample.rows[0]) throw new Error('Sample client unavailable')
+    await client.query("INSERT INTO nemesis_fire.sprinkler_reports (id,report_number,client_id,template_id,status,inspection_date,system_type,performed_by,report_values,revision,created_by,generated_at) VALUES ($1,$2,$3,$4,'generated',$5::date,$6,$7,$8::jsonb,1,'preview-demo',now())", [reportId,reportNumber,sample.rows[0].id,template.rows[0].id,values.testDate,values.systemType,values.performedBy || null,JSON.stringify({ ...values, items })])
+    const rows = await client.query('SELECT item_key,section,item_number,item_kind,description,code_reference FROM nemesis_fire.report_template_items WHERE template_id=$1 ORDER BY sort_order', [template.rows[0].id])
+    for (const row of rows.rows) {
+      const input = items[row.item_key] || { result: '', comment: '' }
+      await client.query('INSERT INTO nemesis_fire.report_checklist_items (report_id,item_key,section,item_number,item_kind,description,code_reference,performed_on,result,comment) VALUES ($1,$2,$3,$4,$5,$6,$7,$8::date,$9,$10)', [reportId,row.item_key,row.section,row.item_number,row.item_kind,row.description,row.code_reference,values.testDate,input.result,input.comment])
+    }
+    await client.query('INSERT INTO nemesis_fire.report_risers (report_id,riser_number,location,riser_diameter,main_drain_diameter,initial_static_pressure,residual_pressure,final_static_pressure) VALUES ($1,1,$2,$3,$4,$5,$6,$7)', [reportId,values.riserLocation || null,values.riserDiameter || null,values.mainDrainDiameter || null,values.initialStatic || null,values.residualPressure || null,values.finalStatic || null])
+    await client.query('INSERT INTO nemesis_fire.report_documents (report_id,revision,document_service_job_id,file_name,sha256,pdf_bytes) VALUES ($1,1,$2,$3,$4,$5)', [reportId,jobId,'nemesis-fire-sprinkler-inspection-' + reportNumber + '.pdf',createHash('sha256').update(pdf).digest('hex'),Buffer.from(pdf)])
+    await client.query('INSERT INTO nemesis_fire.report_audit_events (report_id,actor_id,action,details) VALUES ($1,$2,$3,$4::jsonb)', [reportId,'preview-demo','pdf_generated',JSON.stringify({ report_number: reportNumber, template: 'aes-2.2-ca-title19-five-year-wet-pipe' })])
+    await client.query('COMMIT')
+    return { reportId, reportNumber }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+    await pool.end()
+  }
+}
+
 export async function POST(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT !== 'nemesis-fire') return NextResponse.json({ detail: 'Not found' }, { status: 404 })
+  const enabledTenants = (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT || '').split(',').map((x) => x.trim())
+  if (!enabledTenants.includes('nemesis-fire')) return NextResponse.json({ detail: 'Not found' }, { status: 404 })
   try {
     const raw = await request.text()
     if (raw.length > 32_000) return NextResponse.json({ detail: 'Report input is too large.' }, { status: 413 })
@@ -138,7 +174,8 @@ export async function POST(request: NextRequest) {
     if (bytes.byteLength < 5 || bytes.byteLength > 20_000_000 || new TextDecoder().decode(bytes.slice(0, 5)) !== '%PDF-') {
       return NextResponse.json({ detail: 'The document service returned an invalid PDF.' }, { status: 502 })
     }
-    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="nemesis-fire-sprinkler-inspection-sample.pdf"', 'Cache-Control': 'no-store' } })
+    const saved = await persistGeneratedReport(values, items, bytes, accepted.job_id)
+    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + saved.reportNumber + '.pdf"', 'X-Nemesis-Report-Id': saved.reportId, 'X-Nemesis-Report-Number': saved.reportNumber, 'Cache-Control': 'no-store' } })
   } catch {
     return NextResponse.json({ detail: 'The report could not be generated. Please try again.' }, { status: 500 })
   }
