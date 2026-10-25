@@ -229,6 +229,7 @@ export async function POST(request: NextRequest) {
       if (!values[key]?.trim()) return NextResponse.json({ detail: 'Complete the required property and inspection date fields.' }, { status: 400 })
     }
     values.systemType = ['Wet Pipe', 'Dry Pipe', 'Pre-action', 'Deluge', 'Other / not specified'].includes(String(body.values?.systemType)) ? String(body.values?.systemType) : 'Other / not specified'
+    if (values.systemType !== 'Wet Pipe') return NextResponse.json({ detail: 'The current generated form is the official AES 2.2 five-year Wet Pipe form. Select Wet Pipe; other system forms are being mapped before they can be generated.' }, { status: 400 })
     const items: Record<string, { result: string; comment: string }> = {}
     for (const item of SPRINKLER_REPORT_ITEMS) {
       const input = body.items?.[item.id] as { result?: unknown; comment?: unknown } | undefined
