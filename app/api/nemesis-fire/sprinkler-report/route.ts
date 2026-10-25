@@ -60,7 +60,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
     if (!text) return ''
     return '<span class="wrap" style="left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;width:' + (width * scale) + 'px;height:' + (height * scale) + 'px;font-size:' + (size * scale) + 'px">' + esc(text) + '</span>'
   }
-  const wordmark = (x: number, y: number, size = 9) => '<span style="position:absolute;z-index:1;left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;font-family:Arial,Helvetica,sans-serif;font-size:' + (size * scale) + 'px;font-weight:700;line-height:1;white-space:nowrap"><span style="color:#111">NEMESIS</span><span style="color:#D10505;margin-left:1px">FIRE</span></span>'
+  const wordmark = (x: number, y: number, size = 9) => '<span style="position:absolute;z-index:1;left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;font-family:Arial,Helvetica,sans-serif;font-size:' + (size * scale) + 'px;font-weight:700;line-height:1;white-space:nowrap"><span style="color:#111">NEMESIS</span><span style="color:#D10505;margin-left:4px">FIRE</span></span>'
   const date = printDate(values.testDate || '')
   const { city, zip } = coverValues(values)
   const pages: string[] = []
