@@ -70,7 +70,10 @@ export function SprinklerReportForm() {
     setValues((current) => ({ ...current, [key]: value }))
   }
   function setItem(id: string, patch: Partial<ItemValue>) {
-    setItems((current) => ({ ...current, [id]: { result: '', comment: '', ...current[id], ...patch } }))
+    setItems((current) => {
+      const previous = current[id] ?? { result: '' as ReportResult, comment: '' }
+      return { ...current, [id]: { result: patch.result ?? previous.result, comment: patch.comment ?? previous.comment } }
+    })
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
