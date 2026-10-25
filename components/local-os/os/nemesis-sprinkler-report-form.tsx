@@ -59,6 +59,7 @@ export function SprinklerReportForm() {
     riserDiameter: '',
     mainDrainDiameter: '',
     technicianName: '',
+    technicianSignature: '',
   })
   const [items, setItems] = useState<Record<string, ItemValue>>({})
   const [busy, setBusy] = useState(false)
@@ -163,6 +164,10 @@ export function SprinklerReportForm() {
         <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">{FIELDS[23].label}
           <input value={values.technicianName ?? ''} onChange={(e) => setField('technicianName', e.target.value)} className={INPUT} />
         </label>
+        <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">Typed signature (sample only)
+          <input value={values.technicianSignature ?? ''} onChange={(e) => setField('technicianSignature', e.target.value)} className={INPUT} maxLength={120} />
+        </label>
+        <p className="mt-2 text-xs text-slate-500">Shown as typed in this sample PDF; it is not a verified electronic signature or certification.</p>
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-slate-500">{itemCount} of {SPRINKLER_REPORT_ITEMS.length} checklist results recorded</p>
