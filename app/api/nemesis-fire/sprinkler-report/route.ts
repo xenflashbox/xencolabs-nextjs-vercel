@@ -23,7 +23,7 @@ const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-te
 
 const coverValues = (values: Record<string, string>) => {
   const cityStateZip = values.cityStateZip || ''
-  const zip = cityStateZip.match(/\b(\d{5}(?:-\d{4})?)\\s*$/)?.[1] || ''
+  const zip = cityStateZip.match(/\b(\d{5}(?:-\d{4})?)\s*$/)?.[1] || ''
   const city = zip ? cityStateZip.slice(0, cityStateZip.lastIndexOf(zip)).replace(/[ ,]+$/, '') : cityStateZip
   return { city, zip }
 }
