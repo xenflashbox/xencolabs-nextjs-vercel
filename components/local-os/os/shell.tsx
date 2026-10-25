@@ -111,10 +111,14 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
                   {zone === 'tech' ? (
                     <TenantLogo tenant={tenant} surface="shieldOnDark" height={40} />
                   ) : (
-                    <>
+                    <Link
+                      href={osHref(tenant.slug)}
+                      aria-label={`${tenant.name} customer site home`}
+                      className="flex shrink-0 items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    >
                       <TenantLogo tenant={tenant} surface="shieldOnDark" height={40} className="sm:hidden" />
                       <TenantLogo tenant={tenant} surface="wordmarkOnDark" height={36} className="hidden sm:block" />
-                    </>
+                    </Link>
                   )}
                   <div className="min-w-0 text-white">
                     <p className={`truncate font-semibold ${zone === 'tech' ? '' : 'sm:sr-only'}`}>
