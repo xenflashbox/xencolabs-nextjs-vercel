@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Pool } from '@neondatabase/serverless'
+import { createHash, randomUUID } from 'node:crypto'
 import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 const DOCS_BASE = (process.env.DOCUMENT_SERVICE_URL || 'https://docs.xencolabs.com').replace(/\/+$/, '')
 const ALLOWED_RESULTS = new Set(['', 'pass', 'fail', 'na'])
@@ -48,8 +51,42 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   return html
 }
 
+async function persistGeneratedReport(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, pdf: Uint8Array, jobId: string) {
+  const connectionString = process.env.NEMESIS_FIRE_DATABASE_URL
+  if (!connectionString) throw new Error('Nemesis report database is not configured')
+  const pool = new Pool({ connectionString, max: 1 })
+  const client = await pool.connect()
+  const reportId = randomUUID()
+  const reportNumber = 'NF-' + (values.testDate || new Date().toISOString().slice(0, 10)).replace(/-/g, '') + '-' + reportId.slice(0, 6).toUpperCase()
+  try {
+    await client.query('BEGIN')
+    const template = await client.query('SELECT id FROM nemesis_fire.report_templates WHERE template_key=$1 AND active=true', ['aes-2.2-ca-title19-five-year-wet-pipe'])
+    if (!template.rows[0]) throw new Error('Report template unavailable')
+    const sample = await client.query('SELECT id FROM nemesis_fire.clients WHERE business_name=$1 AND active=true ORDER BY created_at LIMIT 1', ['Redwood Court Apartments (Sample Client)'])
+    if (!sample.rows[0]) throw new Error('Sample client unavailable')
+    await client.query("INSERT INTO nemesis_fire.sprinkler_reports (id,report_number,client_id,template_id,status,inspection_date,system_type,performed_by,report_values,revision,created_by,generated_at) VALUES ($1,$2,$3,$4,'generated',$5::date,$6,$7,$8::jsonb,1,'preview-demo',now())", [reportId,reportNumber,sample.rows[0].id,template.rows[0].id,values.testDate,values.systemType,values.performedBy || null,JSON.stringify({ ...values, items })])
+    const rows = await client.query('SELECT item_key,section,item_number,item_kind,description,code_reference FROM nemesis_fire.report_template_items WHERE template_id=$1 ORDER BY sort_order', [template.rows[0].id])
+    for (const row of rows.rows) {
+      const input = items[row.item_key] || { result: '', comment: '' }
+      await client.query('INSERT INTO nemesis_fire.report_checklist_items (report_id,item_key,section,item_number,item_kind,description,code_reference,performed_on,result,comment) VALUES ($1,$2,$3,$4,$5,$6,$7,$8::date,$9,$10)', [reportId,row.item_key,row.section,row.item_number,row.item_kind,row.description,row.code_reference,values.testDate,input.result,input.comment])
+    }
+    await client.query('INSERT INTO nemesis_fire.report_risers (report_id,riser_number,location,riser_diameter,main_drain_diameter,initial_static_pressure,residual_pressure,final_static_pressure) VALUES ($1,1,$2,$3,$4,$5,$6,$7)', [reportId,values.riserLocation || null,values.riserDiameter || null,values.mainDrainDiameter || null,values.initialStatic || null,values.residualPressure || null,values.finalStatic || null])
+    await client.query('INSERT INTO nemesis_fire.report_documents (report_id,revision,document_service_job_id,file_name,sha256,pdf_bytes) VALUES ($1,1,$2,$3,$4,$5)', [reportId,jobId,'nemesis-fire-sprinkler-inspection-' + reportNumber + '.pdf',createHash('sha256').update(pdf).digest('hex'),Buffer.from(pdf)])
+    await client.query('INSERT INTO nemesis_fire.report_audit_events (report_id,actor_id,action,details) VALUES ($1,$2,$3,$4::jsonb)', [reportId,'preview-demo','pdf_generated',JSON.stringify({ report_number: reportNumber, template: 'aes-2.2-ca-title19-five-year-wet-pipe' })])
+    await client.query('COMMIT')
+    return { reportId, reportNumber }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+    await pool.end()
+  }
+}
+
 export async function POST(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT !== 'nemesis-fire') return NextResponse.json({ detail: 'Not found' }, { status: 404 })
+  const enabledTenants = (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT || '').split(',').map((x) => x.trim())
+  if (!enabledTenants.includes('nemesis-fire')) return NextResponse.json({ detail: 'Not found' }, { status: 404 })
   try {
     const raw = await request.text()
     if (raw.length > 32_000) return NextResponse.json({ detail: 'Report input is too large.' }, { status: 413 })
@@ -71,21 +108,74 @@ export async function POST(request: NextRequest) {
       const comment = typeof input?.comment === 'string' ? input.comment.slice(0, 240).replace(/[\u0000-\u001f\u007f]/g, ' ') : ''
       items[item.id] = { result, comment }
     }
+    const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
+    if (!apiKey) return NextResponse.json({ detail: 'Document generation is not configured.' }, { status: 503 })
+
     const generatedResponse = await fetch(DOCS_BASE + '/api/documents/generate', {
-      method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15_000),
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-API-Key': apiKey },
       body: JSON.stringify({
-        html_content: buildHtml(values, items),
-        format: 'pdf',
-        options: { format: 'Letter', margin: { top: '0.35in', right: '0.35in', bottom: '0.35in', left: '0.35in' }, printBackground: true, preferCSSPageSize: true, displayHeaderFooter: false },
-        metadata: { title: 'Nemesis Fire Sprinkler Inspection Sample - ' + (values.jobNumber || 'New Report'), filename: 'nemesis-fire-sprinkler-inspection-sample.pdf', source: 'nemesis-fire-preview' },
+        html: buildHtml(values, items),
+        output_format: 'pdf',
+        app_name: 'nemesis-fire',
+        metadata: {
+          title: 'Nemesis Fire Sprinkler Inspection Sample - ' + (values.jobNumber || 'New Report'),
+          filename: 'nemesis-fire-sprinkler-inspection-sample.pdf',
+          source: 'nemesis-fire-preview',
+        },
       }),
     })
     if (!generatedResponse.ok) return NextResponse.json({ detail: 'The document service did not accept the report. Please try again shortly.' }, { status: 502 })
-    const generated = await generatedResponse.json() as { document_id?: string }
-    if (!generated.document_id || !/^[a-zA-Z0-9_-]{8,80}$/.test(generated.document_id)) return NextResponse.json({ detail: 'The document service returned an invalid report reference.' }, { status: 502 })
-    const pdf = await fetch(DOCS_BASE + '/api/documents/' + encodeURIComponent(generated.document_id) + '/download', { cache: 'no-store' })
-    if (!pdf.ok) return NextResponse.json({ detail: 'The PDF was generated, but could not be downloaded.' }, { status: 502 })
-    return new NextResponse(pdf.body, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="nemesis-fire-sprinkler-inspection-sample.pdf"', 'Cache-Control': 'no-store' } })
+
+    const accepted = await generatedResponse.json() as { job_id?: unknown }
+    if (typeof accepted.job_id !== 'string' || !/^[a-zA-Z0-9_-]{8,100}$/.test(accepted.job_id)) {
+      return NextResponse.json({ detail: 'The document service returned an invalid report reference.' }, { status: 502 })
+    }
+
+    const deadline = Date.now() + 50_000
+    let completed: { status: string; output_url?: unknown } | undefined
+    while (Date.now() < deadline) {
+      const jobResponse = await fetch(DOCS_BASE + '/api/jobs/' + encodeURIComponent(accepted.job_id), {
+        method: 'GET',
+        cache: 'no-store',
+        signal: AbortSignal.timeout(10_000),
+        headers: { Accept: 'application/json', 'X-API-Key': apiKey },
+      })
+      if (!jobResponse.ok) return NextResponse.json({ detail: 'The document service could not confirm report generation.' }, { status: 502 })
+
+      const job = await jobResponse.json() as { status?: unknown; output_url?: unknown }
+      if (job.status === 'completed') {
+        completed = { status: 'completed', output_url: job.output_url }
+        break
+      }
+      if (job.status === 'failed' || job.status === 'error') {
+        return NextResponse.json({ detail: 'The document service could not generate the report.' }, { status: 502 })
+      }
+      if (job.status !== 'pending' && job.status !== 'processing') {
+        return NextResponse.json({ detail: 'The document service returned an unknown report status.' }, { status: 502 })
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1_000))
+    }
+    if (!completed || typeof completed.output_url !== 'string') {
+      return NextResponse.json({ detail: 'Report generation timed out. Please try again.' }, { status: 504 })
+    }
+
+    const outputUrl = new URL(completed.output_url)
+    if (outputUrl.origin !== new URL(DOCS_BASE).origin || outputUrl.protocol !== 'https:') {
+      return NextResponse.json({ detail: 'The document service returned an unsafe report URL.' }, { status: 502 })
+    }
+    const pdf = await fetch(outputUrl, { cache: 'no-store', signal: AbortSignal.timeout(15_000) })
+    if (!pdf.ok || !pdf.headers.get('content-type')?.toLowerCase().includes('application/pdf')) {
+      return NextResponse.json({ detail: 'The PDF was generated, but could not be downloaded.' }, { status: 502 })
+    }
+    const bytes = new Uint8Array(await pdf.arrayBuffer())
+    if (bytes.byteLength < 5 || bytes.byteLength > 20_000_000 || new TextDecoder().decode(bytes.slice(0, 5)) !== '%PDF-') {
+      return NextResponse.json({ detail: 'The document service returned an invalid PDF.' }, { status: 502 })
+    }
+    const saved = await persistGeneratedReport(values, items, bytes, accepted.job_id)
+    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + saved.reportNumber + '.pdf"', 'X-Nemesis-Report-Id': saved.reportId, 'X-Nemesis-Report-Number': saved.reportNumber, 'Cache-Control': 'no-store' } })
   } catch {
     return NextResponse.json({ detail: 'The report could not be generated. Please try again.' }, { status: 500 })
   }
