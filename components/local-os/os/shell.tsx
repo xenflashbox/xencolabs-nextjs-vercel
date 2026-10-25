@@ -45,6 +45,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
     ['/office', 'Dashboard'],
     ['/office/requests', 'Requests'],
     ['/office/intake', 'Phone intake'],
+    ['/office/reports/new', 'Reports'],
   ];
 
   return (
@@ -74,6 +75,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
                 </Link>
                 <nav className="flex items-center gap-1 text-sm">
                   <Link href={osHref(tenant.slug, '/#services')} className="hidden rounded-md px-3 py-2 hover:bg-slate-100 sm:block">Services</Link>
+                  {tenant.slug === 'nemesis-fire' ? <Link href={osHref(tenant.slug, '/office')} className="rounded-md px-3 py-2 font-medium hover:bg-slate-100">Office</Link> : null}
                   <a href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 rounded-md px-3 py-2 font-medium hover:bg-slate-100">
                     <Phone className="h-4 w-4" /> <span className="hidden md:inline">{tenant.phone}</span><span className="md:hidden">Call</span>
                   </a>

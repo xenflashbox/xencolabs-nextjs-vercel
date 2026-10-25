@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Pool } from '@neondatabase/serverless'
-import { createHash, randomUUID } from 'node:crypto'
 import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
 import { getCaller } from '@/lib/local-os/auth'
 import { hasNemesisDemoRequestAccess } from '@/lib/local-os/nemesis-fire/demo-access'
+import { getSavedReport, getSavedReportPdf, listSavedReports, persistGeneratedReport, saveReportDraft } from '@/lib/local-os/nemesis-fire/report-store'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -23,7 +22,7 @@ const VALUE_LIMITS: Record<string, number> = {
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
 
-const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-template-library'
+const AES_TEMPLATE_BASE_URL = 'https://xencolabs.com/nemesis-fire/aes-template-library'
 
 const coverValues = (values: Record<string, string>) => {
   const cityStateZip = values.cityStateZip || ''
@@ -205,39 +204,29 @@ async function loadAesTemplateImages() {
   }))
 }
 
-async function persistGeneratedReport(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, pdf: Uint8Array, jobId: string) {
-  const connectionString = process.env.NEMESIS_FIRE_DATABASE_URL
-  if (!connectionString) throw new Error('Nemesis report database is not configured')
-  const pool = new Pool({ connectionString, max: 1 })
-  const client = await pool.connect()
-  const reportId = randomUUID()
-  const reportNumber = 'NF-' + (values.testDate || new Date().toISOString().slice(0, 10)).replace(/-/g, '') + '-' + reportId.slice(0, 6).toUpperCase()
+async function hasReportAccess(request: NextRequest) {
+  const previewDemoAuthorized = hasNemesisDemoRequestAccess(request.headers.get('host'), request.cookies.get('nemesis_demo_access')?.value)
+  return previewDemoAuthorized || Boolean(await getCaller())
+}
+
+export async function GET(request: NextRequest) {
+  const enabledTenants = (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT || '').split(',').map((x) => x.trim())
+  if (!enabledTenants.includes('nemesis-fire')) return NextResponse.json({ detail: 'Not found' }, { status: 404 })
+  if (!(await hasReportAccess(request))) return NextResponse.json({ detail: 'Open this report from the private Nemesis link or sign in to the Nemesis office portal.' }, { status: 403 })
   try {
-    await client.query('BEGIN')
-    const template = await client.query('SELECT id FROM nemesis_fire.report_templates WHERE template_key=$1 AND active=true', ['aes-2.2-ca-title19-five-year-wet-pipe'])
-    if (!template.rows[0]) throw new Error('Report template unavailable')
-    const sample = await client.query('SELECT id FROM nemesis_fire.clients WHERE business_name=$1 AND active=true ORDER BY created_at LIMIT 1', ['Redwood Court Apartments (Sample Client)'])
-    if (!sample.rows[0]) throw new Error('Sample client unavailable')
-    await client.query("INSERT INTO nemesis_fire.sprinkler_reports (id,report_number,client_id,template_id,status,inspection_date,system_type,performed_by,report_values,revision,created_by,generated_at) VALUES ($1,$2,$3,$4,'generated',$5::date,$6,$7,$8::jsonb,1,'preview-demo',now())", [reportId,reportNumber,sample.rows[0].id,template.rows[0].id,values.testDate,values.systemType,values.performedBy || null,JSON.stringify({ ...values, items })])
-    const rows = await client.query('SELECT item_key,section,item_number,item_kind,description,code_reference FROM nemesis_fire.report_template_items WHERE template_id=$1 ORDER BY sort_order', [template.rows[0].id])
-    for (const row of rows.rows) {
-      const input = items[row.item_key] || { result: '', comment: '' }
-      // The complete Yes/No response is stored in report_values JSONB; the existing
-      // checklist result column intentionally remains limited to P/F/N/A.
-      const result = input.result === 'yes' || input.result === 'no' ? '' : input.result
-      await client.query('INSERT INTO nemesis_fire.report_checklist_items (report_id,item_key,section,item_number,item_kind,description,code_reference,performed_on,result,comment) VALUES ($1,$2,$3,$4,$5,$6,$7,$8::date,$9,$10)', [reportId,row.item_key,row.section,row.item_number,row.item_kind,row.description,row.code_reference,values.testDate,result,input.comment])
+    const id = request.nextUrl.searchParams.get('id')
+    if (!id) return NextResponse.json({ reports: await listSavedReports() }, { headers: { 'Cache-Control': 'no-store' } })
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return NextResponse.json({ detail: 'Invalid report reference.' }, { status: 400 })
+    if (request.nextUrl.searchParams.get('pdf') === '1') {
+      const file = await getSavedReportPdf(id)
+      if (!file) return NextResponse.json({ detail: 'No PDF has been generated for this report yet.' }, { status: 404 })
+      return new NextResponse(Buffer.from(file.pdf_bytes), { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + file.file_name.replace(/[^a-zA-Z0-9._-]/g, '') + '"', 'Cache-Control': 'no-store' } })
     }
-    await client.query('INSERT INTO nemesis_fire.report_risers (report_id,riser_number,location,riser_diameter,main_drain_diameter,initial_static_pressure,residual_pressure,final_static_pressure) VALUES ($1,1,$2,$3,$4,$5,$6,$7)', [reportId,values.riserLocation || null,values.riserDiameter || null,values.mainDrainDiameter || null,values.initialStatic || null,values.residualPressure || null,values.finalStatic || null])
-    await client.query('INSERT INTO nemesis_fire.report_documents (report_id,revision,document_service_job_id,file_name,sha256,pdf_bytes) VALUES ($1,1,$2,$3,$4,$5)', [reportId,jobId,'nemesis-fire-sprinkler-inspection-' + reportNumber + '.pdf',createHash('sha256').update(pdf).digest('hex'),Buffer.from(pdf)])
-    await client.query('INSERT INTO nemesis_fire.report_audit_events (report_id,actor_id,action,details) VALUES ($1,$2,$3,$4::jsonb)', [reportId,'preview-demo','pdf_generated',JSON.stringify({ report_number: reportNumber, template: 'aes-2.2-ca-title19-five-year-wet-pipe' })])
-    await client.query('COMMIT')
-    return { reportId, reportNumber }
+    const report = await getSavedReport(id)
+    return report ? NextResponse.json(report, { headers: { 'Cache-Control': 'no-store' } }) : NextResponse.json({ detail: 'Saved report not found.' }, { status: 404 })
   } catch (error) {
-    await client.query('ROLLBACK')
-    throw error
-  } finally {
-    client.release()
-    await pool.end()
+    console.error('nemesis_report_load_failed', { errorType: error instanceof Error ? error.name : 'UnknownError' })
+    return NextResponse.json({ detail: 'Saved reports could not be loaded. Check the report database configuration.' }, { status: 503 })
   }
 }
 
@@ -247,7 +236,7 @@ export async function POST(request: NextRequest) {
   try {
     const raw = await request.text()
     if (raw.length > 32_000) return NextResponse.json({ detail: 'Report input is too large.' }, { status: 413 })
-    const body = JSON.parse(raw) as { values?: Record<string, unknown>; items?: Record<string, unknown>; signedCopy?: unknown }
+    const body = JSON.parse(raw) as { action?: unknown; reportId?: unknown; clientId?: unknown; values?: Record<string, unknown>; items?: Record<string, unknown>; signedCopy?: unknown }
     const values: Record<string, string> = {}
     for (const [key, max] of Object.entries(VALUE_LIMITS)) {
       const candidate = body.values?.[key]
@@ -263,8 +252,9 @@ export async function POST(request: NextRequest) {
     values.systemType = ['Wet Pipe', 'Dry Pipe', 'Pre-action', 'Deluge', 'Other / not specified'].includes(String(body.values?.systemType)) ? String(body.values?.systemType) : 'Other / not specified'
     if (values.systemType !== 'Wet Pipe') return NextResponse.json({ detail: 'The current generated form is the official AES 2.2 five-year Wet Pipe form. Select Wet Pipe; other system forms are being mapped before they can be generated.' }, { status: 400 })
     if (body.signedCopy !== undefined && typeof body.signedCopy !== 'boolean') return NextResponse.json({ detail: 'Invalid report completion status.' }, { status: 400 })
-    const previewDemoAuthorized = hasNemesisDemoRequestAccess(request.headers.get('host'), request.cookies.get('nemesis_demo_access')?.value)
-    if (!previewDemoAuthorized && !(await getCaller())) return NextResponse.json({ detail: 'Open this report from the private Nemesis preview link or sign in to the Nemesis office portal.' }, { status: 403 })
+    if (!(await hasReportAccess(request))) return NextResponse.json({ detail: 'Open this report from the private Nemesis link or sign in to the Nemesis office portal.' }, { status: 403 })
+    if (body.reportId !== undefined && (typeof body.reportId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.reportId))) return NextResponse.json({ detail: 'Invalid saved report reference.' }, { status: 400 })
+    if (body.clientId !== undefined && (typeof body.clientId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.clientId))) return NextResponse.json({ detail: 'Invalid client reference.' }, { status: 400 })
     const items: Record<string, { result: string; comment: string }> = {}
     for (const item of SPRINKLER_REPORT_ITEMS) {
       const input = body.items?.[item.id] as { result?: unknown; comment?: unknown } | undefined
@@ -274,13 +264,24 @@ export async function POST(request: NextRequest) {
       items[item.id] = { result, comment }
     }
     const signedCopy = body.signedCopy === true
-    if (signedCopy && !previewDemoAuthorized && !(await getCaller())) return NextResponse.json({ detail: 'Sign in with an authorized Nemesis admin account to create a signed copy.' }, { status: 403 })
+    const input = { values, items }
+    const action = body.action === 'save' ? 'save' : 'generate'
+    let saved: { reportId: string; reportNumber: string; savedAt?: string }
+    try {
+      saved = await saveReportDraft(input, typeof body.reportId === 'string' ? body.reportId : null, typeof body.clientId === 'string' ? body.clientId : null, signedCopy)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Draft could not be saved'
+      const status = message === 'Saved report not found' ? 404 : message.includes('already been generated') ? 409 : 503
+      return NextResponse.json({ detail: message, reportId: body.reportId || null }, { status })
+    }
+    if (action === 'save') return NextResponse.json({ ok: true, ...saved }, { headers: { 'Cache-Control': 'no-store' } })
+
     const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
-    if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'The signed-report signature is not configured on this server.' }, { status: 503 })
-    if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy.' }, { status: 400 })
-    if (signedCopy && Object.values(items).some((item) => !item.result)) return NextResponse.json({ detail: 'Complete every checklist result before creating the signed copy.' }, { status: 400 })
+    if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'Signed PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
+    if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
+    if (signedCopy && Object.values(items).some((item) => !item.result)) return NextResponse.json({ detail: 'Complete every checklist result before creating the signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
     const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
-    if (!apiKey) return NextResponse.json({ detail: 'Document generation is not configured.' }, { status: 503 })
+    if (!apiKey) return NextResponse.json({ detail: 'Unsigned PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
 
     const generatedResponse = await fetch(DOCS_BASE + '/api/documents/generate', {
       method: 'POST',
@@ -298,7 +299,10 @@ export async function POST(request: NextRequest) {
         },
       }),
     })
-    if (!generatedResponse.ok) return NextResponse.json({ detail: 'The document service did not accept the report. Please try again shortly.' }, { status: 502 })
+    if (!generatedResponse.ok) {
+      console.error('nemesis_document_service_rejected_report', { status: generatedResponse.status, reportId: saved.reportId })
+      return NextResponse.json({ detail: 'The document service rejected the request (HTTP ' + generatedResponse.status + '). Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 502 })
+    }
 
     const accepted = await generatedResponse.json() as { job_id?: unknown }
     if (typeof accepted.job_id !== 'string' || !/^[a-zA-Z0-9_-]{8,100}$/.test(accepted.job_id)) {
@@ -314,7 +318,10 @@ export async function POST(request: NextRequest) {
         signal: AbortSignal.timeout(10_000),
         headers: { Accept: 'application/json', 'X-API-Key': apiKey },
       })
-      if (!jobResponse.ok) return NextResponse.json({ detail: 'The document service could not confirm report generation.' }, { status: 502 })
+      if (!jobResponse.ok) {
+        console.error('nemesis_document_service_status_failed', { status: jobResponse.status, reportId: saved.reportId })
+        return NextResponse.json({ detail: 'The document service could not confirm report generation (HTTP ' + jobResponse.status + '). Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 502 })
+      }
 
       const job = await jobResponse.json() as { status?: unknown; output_url?: unknown }
       if (job.status === 'completed') {
@@ -322,7 +329,8 @@ export async function POST(request: NextRequest) {
         break
       }
       if (job.status === 'failed' || job.status === 'error') {
-        return NextResponse.json({ detail: 'The document service could not generate the report.' }, { status: 502 })
+        console.error('nemesis_document_service_job_failed', { reportId: saved.reportId })
+        return NextResponse.json({ detail: 'The document service could not generate the report. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 502 })
       }
       if (job.status !== 'pending' && job.status !== 'processing') {
         return NextResponse.json({ detail: 'The document service returned an unknown report status.' }, { status: 502 })
@@ -345,9 +353,10 @@ export async function POST(request: NextRequest) {
     if (bytes.byteLength < 5 || bytes.byteLength > 20_000_000 || new TextDecoder().decode(bytes.slice(0, 5)) !== '%PDF-') {
       return NextResponse.json({ detail: 'The document service returned an invalid PDF.' }, { status: 502 })
     }
-    const saved = await persistGeneratedReport(values, items, bytes, accepted.job_id)
-    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + saved.reportNumber + '.pdf"', 'X-Nemesis-Report-Id': saved.reportId, 'X-Nemesis-Report-Number': saved.reportNumber, 'Cache-Control': 'no-store' } })
-  } catch {
-    return NextResponse.json({ detail: 'The report could not be generated. Please try again.' }, { status: 500 })
+    const generated = await persistGeneratedReport(saved.reportId, bytes, accepted.job_id, signedCopy)
+    return new NextResponse(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + generated.reportNumber + '.pdf"', 'X-Nemesis-Report-Id': generated.reportId, 'X-Nemesis-Report-Number': generated.reportNumber, 'Cache-Control': 'no-store' } })
+  } catch (error) {
+    console.error('nemesis_report_generation_failed', { errorType: error instanceof Error ? error.name : 'UnknownError' })
+    return NextResponse.json({ detail: 'Report generation failed, but any saved draft remains in Reports. Check the service settings and try again.' }, { status: 500 })
   }
 }

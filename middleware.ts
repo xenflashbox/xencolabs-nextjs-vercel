@@ -75,7 +75,7 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
     } else {
       res = NextResponse.next() // not rebuilt yet: the earlier workflow-concept pages render as before
     }
-  } else if (pathname === '/api/nemesis-fire/sprinkler-report' && (req.method === 'POST' || req.method === 'OPTIONS')) {
+  } else if (pathname === '/api/nemesis-fire/sprinkler-report' && ['GET', 'POST', 'OPTIONS'].includes(req.method)) {
     // Preview-only report generation route; host validation above still applies.
     res = NextResponse.next()
   } else if (media || pathname === '/robots.txt') {
