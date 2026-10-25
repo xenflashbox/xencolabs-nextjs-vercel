@@ -50,6 +50,6 @@ export async function GET(req: Request, { params }: { params: { tenant: string }
       footerLabel: params.tenant === 'nemesis-fire' ? '707-353-4600' : undefined,
       points: t.site.credibility,
     },
-    params.tenant === 'nemesis-fire' ? { 'X-Robots-Tag': 'noindex, nofollow, noarchive' } : NOINDEX,
+    params.tenant === 'nemesis-fire' ? {} : NOINDEX,
   );
 }
