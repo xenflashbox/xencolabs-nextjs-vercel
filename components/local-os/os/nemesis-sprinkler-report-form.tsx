@@ -41,17 +41,17 @@ const INPUT = 'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2
 
 export function SprinklerReportForm() {
   const [values, setValues] = useState<Values>({
-    buildingName: 'Redwood Court Apartments (Sample Client)',
-    address: '100 Sample Avenue',
+    buildingName: 'Redwood Court Offices',
+    address: '415 Sonoma Highway',
     cityStateZip: 'Santa Rosa, CA 95401',
-    contactName: 'Jordan Taylor (sample)',
+    contactName: 'Jordan Taylor',
     contactPhone: '(707) 555-0142',
-    occupancy: 'R-2',
+    occupancy: 'Office',
     constructionType: 'Type V-A',
     stories: '2',
     yearBuilt: '2004',
-    jobNumber: 'NF-DEMO-001',
-    performedBy: 'Sample Technician',
+    jobNumber: 'NF-2026-001',
+    performedBy: 'Alejandro Ruiz',
     testDate: new Date().toISOString().slice(0, 10),
     systemType: 'Wet Pipe',
     riserCount: '1',
