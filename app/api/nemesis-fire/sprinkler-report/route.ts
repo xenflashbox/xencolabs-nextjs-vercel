@@ -86,8 +86,6 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 161, values.yearBuilt)
   p += place(98, 402, values.jobNumber)
   p += place(98, 424, values.performedBy)
-  p += place(463, 294, date)
-  p += place(463, 315, date)
   p += place(376, 509, '1', { size: 9, width: 16, align: 'center' })
   p += place(31, 509, '✔', { size: 9 })
   const statuses = Object.values(items).map(x => x.result).filter(Boolean)
@@ -127,7 +125,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(97, 96, values.address)
   p += place(96, 113, values.cityStateZip)
   p += place(383, 97, 'Job # ' + (values.jobNumber || ''))
-  p += place(77, 23, values.systemType || 'Wet Pipe')
+  p += place(77, 23, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
   const page3Rows = [
     ['1.17',202.5],['1.18',223.7],['1.19',244],['1.20',264.3],['1.21',284.6],['1.22',304.4],
     ['1.23',324.8],['1.24',344.8],['1.25',364.5],['1.26',385.4],['1.27',405.8],['1.28',425.5],
@@ -142,7 +140,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(96, 96, values.address)
   p += place(95, 113, values.cityStateZip)
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
-  p += place(77, 25, values.systemType || 'Wet Pipe')
+  p += place(77, 25, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
   const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   p += place(112.6, 723.5, values.technicianName)
