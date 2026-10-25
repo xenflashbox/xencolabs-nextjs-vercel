@@ -16,7 +16,7 @@ const VALUE_LIMITS: Record<string, number> = {
   buildingName: 120, address: 180, cityStateZip: 120, contactName: 100, contactPhone: 40, contactEmail: 120,
   occupancy: 60, constructionType: 60, stories: 20, yearBuilt: 20, jobNumber: 60, performedBy: 100,
   testDate: 20, systemType: 40, riserCount: 20, riserLocation: 120, riserDiameter: 30, mainDrainDiameter: 30,
-  initialStatic: 30, residualPressure: 30, finalStatic: 30, waterSupplyBelow: 30, waterSupplyAbove: 30,
+  initialStatic: 30, residualPressure: 30, finalStatic: 30, riserResult: 10, waterSupplyBelow: 30, waterSupplyAbove: 30,
   waterflowTime: 30, technicianName: 100, technicianSignature: 120, deficiencies: 2500,
 }
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
@@ -69,10 +69,13 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
     const value = items[key]?.result || ''
     return value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : ''
   }
-  const yesNoMark = (key: string, y: number, boxX: number, yesY = -4.5, noY = 4.5) => {
+  const riserResult = values.riserResult === 'pass' ? 'P' : values.riserResult === 'fail' ? 'F' : values.riserResult === 'na' ? 'N/A' : ''
+  const yesNoMark = (key: string, y: number, boxX: number, yesY = -1.5, noY = 8) => {
     const value = items[key]?.result
     if (value !== 'yes' && value !== 'no') return ''
-    return place(boxX, y + (value === 'yes' ? yesY : noY), '✔', { size: 7, width: 8, align: 'center', bold: true })
+    const x = key === '1.28' ? (value === 'yes' ? boxX : boxX + 52) : boxX - 16
+    const verticalOffset = key === '1.28' ? yesY - 3 : value === 'yes' ? yesY : noY
+    return place(x, y + verticalOffset, '✔', { size: 9, width: 10, align: 'center', bold: true })
   }
   const comment = (key: string) => COMMENTLESS_ITEM_KEYS.has(key) ? '' : items[key]?.comment || ''
   const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
@@ -106,7 +109,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 140, values.stories)
   p += place(350, 161, values.yearBuilt)
   p += place(98, 275, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(156, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(135, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   p += place(98, 296, 'P.O. Box 11651')
   p += place(98, 318, 'Santa Rosa')
   p += place(98, 340, 'California')
@@ -136,7 +139,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(91, 164, values.contactEmail)
   p += place(385, 144, values.jobNumber)
   p += place(385, 82, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(435, 82, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(426, 82, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   p += place(385, 98, 'P.O. Box 11651', { size: 8.5 })
   p += place(385, 114, 'Santa Rosa', { size: 8.5 })
   p += place(488, 114, 'CA', { size: 8.5 })
@@ -152,6 +155,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(390, 229, values.initialStatic, { width: 34, align: 'center' })
   p += place(443, 229, values.residualPressure, { width: 34, align: 'center' })
   p += place(502, 229, values.finalStatic, { width: 34, align: 'center' })
+  p += place(541, 229, riserResult, { size: 9, width: 34, align: 'center' })
   const page2Rows = [
     ['1.1',403.8],['1.2',423.3],['1.3',442.8],['1.4',462.3],['1.5',481.8],
     ['1.6',502.9],['1.7',523.4],['1.8',542.9],['1.9',562.4],['1.10',583.1],
@@ -166,7 +170,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(96, 113, values.cityStateZip)
   p += place(383, 97, 'Job # ' + (values.jobNumber || ''))
   p += place(383.5, 81, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(433.4, 81, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(425.5, 81, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   const page3Rows = [
     ['1.17',202.5],['1.18',223.7],['1.19',244],['1.20',264.3],['1.21',284.6],['1.22',304.4],
     ['1.23',324.8],['1.24',344.8],['1.25',364.5],['1.26',385.4],['1.27',405.8],['1.28',425.5],
@@ -182,7 +186,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(95, 113, values.cityStateZip)
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
   p += place(386.9, 80, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(438.1, 80, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(428, 80, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   const page4Rows: Array<[string, number]> = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
@@ -261,6 +265,7 @@ export async function POST(request: NextRequest) {
       if (values[key] && !/^\d+(?:\.\d+)?$/.test(values[key].trim())) return NextResponse.json({ detail: 'Enter only a numeric value for PSI and seconds fields.' }, { status: 400 })
     }
     values.systemType = ['Wet Pipe', 'Dry Pipe', 'Pre-action', 'Deluge', 'Other / not specified'].includes(String(body.values?.systemType)) ? String(body.values?.systemType) : 'Other / not specified'
+    if (!['', 'pass', 'fail', 'na'].includes(values.riserResult)) return NextResponse.json({ detail: 'Choose Pass, Fail, or N/A for the riser information result.' }, { status: 400 })
     if (values.systemType !== 'Wet Pipe') return NextResponse.json({ detail: 'The current generated form is the official AES 2.2 five-year Wet Pipe form. Select Wet Pipe; other system forms are being mapped before they can be generated.' }, { status: 400 })
     if (body.signedCopy !== undefined && typeof body.signedCopy !== 'boolean') return NextResponse.json({ detail: 'Invalid report completion status.' }, { status: 400 })
     if (!(await hasReportAccess(request))) return NextResponse.json({ detail: 'Open this report from the private Nemesis link or sign in to the Nemesis office portal.' }, { status: 403 })
@@ -290,7 +295,15 @@ export async function POST(request: NextRequest) {
     const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
     if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'Signed PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
     if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
-    if (signedCopy && Object.values(items).some((item) => !item.result)) return NextResponse.json({ detail: 'Complete every checklist result before creating the signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
+    const missingChecklistItems = signedCopy ? SPRINKLER_REPORT_ITEMS.filter((item) => !items[item.id]?.result) : []
+    const missingRiserResult = signedCopy && !values.riserResult
+    if (missingChecklistItems.length || missingRiserResult) {
+      const missingDescriptions = [
+        ...missingChecklistItems.map(item => item.id + ' ' + item.description),
+        ...(missingRiserResult ? ['Riser information — P / F / N/A result'] : []),
+      ]
+      return NextResponse.json({ detail: 'Complete checklist results for: ' + missingDescriptions.join('; ') + '. Your draft is saved.', missingItemIds: [...missingChecklistItems.map(item => item.id), ...(missingRiserResult ? ['riserResult'] : [])], reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
+    }
     const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
     if (!apiKey) return NextResponse.json({ detail: 'Unsigned PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
 
