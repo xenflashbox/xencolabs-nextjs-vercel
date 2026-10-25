@@ -26,7 +26,7 @@ export function SiteHome() {
   const services = vertical.services.filter((x) => tenant.laneIds.includes(x.laneId));
   const tel = `tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`;
   const terms = termsOf(vertical);
-  const callCta = s === 'nemesis-fire' ? 'Call Nemesis Fire' : terms.callCta;
+  const callCta = s === 'nemesis-fire' ? 'Call Nemesis Fire' : s === 'jacksons-paving' ? 'Call Xenco Labs demo' : terms.callCta;
   const links = linksOf(tenant);
   const split = tenant.branding.theme?.heroLayout === 'split';
   const cta = tenant.site.ctaLabel ?? 'Request service';

@@ -31,7 +31,7 @@ export const JACKSONS_PAVING: TenantConfig = {
   name: 'Jackson’s Paving',
   owner: 'Jack (owner)',
   license: null,
-  phone: '(707) 843-7248',
+  phone: '(415) 338-9949',
   region: 'Santa Rosa · Sonoma County · North Bay',
   established: null,
   aiDemo: false,
@@ -71,7 +71,7 @@ export const JACKSONS_PAVING: TenantConfig = {
       'Serving Sonoma, Napa and Marin counties',
     ],
     serviceAreas: ['Santa Rosa', 'Sonoma County', 'the North Bay'],
-    emergencyLine: 'Open pothole or failed area in a drive lane? Call the office.',
+    emergencyLine: 'Try the Xenco Labs live assistant on the sample site.',
     aboutTitle: 'Asphalt work, planned around your property',
     aboutBody:
       'Jackson’s Paving is a family-owned paving company in Santa Rosa, providing commercial and residential paving, sealcoating, parking lot striping, crack repair and milling.',
