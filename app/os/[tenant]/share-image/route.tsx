@@ -19,9 +19,9 @@ function signedAsset(slug: string, src: string): string | null {
 }
 
 /**
- * Link-preview image for a tenant preview (og:image / twitter:image): the tenant's own hero photo
- * and on-dark wordmark (read server-side from the private bucket), headline, service area and the
- * private-concept ribbon. Same gates as the preview itself.
+ * Link-preview image for a tenant site (og:image / twitter:image): its own hero photo and on-dark
+ * wordmark (read server-side from the private bucket), headline and service area. Nemesis uses a
+ * customer-facing service footer; other preview tenants retain the private-concept label.
  */
 export async function GET(req: Request, { params }: { params: { tenant: string } }) {
   const presentationOk =
@@ -44,7 +44,10 @@ export async function GET(req: Request, { params }: { params: { tenant: string }
       photo,
       accent: t.branding.primary,
       surface: t.branding.surface,
-      ribbon: `Private Xenco Labs concept preview for ${t.name}`,
+      ribbon: params.tenant === 'nemesis-fire'
+        ? 'INSPECTION · TESTING · MAINTENANCE · REPAIR'
+        : `Private Xenco Labs concept preview for ${t.name}`,
+      footerLabel: params.tenant === 'nemesis-fire' ? '707-353-4600' : undefined,
       points: t.site.credibility,
     },
     NOINDEX,
