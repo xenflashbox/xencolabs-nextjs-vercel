@@ -15,6 +15,9 @@ import { linksOf } from '@/lib/local-os/terms';
  * receptionist number (a Xenco line, never the tenant's).
  */
 export function PreviewBar({ tenant, fieldView = 'Technician', tour }: { tenant: TenantConfig; fieldView?: string; tour?: React.ReactNode }) {
+  // Nemesis has its own client-facing presentation and token-gated workspace. Do not expose
+  // the generic Xenco concept-preview ribbon or demo phone UI on that branded experience.
+  if (tenant.slug === 'nemesis-fire') return null;
   const path = usePathname() ?? '';
   const base = osBase(tenant.slug);
   const zone = path.startsWith(`${base}/office`) ? 'office' : path.startsWith(`${base}/tech/`) ? 'tech' : 'site';

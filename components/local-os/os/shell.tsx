@@ -19,10 +19,10 @@ function ResetButton() {
   return (
     <button
       type="button"
-      onClick={() => window.confirm('Reset all sample data to the starting state?') && reset()}
+      onClick={() => window.confirm('Reset this workspace to its starting state?') && reset()}
       className="rounded-md border border-white/30 px-2 py-1 text-xs text-white/90 hover:bg-white/10"
     >
-      Reset sample data
+      Reset workspace
     </button>
   );
 }
@@ -144,11 +144,11 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
             </header>
             <main className="mx-auto max-w-5xl px-4 pb-28 pt-5">{children}</main>
             <footer className="mx-auto max-w-5xl px-4 pb-24 text-xs text-slate-500">
-              Local OS by Xenco Labs · private preview for {tenant.name}. Seeded records are fictional samples.
+              {tenant.slug === 'nemesis-fire' ? 'Nemesis Fire · Fire protection services' : `Local OS by Xenco Labs · private preview for ${tenant.name}. Seeded records are fictional samples.`}
             </footer>
           </>
         )}
-        {prospect || (tenant.slug === 'nemesis-fire' && zone === 'site') ? null : <DemoTour tenant={tenant} />}
+        {prospect || tenant.slug === 'nemesis-fire' ? null : <DemoTour tenant={tenant} />}
       </DemoProvider>
     </div>
   );
