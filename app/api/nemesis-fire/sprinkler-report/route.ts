@@ -290,7 +290,8 @@ export async function POST(request: NextRequest) {
     const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
     if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'Signed PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
     if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
-    if (signedCopy && Object.values(items).some((item) => !item.result)) return NextResponse.json({ detail: 'Complete every checklist result before creating the signed copy. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
+    const missingChecklistItems = signedCopy ? SPRINKLER_REPORT_ITEMS.filter((item) => !items[item.id]?.result) : []
+    if (missingChecklistItems.length) return NextResponse.json({ detail: 'Complete checklist results for: ' + missingChecklistItems.map((item) => item.id + ' ' + item.description).join('; ') + '. Your draft is saved.', missingItemIds: missingChecklistItems.map((item) => item.id), reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 400 })
     const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
     if (!apiKey) return NextResponse.json({ detail: 'Unsigned PDF generation is not configured on this deployment. Your report draft has been saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 503 })
 
