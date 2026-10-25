@@ -26,16 +26,12 @@ const FIELDS: { key: string; label: string; required?: boolean }[] = [
   { key: 'initialStatic', label: 'Initial static pressure (psi)' },
   { key: 'residualPressure', label: 'Residual pressure (psi)' },
   { key: 'finalStatic', label: 'Final static pressure (psi)' },
-  { key: 'waterSupplyBelow', label: 'Water supply pressure below riser (psi)' },
-  { key: 'waterSupplyAbove', label: 'Water supply pressure above riser (psi)' },
-  { key: 'waterflowTime', label: 'Waterflow alarm time (seconds)' },
   { key: 'technicianName', label: 'Technician print name' },
-  { key: 'deficiencies', label: 'Deficiencies and comments' },
 ]
 const GROUPS = [
-  { key: 'five-year', title: 'Five-year inspection items', detail: 'Record the result for each item performed; leave unrecorded items blank.' },
-  { key: 'annual', title: 'Annual and quarterly items', detail: 'The responsible technician determines which items apply.' },
-  { key: 'maintenance', title: 'Maintenance items', detail: 'Record observations and comments for contractor review.' },
+  { key: 'five-year', title: 'Five-year inspection items', detail: 'Use the result type printed on each row. Enter measured values only in the labeled fields.' },
+  { key: 'annual', title: 'Annual and quarterly items', detail: 'Some rows use Pass / Fail / N/A; items 1.28 and 3.4 / 3.6 use Yes / No checkboxes. Follow the item-specific instructions.' },
+  { key: 'maintenance', title: 'Maintenance items', detail: 'Use Yes / No only where the official form shows checkboxes. Record repair findings in Deficiencies and Comments.' },
 ] as const
 const INPUT = 'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm'
 
@@ -120,9 +116,9 @@ export function SprinklerReportForm() {
       </section>
       <section className="rounded-xl border border-slate-200 bg-white p-4">
         <h2 className="text-base font-semibold">Riser and main drain</h2>
-        <p className="mt-1 text-xs text-slate-500">Enter readings recorded by the technician on site.</p>
+        <p className="mt-1 text-xs text-slate-500">These fields fill the riser/main-drain table on page 1 of the report. Each riser uses one row: number, location, riser diameter, main-drain diameter, initial static pressure, residual pressure, and final static pressure. Water supply pressures and alarm time are entered beside checklist items 1.7, 1.8, and 2.3 below.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {FIELDS.slice(13, 23).map((field) => (
+          {FIELDS.slice(13, 20).map((field) => (
             <label key={field.key} className="text-xs font-medium text-slate-600">
               {field.label}
               <input value={values[field.key] ?? ''} onChange={(e) => setField(field.key, e.target.value)} className={INPUT} />
@@ -143,11 +139,29 @@ export function SprinklerReportForm() {
                 <div>
                   <p className="text-sm font-medium">{item.description}</p>
                   <p className="text-xs text-slate-400">Reference on supplied form: {item.reference}</p>
-                  <input aria-label={item.id + ' comments'} placeholder="Comments (optional)" value={items[item.id]?.comment ?? ''} onChange={(e) => setItem(item.id, { comment: e.target.value })} className={INPUT} />
+                  {item.instruction ? <p className="mt-1 text-xs font-medium text-amber-800">{item.instruction}</p> : null}
+                  {item.inputMode === 'pressure-below' || item.inputMode === 'pressure-above' || item.inputMode === 'seconds' ? (
+                    <label className="mt-2 block text-xs font-medium text-slate-600">
+                      {item.id === '1.7' ? 'Water supply pressure below riser (PSI)' : item.id === '1.8' ? 'Water supply pressure above riser (PSI)' : 'Water flow alarm time (seconds)'}
+                      <input type="number" min="0" step="any" inputMode="decimal" aria-label={item.id + ' measurement'} value={values[item.id === '1.7' ? 'waterSupplyBelow' : item.id === '1.8' ? 'waterSupplyAbove' : 'waterflowTime'] ?? ''} onChange={(e) => setField(item.id === '1.7' ? 'waterSupplyBelow' : item.id === '1.8' ? 'waterSupplyAbove' : 'waterflowTime', e.target.value)} className={INPUT} />
+                    </label>
+                  ) : null}
+                  {item.id === '1.28' || item.id === '3.4' ? <p className="mt-1 text-xs text-slate-500">Findings and repair details belong in the Deficiencies and Comments section at the end of the report.</p> : null}
+                  {item.comments !== false ? <input aria-label={item.id + ' comments'} placeholder="Comments (optional)" value={items[item.id]?.comment ?? ''} onChange={(e) => setItem(item.id, { comment: e.target.value })} className={INPUT} /> : null}
                 </div>
-                <select aria-label={item.id + ' result'} value={items[item.id]?.result ?? ''} onChange={(e) => setItem(item.id, { result: e.target.value as ReportResult })} className={INPUT}>
-                  <option value="">Not recorded</option><option value="pass">Pass</option><option value="fail">Fail</option><option value="na">N/A</option>
-                </select>
+                {item.inputMode === 'yes-no' ? (
+                  <label className="text-xs font-medium text-slate-600">{item.id === '1.28' ? 'Are there unsprinklered areas?' : item.id === '3.4' ? 'Internal pipe inspection?' : 'System returned to service?'}
+                    <select aria-label={item.id + ' yes or no'} value={items[item.id]?.result ?? ''} onChange={(e) => setItem(item.id, { result: e.target.value as ReportResult })} className={INPUT}>
+                      <option value="">Choose yes or no</option><option value="yes">Yes</option><option value="no">No</option>
+                    </select>
+                  </label>
+                ) : (
+                  <label className="text-xs font-medium text-slate-600">Result (P / F / N/A)
+                    <select aria-label={item.id + ' result'} value={items[item.id]?.result ?? ''} onChange={(e) => setItem(item.id, { result: e.target.value as ReportResult })} className={INPUT}>
+                      <option value="">Not recorded</option><option value="pass">Pass</option><option value="fail">Fail</option><option value="na">N/A</option>
+                    </select>
+                  </label>
+                )}
               </div>
             ))}
           </div>
@@ -158,12 +172,12 @@ export function SprinklerReportForm() {
         <label className="mt-3 block text-xs font-medium text-slate-600">Deficiencies / comments
           <textarea rows={4} value={values.deficiencies ?? ''} onChange={(e) => setField('deficiencies', e.target.value)} className={INPUT} />
         </label>
-        <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">{FIELDS[23].label}
+        <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">Technician print name
           <input value={values.technicianName ?? ''} onChange={(e) => setField('technicianName', e.target.value)} className={INPUT} />
         </label>
         <label className="mt-4 flex items-start gap-2 text-sm text-slate-700">
           <input type="checkbox" checked={signedCopy} onChange={(e) => setSignedCopy(e.target.checked)} className="mt-1" />
-          <span>Inspection is complete and Alex Ruiz authorized his signature on this final report.</span>
+          <span>Inspection is complete and Alex Ruiz authorized his typed signature on this report.</span>
         </label>
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3">
