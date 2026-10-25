@@ -1,8 +1,12 @@
 import type { MetadataRoute } from "next";
+import { fetchPublishedArticles, getArticlePublishedDate } from "@/lib/payload-blog";
 
 const BASE_URL = "https://xencolabs.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// CMS-backed sitemap data is fetched at request time and cached by the data layer.
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     "",
     "/apps",
@@ -56,7 +60,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/tools/yaml-json",
   ];
 
-  return [...routes, ...toolRoutes].map((route) => ({
+  const staticEntries: MetadataRoute.Sitemap = [...routes, ...toolRoutes].map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "" ? "weekly" : "monthly",
@@ -71,4 +75,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
               ? 0.5
               : 0.6,
   }));
+
+  const articles = await fetchPublishedArticles();
+  const articleEntries = articles.map((article) => {
+    const lastUpdated = article.updatedAt || getArticlePublishedDate(article);
+    const parsedDate = lastUpdated ? new Date(lastUpdated) : undefined;
+
+    return {
+      url: `${BASE_URL}/blog/${article.slug}`,
+      ...(parsedDate && !Number.isNaN(parsedDate.getTime()) ? { lastModified: parsedDate } : {}),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    };
+  });
+
+  return [...staticEntries, ...articleEntries];
 }

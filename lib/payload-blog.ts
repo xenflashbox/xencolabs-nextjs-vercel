@@ -80,6 +80,8 @@ export interface Article {
 interface PayloadListResponse<T> {
   docs: T[]
   totalDocs?: number
+  totalPages?: number
+  hasNextPage?: boolean
 }
 
 function withAuth(init: RequestInit = {}): RequestInit {
@@ -183,20 +185,54 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   }
 }
 
-export async function fetchLatestArticles(opts: { limit?: number } = {}): Promise<Article[]> {
-  try {
+/** Fetch all published Xenco Labs articles for the archive and sitemap. */
+export async function fetchPublishedArticles(): Promise<Article[]> {
+  const limit = 100
+  const articles: Article[] = []
+  let page = 1
+  let hasNextPage = true
+  const selectedFields = [
+    "id",
+    "slug",
+    "title",
+    "excerpt",
+    "featuredImage",
+    "categories",
+    "publishedAt",
+    "publishedDate",
+    "createdAt",
+    "updatedAt",
+    "readTime",
+  ]
+
+  while (hasNextPage) {
     const params: Record<string, string> = {
       "where[status][equals]": "published",
       "where[site.slug][equals]": SITE_SLUG,
       depth: "1",
-      limit: String(opts.limit ?? 24),
+      limit: String(limit),
+      page: String(page),
       sort: "-publishedAt",
     }
-    const data = await fetchJSON<PayloadListResponse<Article>>("/api/articles", params, 60)
-    return data.docs || []
-  } catch {
-    return []
+    selectedFields.forEach((field) => {
+      params[`select[${field}]`] = "true"
+    })
+    const data = await fetchJSON<PayloadListResponse<Article>>("/api/articles", params, 300)
+    if (!Array.isArray(data.docs)) {
+      throw new Error(`Payload returned an invalid published articles page ${page}`)
+    }
+
+    articles.push(...data.docs.filter((article) => typeof article.slug === "string" && article.slug.trim()))
+    hasNextPage =
+      data.hasNextPage ??
+      (typeof data.totalPages === "number" ? page < data.totalPages : data.docs.length === limit)
+    if (hasNextPage && data.docs.length === 0) {
+      throw new Error(`Payload reported another articles page after an empty sitemap page ${page}`)
+    }
+    page += 1
   }
+
+  return articles
 }
 
 export async function getRelatedPosts(opts: {
