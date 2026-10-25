@@ -109,7 +109,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 140, values.stories)
   p += place(350, 161, values.yearBuilt)
   p += place(98, 275, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(139, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(135, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   p += place(98, 296, 'P.O. Box 11651')
   p += place(98, 318, 'Santa Rosa')
   p += place(98, 340, 'California')
