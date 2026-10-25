@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse, type NextRequest } from 'next/server'
 import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation'
+import { hasNemesisDemoAccess } from '@/lib/local-os/nemesis-fire/demo-access'
 
 /**
  * Presentation deployment only (see lib/local-os/presentation.ts). On an allowed host:
@@ -37,6 +38,20 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
+  } else if (!PRESENTATION_TENANT || !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token'))) {
+    res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
+  } else if (hasNemesisDemoAccess(url.searchParams.get('token'))) {
+    // Redeem the share token once, then keep it in an HttpOnly cookie so internal links stay clean.
+    const token = url.searchParams.get('token') as string
+    url.searchParams.delete('token')
+    res = NextResponse.redirect(url, 302)
+    res.cookies.set('nemesis_demo_access', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    })
   } else if (pathname === '/') {
     url.pathname = `/${PRESENTATION_TENANT}`
     res = NextResponse.redirect(url, 302)
@@ -125,12 +140,18 @@ const isPublicRoute = createRouteMatcher([
 
 // Primary domain middleware configuration
 export default clerkMiddleware((auth, req) => {
-  // Public presentation paths are answered here, before any Clerk protection runs. This branch only
-  // exists on the dedicated presentation deployment; the Xenco site's auth policy below is unchanged.
-  if (PRESENTATION_TENANT) return presentation(req)
+  // Only the approved branded presentation hostname bypasses Clerk. The main Xenco Labs host keeps
+  // the existing auth policy except for the isolated Nemesis share path.
+  const host = (req.headers.get('host') || '').split(':')[0].toLowerCase()
+  const path = req.nextUrl.pathname
+  const dedicatedPreviewHost = host === 'preview.xencolabs.com'
+  const nemesisSharePath = /^\/(?:nemesis-fire|os\/nemesis-fire|os-media\/nemesis-fire|api\/nemesis-fire)(?:\/|$)/.test(path)
+  if (PRESENTATION_TENANT && presentationHostAllowed(host) && (dedicatedPreviewHost || nemesisSharePath)) return presentation(req)
+
+  const localOsRoute = /^\/(?:os|os-media|api\/nemesis-fire)(?:\/|$)/.test(path)
 
   // For public routes, allow access
-  if (isPublicRoute(req)) {
+  if (!localOsRoute && isPublicRoute(req)) {
     return
   }
   
