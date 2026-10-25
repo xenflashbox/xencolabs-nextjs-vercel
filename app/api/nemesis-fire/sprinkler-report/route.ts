@@ -58,10 +58,11 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   }
   const comment = (key: string) => items[key]?.comment || ''
   const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
-    let html = place(dateX, y, date, { size: 9, width: 46, align: 'center' })
     const note = key === '1.7' ? values.waterSupplyBelow || comment(key)
       : key === '1.8' ? values.waterSupplyAbove || comment(key)
       : key === '2.3' && values.waterflowTime ? values.waterflowTime : comment(key)
+    const row = items[key]
+    let html = row?.result || note ? place(dateX, y, date, { size: 9, width: 46, align: 'center' }) : ''
     if (key === '1.7' || key === '1.8') {
       html += place(461, y, note, { size: 9, width: 18, align: 'center' })
       if (note) html += place(516, y + 1, 'psi', { size: 8, width: 15, align: 'center' })
@@ -85,7 +86,8 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 119, values.constructionType)
   p += place(350, 140, values.stories)
   p += place(350, 161, values.yearBuilt)
-  p += place(98, 275, 'NEMESIS FIRE', { size: 9, bold: true })
+  p += place(98, 275, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
+  p += place(156, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   p += place(98, 296, 'P.O. Box 11651')
   p += place(98, 318, 'Santa Rosa')
   p += place(98, 340, 'California')
@@ -113,6 +115,16 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(91, 144, values.contactPhone)
   p += place(91, 164, values.contactEmail)
   p += place(385, 144, values.jobNumber)
+  p += place(385, 82, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
+  p += place(435, 82, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += place(385, 98, 'P.O. Box 11651', { size: 8.5 })
+  p += place(385, 114, 'Santa Rosa', { size: 8.5 })
+  p += place(488, 114, 'CA', { size: 8.5 })
+  p += place(544, 114, '95406', { size: 8.5 })
+  p += place(385, 130, '(707) 495-5051', { size: 8.5 })
+  p += place(287, 130, '1036129', { size: 8.5 })
+  p += place(245, 162, '✔', { size: 8 })
+  p += place(387, 162, 'nemesisfire78@gmail.com', { size: 8 })
   p += place(34, 230, '1', { size: 9, width: 12, align: 'center' })
   p += place(59, 229, values.riserLocation)
   p += place(280, 229, values.riserDiameter, { width: 38, align: 'center' })
@@ -133,7 +145,8 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(97, 96, values.address)
   p += place(96, 113, values.cityStateZip)
   p += place(383, 97, 'Job # ' + (values.jobNumber || ''))
-  p += place(77, 23, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
+  p += place(383.5, 81, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
+  p += place(433.4, 81, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   const page3Rows = [
     ['1.17',202.5],['1.18',223.7],['1.19',244],['1.20',264.3],['1.21',284.6],['1.22',304.4],
     ['1.23',324.8],['1.24',344.8],['1.25',364.5],['1.26',385.4],['1.27',405.8],['1.28',425.5],
@@ -148,7 +161,8 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(96, 96, values.address)
   p += place(95, 113, values.cityStateZip)
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
-  p += place(77, 25, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
+  p += place(386.9, 80, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
+  p += place(438.1, 80, 'FIRE', { size: 9, bold: true, color: '#D10505' })
   const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]] as const
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
