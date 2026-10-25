@@ -1,12 +1,21 @@
 import Link from 'next/link'
+import { cookies, headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { SprinklerReportForm } from '@/components/local-os/os/nemesis-sprinkler-report-form'
 import { osBase } from '@/lib/local-os/presentation'
+import { hasNemesisDemoRequestAccess } from '@/lib/local-os/nemesis-fire/demo-access'
 import type { Route } from 'next'
 
-export default async function NewSprinklerReportPage({ params }: { params: { tenant: string } }) {
+export const dynamic = 'force-dynamic'
+
+type PageProps = { params: { tenant: string } }
+
+export default async function NewSprinklerReportPage({ params }: PageProps) {
   const { tenant } = params
   if (tenant !== 'nemesis-fire') notFound()
+  const requestHeaders = headers()
+  const cookieStore = cookies()
+  if (!hasNemesisDemoRequestAccess(requestHeaders.get('host'), cookieStore.get('nemesis_demo_access')?.value)) notFound()
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
@@ -15,7 +24,7 @@ export default async function NewSprinklerReportPage({ params }: { params: { ten
         <header className="mt-5 mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">Nemesis Fire · Office</p>
           <h1 className="mt-2 text-3xl font-bold">Five-year sprinkler inspection report</h1>
-          <p className="mt-2 max-w-3xl text-sm text-slate-600">Enter a sample inspection record to generate a form-style PDF for Alex to review. The current walkthrough uses fictional sample data.</p>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">Complete the inspection details and generate the finished report.</p>
         </header>
         <SprinklerReportForm />
       </div>
