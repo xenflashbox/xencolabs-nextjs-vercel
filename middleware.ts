@@ -38,7 +38,8 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
     && (presentationTenantAllowedForHost(mediaSlug, host) || (mediaSlug.startsWith('lp-') && presentationHostAllowed(host)))
     && seg.length > 3
   // Public pages and share cards are customer-facing. Office and technician tools require the preview token.
-  const publicTenantPage = clean && !['office', 'tech', 'api'].includes(seg[2] ?? '')
+  const publicMedia = media && presentationTenantAllowedForHost(mediaSlug, host)
+  const publicTenantPage = (clean && !['office', 'tech', 'api'].includes(seg[2] ?? '')) || publicMedia
   // Local OS workflow-concept previews (/lp/<token>/…): token-addressed, noindex, sample data only.
   const lp = seg[1] === 'lp' && /^[A-Za-z0-9_-]{16,64}$/.test(seg[2] ?? '')
   let res: NextResponse
