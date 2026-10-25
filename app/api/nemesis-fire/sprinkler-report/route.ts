@@ -18,37 +18,158 @@ const VALUE_LIMITS: Record<string, number> = {
 }
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
-const resultLabel = (value: string) => value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : '—'
-const safeDate = (value: string) => esc(value || '—')
-const field = (values: Record<string, string>, key: string) => esc(values[key] || '—')
-const boxField = (label: string, value: string) => '<div class="field"><b>' + esc(label) + '</b>' + value + '</div>'
 
-function buildHtml(values: Record<string, string>, items: Record<string, { result: string; comment: string }>) {
-  const date = safeDate(values.testDate)
-  const itemTable = (group: string) => SPRINKLER_REPORT_ITEMS.filter((x) => x.group === group).map((item) => {
-    const input = items[item.id] || { result: '', comment: '' }
-    return '<tr><td class="id">' + esc(item.id) + '</td><td class="kind">' + esc(item.kind) + '</td><td>' + esc(item.description) + '<span class="ref">' + esc(item.reference) + '</span></td><td class="date">' + date + '</td><td>' + esc(input.comment || '') + '</td><td class="result">' + resultLabel(input.result) + '</td></tr>'
-  }).join('')
-  const brand = (right: string) => '<div class="brand"><strong>NEMESIS FIRE</strong><span>' + right + '</span></div><div class="watermark">SAMPLE CLIENT RECORD · NOT A CERTIFICATION OR AHJ FILING</div>'
-  const footer = (page: number) => '<div class="foot"><span>Nemesis Fire · ' + field(values, 'buildingName') + ' · Job ' + field(values, 'jobNumber') + '</span><span>Form-style sample · Page ' + page + ' of 4</span></div>'
-  const tableHead = '<thead><tr><th>Item</th><th>I/T/M</th><th>Description / reference</th><th>Date</th><th>Comments</th><th>P/F/N/A</th></tr></thead>'
-  const css = '@page{size:letter portrait;margin:.35in}*{box-sizing:border-box}body{font:9px Arial,sans-serif;color:#111;margin:0}.page{height:10.25in;position:relative;page-break-after:always}.page:last-child{page-break-after:auto}.brand{border-bottom:2px solid #b51e23;padding:0 0 7px;display:flex;justify-content:space-between;align-items:end}.brand strong{font-size:16px;letter-spacing:.5px}.brand span{font-size:8px;color:#555}.watermark{margin:8px 0;padding:5px 8px;background:#fff2d4;border:1px solid #d6a947;color:#5b4300;font-weight:bold;text-align:center;font-size:8px;letter-spacing:.6px}.title{font-size:14px;font-weight:bold;margin:9px 0 4px}.subtitle{color:#555;margin:0 0 8px}.box{border:1px solid #777;padding:7px;margin:7px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field{border-bottom:1px solid #bbb;padding:3px 2px;min-height:22px}.field b{display:block;font-size:7px;color:#555;text-transform:uppercase;letter-spacing:.25px}.section{font-weight:bold;background:#ececec;padding:5px;margin:8px 0 0;border:1px solid #888}.small{font-size:7px;color:#555}table{width:100%;border-collapse:collapse;margin-top:5px}th{background:#ececec;text-align:left}th,td{border:1px solid #999;padding:3px;vertical-align:top}th{font-size:7px}td{font-size:8px}.id{width:34px;text-align:center}.kind{width:24px;text-align:center}.date{width:52px;text-align:center}.result{width:35px;text-align:center;font-weight:bold}.ref{display:block;font-size:7px;color:#666}.riser th,.riser td{text-align:left}.sign{height:28px;border-bottom:1px solid #222}.foot{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #aaa;padding-top:4px;display:flex;justify-content:space-between;color:#555;font-size:7px}'
-  let html = '<!doctype html><html><head><meta charset="utf-8"><style>' + css + '</style></head><body>'
-  html += '<section class="page">' + brand('Inspection, Testing, and Maintenance Cover Sheet') + '<p class="title">Inspection, Testing, and Maintenance Cover Sheet</p><p class="subtitle">Fire protection record · Sample preview</p><div class="grid"><div class="box"><b>Property information</b>'
-  html += boxField('Name', field(values, 'buildingName')) + boxField('Address', field(values, 'address')) + boxField('City / State / ZIP', field(values, 'cityStateZip')) + boxField('Contact / telephone', field(values, 'contactName') + ' · ' + field(values, 'contactPhone')) + boxField('Occupancy / use', field(values, 'occupancy')) + boxField('Construction / stories / year built', field(values, 'constructionType') + ' · ' + field(values, 'stories') + ' · ' + field(values, 'yearBuilt')) + '</div>'
-  html += '<div class="box"><b>Contractor information</b>' + boxField('Name', 'Nemesis Fire') + boxField('California License', 'C16 · 1036129') + boxField('Phone', '707-353-4600') + boxField('Job number', field(values, 'jobNumber')) + boxField('Performed by', field(values, 'performedBy')) + boxField('Inspection date', date) + '</div></div>'
-  html += '<div class="section">System and report scope</div><div class="box grid"><div>' + boxField('System inspected', field(values, 'systemType') + ' sprinkler system') + boxField('Risers', field(values, 'riserCount')) + '</div><div>' + boxField('Report cycle', 'Five-year inspection, testing, and maintenance') + boxField('Record state', 'Sample preview — technician review required') + '</div></div>'
-  html += '<div class="section">Report contents</div><div class="box">Automatic sprinkler system · Five-year items, annual and quarterly items, maintenance items, riser information, main-drain readings, and comments.</div><p class="small">This sample format is based on a Nemesis Fire report supplied for this project. The applicable form edition, item applicability, results, certification, and any filing must be confirmed by the responsible licensed professional.</p>' + footer(1) + '</section>'
-  html += '<section class="page">' + brand(field(values, 'buildingName') + ' · Job ' + field(values, 'jobNumber')) + '<p class="title">' + field(values, 'systemType') + ' Fire Sprinkler System · Five-Year Inspection</p><p class="subtitle">Inspection, testing, and maintenance report · Based on the supplied form layout</p><div class="grid"><div class="box"><b>Property</b>' + boxField('Address', field(values, 'address')) + boxField('City / State / ZIP', field(values, 'cityStateZip')) + boxField('Contact', field(values, 'contactName') + ' · ' + field(values, 'contactPhone')) + '</div><div class="box"><b>Contractor</b>' + boxField('Company / license', 'Nemesis Fire · C16 1036129') + boxField('Performed by', field(values, 'performedBy')) + boxField('Date', date) + '</div></div>'
-  html += '<div class="section">Riser information and main drain test</div><table class="riser"><thead><tr><th>Riser</th><th>Location</th><th>Riser diameter</th><th>Main drain diameter</th><th>Initial static</th><th>Residual</th><th>Final static</th></tr></thead><tbody><tr><td>' + field(values, 'riserCount') + '</td><td>' + field(values, 'riserLocation') + '</td><td>' + field(values, 'riserDiameter') + '</td><td>' + field(values, 'mainDrainDiameter') + '</td><td>' + field(values, 'initialStatic') + '</td><td>' + field(values, 'residualPressure') + '</td><td>' + field(values, 'finalStatic') + '</td></tr></tbody></table><p class="small">Pressure values are reproduced as entered; this sample does not interpret or rate readings.</p>'
-  html += '<div class="section">Five-year inspection, testing, and maintenance · inspection items</div><table>' + tableHead + '<tbody>' + itemTable('five-year') + '</tbody></table>' + footer(2) + '</section>'
-  html += '<section class="page">' + brand(field(values, 'buildingName') + ' · Job ' + field(values, 'jobNumber')) + '<p class="title">Annual Inspection, Testing, and Maintenance</p><p class="subtitle">Includes applicable quarterly inspection items · ' + date + '</p><table>' + tableHead + '<tbody>' + itemTable('annual') + '</tbody></table>'
-  html += '<div class="section">Field readings</div><div class="box grid"><div>' + boxField('Water supply pressure below riser', field(values, 'waterSupplyBelow') + ' psi') + boxField('Water supply pressure above riser', field(values, 'waterSupplyAbove') + ' psi') + '</div><div>' + boxField('Waterflow alarm time', field(values, 'waterflowTime') + ' seconds') + boxField('System type', field(values, 'systemType')) + '</div></div><p class="small">Results shown above are the sample values entered in the preview and require review by the responsible technician.</p>'
-  html += footer(3) + '</section>'
-  html += '<section class="page">' + brand(field(values, 'buildingName') + ' · Job ' + field(values, 'jobNumber')) + '<p class="title">Maintenance, Deficiencies, and Technician Review</p><p class="subtitle">Inspection record · ' + date + '</p>'
-  html += '<div class="section">Annual maintenance items</div><table>' + tableHead + '<tbody>' + itemTable('maintenance') + '</tbody></table><div class="section">Deficiencies and comments</div><div class="box" style="min-height:70px;white-space:pre-wrap">' + field(values, 'deficiencies') + '</div>'
-  html += '<div class="section">Technician review</div><div class="box"><p>This sample record is not a certification, code-compliance determination, customer report, or AHJ filing. The responsible licensed contractor must review the completed inspection and execute the final report.</p><div class="grid"><div>' + boxField('Print name', field(values, 'technicianName')) + '<div class="sign">' + esc(values.technicianSignature || '') + '</div><span class="small">Typed signature (sample only; not a verified electronic signature)</span></div><div>' + boxField('Date', date) + '<div class="sign"></div><span class="small">Date</span></div></div></div>' + footer(4) + '</section></body></html>'
-  return html
+const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-template'
+
+const coverValues = (values: Record<string, string>) => {
+  const cityStateZip = values.cityStateZip || ''
+  const zip = cityStateZip.match(/\b(\d{5}(?:-\d{4})?)\s*$/)?.[1] || ''
+  const city = zip ? cityStateZip.slice(0, cityStateZip.lastIndexOf(zip)).replace(/[ ,]+$/, '') : cityStateZip
+  return { city, zip }
+}
+
+const printDate = (value: string) => {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  return match ? match[2] + '/' + match[3] + '/' + match[1].slice(-2) : value
+}
+
+function buildHtml(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, templateImages: string[]) {
+  const scale = 4 / 3
+  const place = (x: number, y: number, raw: unknown, opts: { size?: number; width?: number; align?: 'left' | 'center' | 'right'; bold?: boolean; italic?: boolean; color?: string } = {}) => {
+    const text = String(raw ?? '')
+    if (!text) return ''
+    const { size = 9, width, align = 'left', bold = false, italic = false, color = '#111111' } = opts
+    return '<span class="text" style="left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;font-size:' + (size * scale) + 'px;' + (width ? 'width:' + (width * scale) + 'px;' : '') + 'text-align:' + align + ';font-weight:' + (bold ? '700' : '400') + ';font-style:' + (italic ? 'italic' : 'normal') + ';color:' + color + '">' + esc(text) + '</span>'
+  }
+  const wrapped = (x: number, y: number, raw: unknown, width: number, height: number, size = 7.5) => {
+    const text = String(raw ?? '')
+    if (!text) return ''
+    return '<span class="wrap" style="left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;width:' + (width * scale) + 'px;height:' + (height * scale) + 'px;font-size:' + (size * scale) + 'px">' + esc(text) + '</span>'
+  }
+  const date = printDate(values.testDate || '')
+  const { city, zip } = coverValues(values)
+  const pages: string[] = []
+  const open = (index: number) => '<section class="page"><img class="background" src="data:image/png;base64,' + templateImages[index] + '">'
+  const close = () => '</section>'
+  const result = (key: string) => {
+    const value = items[key]?.result || ''
+    return value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : ''
+  }
+  const comment = (key: string) => items[key]?.comment || ''
+  const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
+    let html = place(dateX, y, date, { size: 9, width: 46, align: 'center' })
+    const note = key === '1.7' ? values.waterSupplyBelow || comment(key)
+      : key === '1.8' ? values.waterSupplyAbove || comment(key)
+      : key === '2.3' && values.waterflowTime ? values.waterflowTime : comment(key)
+    if (key === '1.7' || key === '1.8') {
+      html += place(461, y, note, { size: 9, width: 18, align: 'center' })
+      if (note) html += place(516, y + 1, 'psi', { size: 8, width: 15, align: 'center' })
+    } else if (key === '2.3') {
+      html += place(457, y, note, { size: 9, width: 20, align: 'center' })
+    } else {
+      html += wrapped(commentsX, y + 1, note, commentsWidth, commentsHeight, 7.5)
+    }
+    html += place(resultX, y, result(key), { size: 9, width: 34, align: 'center' })
+    return html
+  }
+
+  let p = open(0)
+  p += place(89, 98, values.buildingName)
+  p += place(90, 117, values.address)
+  p += place(90, 138, city)
+  p += place(90, 160, zip)
+  p += place(91, 183, values.contactName)
+  p += place(91, 205, values.contactPhone)
+  p += place(349, 99, values.occupancy)
+  p += place(350, 119, values.constructionType)
+  p += place(350, 140, values.stories)
+  p += place(350, 161, values.yearBuilt)
+  p += place(98, 402, values.jobNumber)
+  p += place(98, 424, values.performedBy)
+  p += place(376, 509, '1', { size: 9, width: 16, align: 'center' })
+  p += place(31, 509, '✔', { size: 9 })
+  const statuses = Object.values(items).map(x => x.result).filter(Boolean)
+  const overall = statuses.length === Object.keys(items).length
+    ? statuses.includes('fail') ? 'Fail' : statuses.every(x => x === 'na') ? 'N/A' : 'Pass'
+    : ''
+  if (overall === 'Pass') p += place(542, 508, '✔', { size: 9 })
+  if (overall === 'Fail') p += place(489, 508, '✔', { size: 9 })
+  if (overall === 'N/A') p += place(442, 508, '✔', { size: 9 })
+  pages.push(p + close())
+
+  p = open(1)
+  p += place(92, 81, values.buildingName)
+  p += place(92, 96, values.address)
+  p += place(91, 113, values.cityStateZip)
+  p += place(91, 128, values.contactName)
+  p += place(91, 144, values.contactPhone)
+  p += place(91, 164, values.contactEmail)
+  p += place(385, 144, values.jobNumber)
+  p += place(34, 230, '1', { size: 9, width: 12, align: 'center' })
+  p += place(59, 229, values.riserLocation)
+  p += place(280, 229, values.riserDiameter, { width: 38, align: 'center' })
+  p += place(328, 229, values.mainDrainDiameter, { width: 38, align: 'center' })
+  p += place(390, 229, values.initialStatic, { width: 34, align: 'center' })
+  p += place(443, 229, values.residualPressure, { width: 34, align: 'center' })
+  p += place(502, 229, values.finalStatic, { width: 34, align: 'center' })
+  const page2Rows = [
+    ['1.1',403.8],['1.2',423.3],['1.3',442.8],['1.4',462.3],['1.5',481.8],
+    ['1.6',502.9],['1.7',523.4],['1.8',542.9],['1.9',562.4],['1.10',583.1],
+    ['1.11',603.6],['1.12',623.1],['1.13',642.6],['1.14',662.2],['1.15',681.6],['1.16',701],
+  ] as const
+  for (const [key, y] of page2Rows) p += putRow(key, y, 371.7, 541.5, 414, 123, 12)
+  pages.push(p + close())
+
+  p = open(2)
+  p += place(97, 79, values.buildingName)
+  p += place(97, 96, values.address)
+  p += place(96, 113, values.cityStateZip)
+  p += place(383, 97, 'Job # ' + (values.jobNumber || ''))
+  p += place(77, 23, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
+  const page3Rows = [
+    ['1.17',202.5],['1.18',223.7],['1.19',244],['1.20',264.3],['1.21',284.6],['1.22',304.4],
+    ['1.23',324.8],['1.24',344.8],['1.25',364.5],['1.26',385.4],['1.27',405.8],['1.28',425.5],
+    ['2.1',447.4],['2.2',470],['2.3',492.5],['2.4',514.4],['2.5',535.4],['2.6',556.2],
+    ['2.7',576.7],['2.8',597],['2.9',618.3],['2.10',639.7],['2.11',660],['2.12',679.4],
+  ] as const
+  for (const [key, y] of page3Rows) p += putRow(key, y, 368.7, 541.9, 414, 123, 12)
+  pages.push(p + close())
+
+  p = open(3)
+  p += place(96, 79, values.buildingName)
+  p += place(96, 96, values.address)
+  p += place(95, 113, values.cityStateZip)
+  p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
+  p += place(77, 25, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
+  const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
+  for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
+  p += place(112.6, 723.5, values.technicianName)
+  p += place(496.4, 740.3, date)
+  const deficiencyLines = (values.deficiencies || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean)
+  if (deficiencyLines.length > 14) throw new Error('Use no more than 14 deficiency lines so each entry fits the supplied form.')
+  deficiencyLines.forEach((line, index) => {
+    p += wrapped(178, 402 + index * 15.4, line, 397, 14, 8)
+  })
+  pages.push(p + close())
+
+  return '<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:8.5in;font-family:Arial,Helvetica,sans-serif;color:#111}.page{position:relative;width:8.5in;height:11in;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.background{position:absolute;inset:0;width:8.5in;height:11in}.text,.wrap{position:absolute;z-index:1;line-height:1.05;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;font-weight:400}.wrap{white-space:normal;line-height:1.05;overflow:hidden}</style></head><body>' + pages.join('') + '</body></html>'
+}
+
+async function loadAesTemplateImages() {
+  const pages = [1, 2, 3, 4]
+  return Promise.all(pages.map(async page => {
+    const response = await fetch(AES_TEMPLATE_BASE_URL + '/aes-' + page + '.png', {
+      method: 'GET',
+      cache: 'force-cache',
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!response.ok || !response.headers.get('content-type')?.toLowerCase().includes('image/png')) {
+      throw new Error('AES report form template could not be loaded')
+    }
+    const bytes = new Uint8Array(await response.arrayBuffer())
+    if (bytes.length < 10_000 || bytes.length > 2_000_000) throw new Error('AES report form template has an invalid size')
+    return Buffer.from(bytes).toString('base64')
+  }))
 }
 
 async function persistGeneratedReport(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, pdf: Uint8Array, jobId: string) {
@@ -117,13 +238,13 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(15_000),
       headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-API-Key': apiKey },
       body: JSON.stringify({
-        html: buildHtml(values, items),
+        html: buildHtml(values, items, await loadAesTemplateImages()),
         output_format: 'pdf',
         app_name: 'nemesis-fire',
         metadata: {
-          title: 'Nemesis Fire Sprinkler Inspection Sample - ' + (values.jobNumber || 'New Report'),
-          filename: 'nemesis-fire-sprinkler-inspection-sample.pdf',
-          source: 'nemesis-fire-preview',
+          title: 'Nemesis Fire Sprinkler Inspection Report - ' + (values.jobNumber || 'New Report'),
+          filename: 'nemesis-fire-sprinkler-inspection-' + (values.jobNumber || 'report') + '.pdf',
+          source: 'nemesis-fire-report-generator',
         },
       }),
     })
