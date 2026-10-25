@@ -30,9 +30,10 @@ const nextConfig = {
   // Local OS tenant previews and their media are never indexed (also noindex meta + robots.txt).
   async headers() {
     const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, noimageindex' }];
+    const nemesisNoindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }];
     return [
       // Keep tenant presentations out of search results without affecting the XencoLabs corporate site.
-      { source: '/nemesis-fire/:path*', headers: noindex },
+      { source: '/nemesis-fire/:path*', headers: nemesisNoindex },
       { source: '/os/nemesis-fire/:path*', headers: noindex },
       { source: '/os/:path*', headers: noindex },
       { source: '/os-media/:path*', headers: noindex },

@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic';
 const display = Barlow_Condensed({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-display', display: 'swap' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono-field', display: 'swap' });
 const ROBOTS: Metadata['robots'] = { index: false, follow: false, noarchive: true, noimageindex: true, nocache: true, googleBot: { index: false, follow: false, noarchive: true, noimageindex: true } };
+const NEMESIS_ROBOTS: Metadata['robots'] = { index: false, follow: false, noarchive: true, googleBot: { index: false, follow: false, noarchive: true } };
 
 /**
  * Per-tenant tab title, favicon (the tenant's compact mark) and link-preview card
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: { params: { tenant: string } 
     : `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
   // Absolute: on Vercel *preview* deployments Next resolves relative social-image URLs against the
   // branch URL (ignoring metadataBase), which the presentation host gate answers with 404.
-  const image = { url: `${origin}${base}/share-image`, width: 1200, height: 630, alt: nemesis ? 'Nemesis Fire' : `${t.name} concept preview by Xenco Labs` };
+  const image = { url: `${origin}${base}/share-image`, type: 'image/jpeg', width: 1200, height: 630, alt: nemesis ? 'Nemesis Fire' : `${t.name} concept preview by Xenco Labs` };
   return {
     metadataBase: new URL(origin),
     title: { absolute: nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · private preview` },
