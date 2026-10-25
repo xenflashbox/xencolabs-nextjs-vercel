@@ -1,9 +1,7 @@
 /**
- * Dedicated presentation deployment (its own Vercel project, served at preview.xencolabs.com).
- * Set only on that project: NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT=<slug>[,<slug>…] (the first
- * is where `/` lands), and optionally LOCAL_OS_PRESENTATION_HOSTS (comma list; default
- * preview.xencolabs.com). The general Xenco project sets neither, so its routes and auth policy
- * are untouched.
+ * Host-aware customer and prospect presentations served by the main Xenco Labs Vercel project.
+ * NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT is the tenant allowlist; the first slug is the preview
+ * host's root redirect. LOCAL_OS_PRESENTATION_HOSTS is the comma-separated host allowlist.
  */
 export const PRESENTATION_TENANTS: string[] = (process.env.NEXT_PUBLIC_LOCAL_OS_PRESENTATION_TENANT || '')
   .split(',')
@@ -14,6 +12,21 @@ export const PRESENTATION_TENANT = PRESENTATION_TENANTS[0] || '';
 
 export function isPresentationTenant(slug: string): boolean {
   return PRESENTATION_TENANTS.includes(slug);
+}
+
+/**
+ * Prospect demos live on preview.xencolabs.com. The Nemesis customer site keeps its
+ * canonical xencolabs.com URL; other tenant slugs are served only from the demo host.
+ */
+export function presentationTenantAllowedForHost(slug: string, host: string | null): boolean {
+  const hostname = (host || '').split(':')[0].toLowerCase();
+  if (!isPresentationTenant(slug)) return false;
+  if (hostname === 'preview.xencolabs.com') return true;
+  return slug === 'nemesis-fire' && (hostname === 'xencolabs.com' || hostname === 'www.xencolabs.com');
+}
+
+export function presentationOriginForTenant(slug: string): string {
+  return slug === 'nemesis-fire' ? 'https://xencolabs.com' : 'https://preview.xencolabs.com';
 }
 
 const PRESENTATION_HOSTS = (process.env.LOCAL_OS_PRESENTATION_HOSTS || 'preview.xencolabs.com')

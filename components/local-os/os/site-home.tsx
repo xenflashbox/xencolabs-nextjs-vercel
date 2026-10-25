@@ -11,6 +11,7 @@ import { DISPLAY, FIELD } from '@/components/local-os/os/preview/type';
 import { osHref } from '@/components/local-os/os/ui';
 import { XENCO_AI_DEMO } from '@/lib/local-os/xenco-demo';
 import { linksOf, termsOf } from '@/lib/local-os/terms';
+import { isPresentationTenant } from '@/lib/local-os/presentation';
 
 /**
  * Customer-facing homepage of a preview tenant, in the "industrial field documentation"
@@ -169,7 +170,7 @@ export function SiteHome() {
         </section>
       ) : null}
 
-      {s === 'nemesis-fire' ? null : (
+      {isPresentationTenant(s) ? null : (
         <>
       {/* PROTECTION LIFECYCLE — the signature */}
       <section className="bg-neutral-950 text-white">
@@ -186,7 +187,7 @@ export function SiteHome() {
         </>
       )}
       {/* REAL WORK — field proof tied to the system, not a gallery */}
-      {s === 'nemesis-fire' ? null : m.proof.length ? (
+      {isPresentationTenant(s) ? null : m.proof.length ? (
         <section>
           <div className="mx-auto max-w-6xl px-4 py-16">
             <div className="flex flex-wrap items-end justify-between gap-4">
@@ -234,7 +235,7 @@ export function SiteHome() {
         </section>
       ) : null}
 
-      {s === 'nemesis-fire' ? null : (
+      {isPresentationTenant(s) ? null : (
         <>
       {/* BRIDGE — the office and field workflow behind the customer site */}
       <section className="bg-neutral-950 text-white">

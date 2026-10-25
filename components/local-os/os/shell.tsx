@@ -12,6 +12,7 @@ import { osBase, osHref } from '@/components/local-os/os/ui';
 import type { TenantConfig } from '@/lib/local-os/tenant-types';
 import { termsOf } from '@/lib/local-os/terms';
 import { getTenant } from '@/lib/local-os/tenants';
+import { isPresentationTenant } from '@/lib/local-os/presentation';
 import type { ProspectEntryData } from '@/lib/local-os/prospect/build';
 
 function ResetButton() {
@@ -60,7 +61,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
     >
       <DemoProvider slug={tenant.slug} prospect={prospect}>
       {/* Prospect previews dock the tour in the preview bar; registry tenants keep the floating pill. */}
-      {tenant.slug === 'nemesis-fire' && zone === 'site' ? null : <PreviewBar tenant={tenant} fieldView={fieldView} tour={prospect ? <DemoTour tenant={tenant} variant="bar" /> : undefined} />}
+      {isPresentationTenant(tenant.slug) && zone === 'site' ? null : <PreviewBar tenant={tenant} fieldView={fieldView} tour={prospect ? <DemoTour tenant={tenant} variant="bar" /> : undefined} />}
         {zone === 'site' ? (
           <>
             <div style={{ background: tenant.branding.primary }} className="px-4 py-1.5 text-center text-sm font-medium text-white">
@@ -75,7 +76,7 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
                 </Link>
                 <nav className="flex items-center gap-1 text-sm">
                   <Link href={osHref(tenant.slug, '/#services')} className="hidden rounded-md px-3 py-2 hover:bg-slate-100 sm:block">Services</Link>
-                  {tenant.slug === 'nemesis-fire' ? <Link href={osHref(tenant.slug, '/office')} className="rounded-md px-3 py-2 font-medium hover:bg-slate-100">Office</Link> : null}
+                  {isPresentationTenant(tenant.slug) ? <Link href={osHref(tenant.slug, '/office')} className="rounded-md px-3 py-2 font-medium hover:bg-slate-100">Office</Link> : null}
                   <a href={`tel:+1${tenant.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 rounded-md px-3 py-2 font-medium hover:bg-slate-100">
                     <Phone className="h-4 w-4" /> <span className="hidden md:inline">{tenant.phone}</span><span className="md:hidden">Call</span>
                   </a>
@@ -96,9 +97,11 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
                   <p>{tenant.region}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{tenant.license ? 'Licence' : 'About this preview'}</p>
+                  <p className="font-semibold text-white">{tenant.license ? 'Licence' : tenant.slug === 'nemesis-fire' ? 'About this preview' : isPresentationTenant(tenant.slug) ? 'About' : 'About this preview'}</p>
                   {tenant.license ? <p className="mt-1">{tenant.license}</p> : null}
-                  {tenant.slug === 'nemesis-fire' ? null : <p className="mt-3 text-xs text-white/60">Preview of a customer website by Xenco Labs. Sample content; not the live {tenant.website?.replace('https://', '')}.</p>}
+                  {tenant.slug === 'nemesis-fire' ? null : isPresentationTenant(tenant.slug)
+                    ? <p className="mt-1 text-xs text-white/70">{tenant.site.aboutBody}</p>
+                    : <p className="mt-3 text-xs text-white/60">Preview of a customer website by Xenco Labs. Sample content; not the live {tenant.website?.replace('https://', '')}.</p>}
                 </div>
               </div>
             </footer>
@@ -150,11 +153,13 @@ export function TenantShell({ tenant, prospect, children }: { tenant: TenantConf
             </header>
             <main className="mx-auto max-w-5xl px-4 pb-28 pt-5">{children}</main>
             <footer className="mx-auto max-w-5xl px-4 pb-24 text-xs text-slate-500">
-              {tenant.slug === 'nemesis-fire' ? 'Nemesis Fire · Fire protection services' : `Local OS by Xenco Labs · private preview for ${tenant.name}. Seeded records are fictional samples.`}
+              {isPresentationTenant(tenant.slug)
+                ? (tenant.slug === 'nemesis-fire' ? 'Nemesis Fire · Fire protection services' : `${tenant.name} · Office`)
+                : `Local OS by Xenco Labs · private preview for ${tenant.name}. Seeded records are fictional samples.`}
             </footer>
           </>
         )}
-        {prospect || tenant.slug === 'nemesis-fire' ? null : <DemoTour tenant={tenant} />}
+        {prospect || isPresentationTenant(tenant.slug) ? null : <DemoTour tenant={tenant} />}
       </DemoProvider>
     </div>
   );

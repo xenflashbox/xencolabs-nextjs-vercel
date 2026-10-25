@@ -1,10 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse, type NextRequest } from 'next/server'
-import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation'
+import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed, presentationTenantAllowedForHost } from '@/lib/local-os/presentation'
 import { hasNemesisDemoAccess } from '@/lib/local-os/nemesis-fire/demo-access'
 
 /**
- * Presentation deployment only (see lib/local-os/presentation.ts). On an allowed host:
+ * Host-aware Xenco Labs presentations (see lib/local-os/presentation.ts). On an allowed host:
  * `/` → 302 /<slug>, /<slug>/* is rewritten to /os/<slug>/*, /os/<slug>/* redirects to the clean
  * path, /os-media/<slug>/* passes to its gated route, /lp/<token>/* (workflow-concept previews) passes
  * through, everything else is a noindex 404. Any other
@@ -30,17 +30,21 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   const url = req.nextUrl.clone()
   const seg = pathname.split('/')
   // /<slug>/…  ·  /os/<slug>/…  ·  /os-media/<slug>/…
-  const clean = isPresentationTenant(seg[1] ?? '')
-  const legacy = seg[1] === 'os' && isPresentationTenant(seg[2] ?? '')
-  const media = seg[1] === 'os-media' && (isPresentationTenant(seg[2] ?? '') || (seg[2] ?? '').startsWith('lp-')) && seg.length > 3
-  // Nemesis customer pages and the OG image are public; the office and report API stay token-gated.
-  const nemesisPublic = clean && seg[1] === 'nemesis-fire' && seg[2] !== 'office' && seg[2] !== 'api'
+  const host = req.headers.get('host')
+  const clean = presentationTenantAllowedForHost(seg[1] ?? '', host)
+  const legacy = seg[1] === 'os' && presentationTenantAllowedForHost(seg[2] ?? '', host)
+  const mediaSlug = seg[2] ?? ''
+  const media = seg[1] === 'os-media'
+    && (presentationTenantAllowedForHost(mediaSlug, host) || (mediaSlug.startsWith('lp-') && presentationHostAllowed(host)))
+    && seg.length > 3
+  // Public pages and share cards are customer-facing. Office and technician tools require the preview token.
+  const publicTenantPage = clean && !['office', 'tech', 'api'].includes(seg[2] ?? '')
   // Local OS workflow-concept previews (/lp/<token>/…): token-addressed, noindex, sample data only.
   const lp = seg[1] === 'lp' && /^[A-Za-z0-9_-]{16,64}$/.test(seg[2] ?? '')
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
-  } else if (!PRESENTATION_TENANT || (!nemesisPublic && !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token')))) {
+  } else if (!PRESENTATION_TENANT || (!publicTenantPage && !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token')))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
   } else if (hasNemesisDemoAccess(url.searchParams.get('token'))) {
     // Redeem the share token once, then keep it in an HttpOnly cookie so internal links stay clean.
@@ -85,7 +89,7 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   } else {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
   }
-  if (!nemesisPublic) res.headers.set('X-Robots-Tag', NOINDEX)
+  if (!publicTenantPage) res.headers.set('X-Robots-Tag', NOINDEX)
   return res
 }
 

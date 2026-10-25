@@ -166,8 +166,6 @@ export const JACKSONS_PAVING: TenantConfig = {
     { label: 'Completion record', detail: 'Phase 1 work, quantities and tickets (sample)', path: '/report/R-803' },
     { label: 'Invoice', detail: 'Phase 1 invoice linked to the work order', path: '/invoice/I-903' },
   ],
-  aiDemo: true,
-  aiDemoHeading: 'Try the live AI receptionist',
   greetingName: 'Jack',
   links: { status: '/status/L-701', field: '/tech/J-803' },
   website: 'https://www.jacksonspavinginc.com',

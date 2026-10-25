@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { TenantShell } from '@/components/local-os/os/shell';
 import { ShelterShell } from '@/components/local-os/shelter/shelter-shell';
-import { PRESENTATION_TENANT, osBase, presentationOrigin } from '@/lib/local-os/presentation';
+import { osBase, presentationOriginForTenant, presentationTenantAllowedForHost } from '@/lib/local-os/presentation';
 import { resolveTenant } from '@/lib/local-os/tenants/resolve';
 
 export const dynamic = 'force-dynamic';
@@ -18,35 +18,37 @@ const NEMESIS_ROBOTS: Metadata['robots'] = { index: false, follow: false, noarch
 
 /**
  * Per-tenant tab title, favicon (the tenant's compact mark) and link-preview card
- * (og:image / twitter:image), absolute on whichever host serves the preview; always noindex.
+ * (og:image / twitter:image), absolute on the canonical customer or demo host.
  */
 export async function generateMetadata({ params }: { params: { tenant: string } }): Promise<Metadata> {
   const r = await resolveTenant(params.tenant);
   if (!r) return { title: 'Not found', robots: ROBOTS };
   const t = r.entry.config;
   const icon = t.branding.logos.favicon;
-  // Presentation deployment: always the public custom domain (on Vercel, x-forwarded-host can be the
-  // deployment's *.vercel.app alias, which the host gate 404s). Elsewhere: the requesting host.
+  // Use each tenant's canonical Xenco host; a Vercel alias can be rejected by the host gate.
   const host = headers().get('host') || 'xencolabs.com';
-  const origin = PRESENTATION_TENANT
-    ? presentationOrigin()
+  const presentation = presentationTenantAllowedForHost(t.slug, host);
+  const origin = presentation
+    ? presentationOriginForTenant(t.slug)
     : `${host.startsWith('localhost') || host.startsWith('127.') ? 'http' : 'https'}://${host}`;
   const base = osBase(t.slug);
   const nemesis = t.slug === 'nemesis-fire';
-  const title = nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · Private Xenco Labs concept preview`;
-  const description = nemesis
+  const title = presentation
+    ? (nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} | Asphalt Paving & Repair`)
+    : `${t.name} · Private Xenco Labs concept preview`;
+  const description = presentation
     ? t.site.heroSubtitle
     : `${t.site.heroSubtitle} A clickable concept of the website, office and technician app, built by Xenco Labs with sample data.`;
   // Absolute: on Vercel *preview* deployments Next resolves relative social-image URLs against the
   // branch URL (ignoring metadataBase), which the presentation host gate answers with 404.
-  const image = { url: `${origin}${base}/share-image`, type: 'image/jpeg', width: 1200, height: 630, alt: nemesis ? 'Nemesis Fire' : `${t.name} concept preview by Xenco Labs` };
+  const image = { url: `${origin}${base}/share-image`, type: 'image/jpeg', width: 1200, height: 630, alt: presentation ? t.name : `${t.name} concept preview by Xenco Labs` };
   return {
     metadataBase: new URL(origin),
-    title: { absolute: nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · private preview` },
+    title: { absolute: title },
     description,
-    robots: nemesis ? { index: true, follow: true } : ROBOTS,
+    robots: presentation ? { index: true, follow: true } : ROBOTS,
     icons: { icon: [{ url: icon, type: icon.endsWith('.svg') ? 'image/svg+xml' : 'image/png' }], apple: [{ url: icon }] },
-    openGraph: { type: 'website', siteName: nemesis ? 'Nemesis Fire' : 'Xenco Labs', url: base, title, description, images: [image] },
+    openGraph: { type: 'website', siteName: presentation ? t.name : 'Xenco Labs', url: `${origin}${base}`, title, description, images: [image] },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }

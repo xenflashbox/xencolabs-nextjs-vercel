@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { renderShareCard, toDataUrl } from '@/lib/local-os/og/card';
-import { PRESENTATION_TENANT, isPresentationTenant, presentationHostAllowed } from '@/lib/local-os/presentation';
+import { PRESENTATION_TENANT, presentationHostAllowed, presentationTenantAllowedForHost } from '@/lib/local-os/presentation';
 import { presignR2Get, tenantMediaConfig } from '@/lib/local-os/r2-presign';
 import { MEDIA_ROUTE, mediaObjectKey } from '@/lib/local-os/tenant-media';
 import { resolveTenant } from '@/lib/local-os/tenants/resolve';
@@ -24,8 +24,11 @@ function signedAsset(slug: string, src: string): string | null {
  * customer-facing service footer; other preview tenants retain the private-concept label.
  */
 export async function GET(req: Request, { params }: { params: { tenant: string } }) {
+  const host = req.headers.get('host');
   const presentationOk =
-    !PRESENTATION_TENANT || ((isPresentationTenant(params.tenant) || params.tenant.startsWith('lp-')) && presentationHostAllowed(req.headers.get('host')));
+    !PRESENTATION_TENANT || (params.tenant.startsWith('lp-')
+      ? presentationHostAllowed(host)
+      : presentationTenantAllowedForHost(params.tenant, host));
   const entry = presentationOk ? (await resolveTenant(params.tenant))?.entry ?? null : null;
   if (!entry) return new NextResponse('Not found', { status: 404, headers: NOINDEX });
   const t = entry.config;
@@ -46,10 +49,12 @@ export async function GET(req: Request, { params }: { params: { tenant: string }
       surface: t.branding.surface,
       ribbon: params.tenant === 'nemesis-fire'
         ? 'INSPECTION · TESTING · MAINTENANCE · REPAIR'
-        : `Private Xenco Labs concept preview for ${t.name}`,
-      footerLabel: params.tenant === 'nemesis-fire' ? '707-353-4600' : undefined,
+        : params.tenant === 'jacksons-paving'
+          ? 'PAVING · REPAIR · SEALCOATING · STRIPING'
+          : t.site.serviceAreas.slice(0, 3).join(' · ').toUpperCase(),
+      footerLabel: presentationOk ? (params.tenant === 'nemesis-fire' ? '707-353-4600' : t.phone) : undefined,
       points: t.site.credibility,
     },
-    params.tenant === 'nemesis-fire' ? {} : NOINDEX,
+    presentationOk ? {} : NOINDEX,
   );
 }
