@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from '@neondatabase/serverless'
 import { createHash, randomUUID } from 'node:crypto'
 import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
+import { getCaller } from '@/lib/local-os/auth'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -240,6 +241,7 @@ export async function POST(request: NextRequest) {
       items[item.id] = { result, comment }
     }
     const signedCopy = body.signedCopy === true
+    if (signedCopy && !(await getCaller())) return NextResponse.json({ detail: 'Sign in with an authorized Nemesis admin account to create a signed copy.' }, { status: 403 })
     const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
     if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'The signed-report signature is not configured on this server.' }, { status: 503 })
     if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy.' }, { status: 400 })
