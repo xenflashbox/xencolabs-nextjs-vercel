@@ -30,8 +30,10 @@ export interface ShareCard {
   accent: string;
   /** Dark base colour. */
   surface: string;
-  /** Amber ribbon text along the bottom (the preview label). */
+  /** Short service or preview label displayed in the amber footer. */
   ribbon: string;
+  /** Optional right side of the footer; defaults to Xenco Labs. */
+  footerLabel?: string;
   /** Short bullets for a right-hand panel when there is no photo. */
   points?: string[];
 }
@@ -129,7 +131,7 @@ export async function renderShareCard(c: ShareCard, headers: Record<string, stri
           }}
         >
           <div style={{ display: 'flex' }}>{clip(c.ribbon, 70)}</div>
-          <div style={{ display: 'flex' }}>Xenco Labs</div>
+          <div style={{ display: 'flex' }}>{clip(c.footerLabel ?? 'Xenco Labs', 32)}</div>
         </div>
       </div>
     ),
