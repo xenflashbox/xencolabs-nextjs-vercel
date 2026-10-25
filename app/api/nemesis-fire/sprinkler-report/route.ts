@@ -149,7 +149,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(95, 113, values.cityStateZip)
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
   p += place(77, 25, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
-  const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
+  const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]] as const
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
   p += place(112.6, 723.5, values.technicianName)
