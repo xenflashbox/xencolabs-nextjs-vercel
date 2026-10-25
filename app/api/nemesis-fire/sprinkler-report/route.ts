@@ -21,6 +21,17 @@ const VALUE_LIMITS: Record<string, number> = {
 }
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
+const safeJobFailure = (value: unknown) => typeof value === 'string'
+  ? value
+      .replace(/data:[^;]+;base64,[A-Za-z0-9+/=]+/gi, '[embedded asset]')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, '[email]')
+      .replace(/\\+?\\d[\\d ().-]{7,}\\d/g, '[phone]')
+      .replace(/[\\u0000-\\u001f\\u007f]/g, ' ')
+      .replace(/\\s+/g, ' ')
+      .trim()
+      .slice(0, 240)
+  : ''
 
 const AES_TEMPLATE_BASE_URL = 'https://xencolabs.com/nemesis-fire/aes-template-library'
 
@@ -323,13 +334,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ detail: 'The document service could not confirm report generation (HTTP ' + jobResponse.status + '). Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 502 })
       }
 
-      const job = await jobResponse.json() as { status?: unknown; output_url?: unknown }
+      const job = await jobResponse.json() as { status?: unknown; output_url?: unknown; error_message?: unknown }
       if (job.status === 'completed') {
         completed = { status: 'completed', output_url: job.output_url }
         break
       }
       if (job.status === 'failed' || job.status === 'error') {
-        console.error('nemesis_document_service_job_failed', { reportId: saved.reportId })
+        console.error('nemesis_document_service_job_failed', { reportId: saved.reportId, jobId: accepted.job_id, failure: safeJobFailure(job.error_message) || 'No renderer error was returned' })
         return NextResponse.json({ detail: 'The document service could not generate the report. Your draft is saved.', reportId: saved.reportId, reportNumber: saved.reportNumber }, { status: 502 })
       }
       if (job.status !== 'pending' && job.status !== 'processing') {
