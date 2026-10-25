@@ -33,12 +33,14 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   const clean = isPresentationTenant(seg[1] ?? '')
   const legacy = seg[1] === 'os' && isPresentationTenant(seg[2] ?? '')
   const media = seg[1] === 'os-media' && (isPresentationTenant(seg[2] ?? '') || (seg[2] ?? '').startsWith('lp-')) && seg.length > 3
+  // Nemesis customer pages and the OG image are public; the office and report API stay token-gated.
+  const nemesisPublic = clean && seg[1] === 'nemesis-fire' && seg[2] !== 'office' && seg[2] !== 'api'
   // Local OS workflow-concept previews (/lp/<token>/…): token-addressed, noindex, sample data only.
   const lp = seg[1] === 'lp' && /^[A-Za-z0-9_-]{16,64}$/.test(seg[2] ?? '')
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
-  } else if (!PRESENTATION_TENANT || !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token'))) {
+  } else if (!PRESENTATION_TENANT || (!nemesisPublic && !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token')))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
   } else if (hasNemesisDemoAccess(url.searchParams.get('token'))) {
     // Redeem the share token once, then keep it in an HttpOnly cookie so internal links stay clean.
@@ -83,7 +85,7 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   } else {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
   }
-  res.headers.set('X-Robots-Tag', NOINDEX)
+  if (!nemesisPublic) res.headers.set('X-Robots-Tag', NOINDEX)
   return res
 }
 
