@@ -3,13 +3,16 @@ import { Pool } from '@neondatabase/serverless'
 import { createHash, randomUUID } from 'node:crypto'
 import { SPRINKLER_REPORT_ITEMS } from '@/lib/local-os/nemesis-fire/sprinkler-report-items'
 import { getCaller } from '@/lib/local-os/auth'
+import { hasNemesisDemoRequestAccess } from '@/lib/local-os/nemesis-fire/demo-access'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 const DOCS_BASE = (process.env.DOCUMENT_SERVICE_URL || 'https://docs.xencolabs.com').replace(/\/+$/, '')
-const ALLOWED_RESULTS = new Set(['', 'pass', 'fail', 'na'])
+const ALLOWED_RESULTS = new Set(['', 'pass', 'fail', 'na', 'yes', 'no'])
+const YES_NO_ITEM_KEYS = new Set(['1.28', '3.4', '3.6'])
+const COMMENTLESS_ITEM_KEYS = new Set(['1.7', '1.8', '1.19', '1.28', '2.1', '2.3', '3.4', '3.6'])
 const VALUE_LIMITS: Record<string, number> = {
   buildingName: 120, address: 180, cityStateZip: 120, contactName: 100, contactPhone: 40, contactEmail: 120,
   occupancy: 60, constructionType: 60, stories: 20, yearBuilt: 20, jobNumber: 60, performedBy: 100,
@@ -56,22 +59,28 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
     const value = items[key]?.result || ''
     return value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : ''
   }
-  const comment = (key: string) => items[key]?.comment || ''
+  const yesNoMark = (key: string, y: number, boxX: number, yesY = -4.5, noY = 4.5) => {
+    const value = items[key]?.result
+    if (value !== 'yes' && value !== 'no') return ''
+    return place(boxX, y + (value === 'yes' ? yesY : noY), '✔', { size: 7, width: 8, align: 'center', bold: true })
+  }
+  const comment = (key: string) => COMMENTLESS_ITEM_KEYS.has(key) ? '' : items[key]?.comment || ''
   const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
-    const note = key === '1.7' ? values.waterSupplyBelow || comment(key)
-      : key === '1.8' ? values.waterSupplyAbove || comment(key)
-      : key === '2.3' && values.waterflowTime ? values.waterflowTime : comment(key)
+    const note = key === '1.7' ? values.waterSupplyBelow
+      : key === '1.8' ? values.waterSupplyAbove
+      : key === '2.3' ? values.waterflowTime : comment(key)
     const row = items[key]
     let html = row?.result || note ? place(dateX, y, date, { size: 9, width: 46, align: 'center' }) : ''
     if (key === '1.7' || key === '1.8') {
-      html += place(461, y, note, { size: 9, width: 18, align: 'center' })
-      if (note) html += place(516, y + 1, 'psi', { size: 8, width: 15, align: 'center' })
+      html += place(459, y, note, { size: 9, width: 28, align: 'center' })
     } else if (key === '2.3') {
-      html += place(457, y, note, { size: 9, width: 20, align: 'center' })
+      html += place(457, y, note, { size: 9, width: 25, align: 'center' })
+    } else if (YES_NO_ITEM_KEYS.has(key)) {
+      html += yesNoMark(key, y, key === '1.28' ? 498 : 510)
     } else {
-      html += wrapped(commentsX, y + 1, note, commentsWidth, commentsHeight, 7.5)
+      html += wrapped(commentsX + 4, y + 1, note, commentsWidth - 8, commentsHeight - 2, 7.5)
     }
-    html += place(resultX, y, result(key), { size: 9, width: 34, align: 'center' })
+    if (!YES_NO_ITEM_KEYS.has(key)) html += place(resultX, y, result(key), { size: 9, width: 34, align: 'center' })
     return html
   }
 
@@ -98,8 +107,9 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(327, 337, 'X', { size: 8, bold: true })
   p += place(376, 509, '1', { size: 9, width: 16, align: 'center' })
   p += place(31, 509, '✔', { size: 9 })
-  const statuses = Object.values(items).map(x => x.result).filter(Boolean)
-  const overall = statuses.length === Object.keys(items).length
+  const resultItems = SPRINKLER_REPORT_ITEMS.filter(item => !YES_NO_ITEM_KEYS.has(item.id))
+  const statuses = resultItems.map(item => items[item.id]?.result || '').filter(Boolean)
+  const overall = statuses.length === resultItems.length
     ? statuses.includes('fail') ? 'Fail' : statuses.every(x => x === 'na') ? 'N/A' : 'Pass'
     : ''
   if (overall === 'Pass') p += place(542, 508, '✔', { size: 9 })
@@ -175,7 +185,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   })
   pages.push(p + close())
 
-  return '<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:8.5in;font-family:Arial,Helvetica,sans-serif;color:#111}.page{position:relative;width:8.5in;height:11in;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.background{position:absolute;inset:0;width:8.5in;height:11in}.signature{position:absolute;z-index:2;left:149px;top:984px;width:150px;height:26px;object-fit:contain;object-position:left center}.text,.wrap{position:absolute;z-index:1;line-height:1.05;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;font-weight:400}.wrap{white-space:normal;line-height:1.05;overflow:hidden}</style></head><body>' + pages.join('') + '</body></html>'
+  return '<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:8.5in;font-family:Arial,Helvetica,sans-serif;color:#111}.page{position:relative;width:8.5in;height:11in;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.background{position:absolute;inset:0;width:8.5in;height:11in}.signature{position:absolute;z-index:2;left:149px;top:984px;width:150px;height:26px;object-fit:contain;object-position:left center}.text,.wrap{position:absolute;z-index:1;line-height:1.05;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;font-weight:400}.wrap{white-space:normal;line-height:1.05;overflow:hidden;display:flex;align-items:center;text-align:left}</style></head><body>' + pages.join('') + '</body></html>'
 }
 
 async function loadAesTemplateImages() {
@@ -212,7 +222,10 @@ async function persistGeneratedReport(values: Record<string, string>, items: Rec
     const rows = await client.query('SELECT item_key,section,item_number,item_kind,description,code_reference FROM nemesis_fire.report_template_items WHERE template_id=$1 ORDER BY sort_order', [template.rows[0].id])
     for (const row of rows.rows) {
       const input = items[row.item_key] || { result: '', comment: '' }
-      await client.query('INSERT INTO nemesis_fire.report_checklist_items (report_id,item_key,section,item_number,item_kind,description,code_reference,performed_on,result,comment) VALUES ($1,$2,$3,$4,$5,$6,$7,$8::date,$9,$10)', [reportId,row.item_key,row.section,row.item_number,row.item_kind,row.description,row.code_reference,values.testDate,input.result,input.comment])
+      // The complete Yes/No response is stored in report_values JSONB; the existing
+      // checklist result column intentionally remains limited to P/F/N/A.
+      const result = input.result === 'yes' || input.result === 'no' ? '' : input.result
+      await client.query('INSERT INTO nemesis_fire.report_checklist_items (report_id,item_key,section,item_number,item_kind,description,code_reference,performed_on,result,comment) VALUES ($1,$2,$3,$4,$5,$6,$7,$8::date,$9,$10)', [reportId,row.item_key,row.section,row.item_number,row.item_kind,row.description,row.code_reference,values.testDate,result,input.comment])
     }
     await client.query('INSERT INTO nemesis_fire.report_risers (report_id,riser_number,location,riser_diameter,main_drain_diameter,initial_static_pressure,residual_pressure,final_static_pressure) VALUES ($1,1,$2,$3,$4,$5,$6,$7)', [reportId,values.riserLocation || null,values.riserDiameter || null,values.mainDrainDiameter || null,values.initialStatic || null,values.residualPressure || null,values.finalStatic || null])
     await client.query('INSERT INTO nemesis_fire.report_documents (report_id,revision,document_service_job_id,file_name,sha256,pdf_bytes) VALUES ($1,1,$2,$3,$4,$5)', [reportId,jobId,'nemesis-fire-sprinkler-inspection-' + reportNumber + '.pdf',createHash('sha256').update(pdf).digest('hex'),Buffer.from(pdf)])
@@ -244,18 +257,24 @@ export async function POST(request: NextRequest) {
     for (const key of ['buildingName', 'address', 'cityStateZip', 'testDate']) {
       if (!values[key]?.trim()) return NextResponse.json({ detail: 'Complete the required property and inspection date fields.' }, { status: 400 })
     }
+    for (const key of ['waterSupplyBelow', 'waterSupplyAbove', 'waterflowTime']) {
+      if (values[key] && !/^\d+(?:\.\d+)?$/.test(values[key].trim())) return NextResponse.json({ detail: 'Enter only a numeric value for PSI and seconds fields.' }, { status: 400 })
+    }
     values.systemType = ['Wet Pipe', 'Dry Pipe', 'Pre-action', 'Deluge', 'Other / not specified'].includes(String(body.values?.systemType)) ? String(body.values?.systemType) : 'Other / not specified'
     if (values.systemType !== 'Wet Pipe') return NextResponse.json({ detail: 'The current generated form is the official AES 2.2 five-year Wet Pipe form. Select Wet Pipe; other system forms are being mapped before they can be generated.' }, { status: 400 })
     if (body.signedCopy !== undefined && typeof body.signedCopy !== 'boolean') return NextResponse.json({ detail: 'Invalid report completion status.' }, { status: 400 })
+    const previewDemoAuthorized = hasNemesisDemoRequestAccess(request.headers.get('host'), request.cookies.get('nemesis_demo_access')?.value)
+    if (!previewDemoAuthorized && !(await getCaller())) return NextResponse.json({ detail: 'Open this report from the private Nemesis preview link or sign in to the Nemesis office portal.' }, { status: 403 })
     const items: Record<string, { result: string; comment: string }> = {}
     for (const item of SPRINKLER_REPORT_ITEMS) {
       const input = body.items?.[item.id] as { result?: unknown; comment?: unknown } | undefined
-      const result = typeof input?.result === 'string' && ALLOWED_RESULTS.has(input.result) ? input.result : ''
-      const comment = typeof input?.comment === 'string' ? input.comment.slice(0, 240).replace(/[\u0000-\u001f\u007f]/g, ' ') : ''
+      const allowedForItem = YES_NO_ITEM_KEYS.has(item.id) ? new Set(['', 'yes', 'no']) : new Set(['', 'pass', 'fail', 'na'])
+      const result = typeof input?.result === 'string' && ALLOWED_RESULTS.has(input.result) && allowedForItem.has(input.result) ? input.result : ''
+      const comment = COMMENTLESS_ITEM_KEYS.has(item.id) ? '' : typeof input?.comment === 'string' ? input.comment.slice(0, 240).replace(/[\u0000-\u001f\u007f]/g, ' ') : ''
       items[item.id] = { result, comment }
     }
     const signedCopy = body.signedCopy === true
-    if (signedCopy && !(await getCaller())) return NextResponse.json({ detail: 'Sign in with an authorized Nemesis admin account to create a signed copy.' }, { status: 403 })
+    if (signedCopy && !previewDemoAuthorized && !(await getCaller())) return NextResponse.json({ detail: 'Sign in with an authorized Nemesis admin account to create a signed copy.' }, { status: 403 })
     const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
     if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'The signed-report signature is not configured on this server.' }, { status: 503 })
     if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy.' }, { status: 400 })
