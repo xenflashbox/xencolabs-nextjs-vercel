@@ -14,7 +14,7 @@ const VALUE_LIMITS: Record<string, number> = {
   occupancy: 60, constructionType: 60, stories: 20, yearBuilt: 20, jobNumber: 60, performedBy: 100,
   testDate: 20, systemType: 40, riserCount: 20, riserLocation: 120, riserDiameter: 30, mainDrainDiameter: 30,
   initialStatic: 30, residualPressure: 30, finalStatic: 30, waterSupplyBelow: 30, waterSupplyAbove: 30,
-  waterflowTime: 30, technicianName: 100, deficiencies: 2500,
+  waterflowTime: 30, technicianName: 100, technicianSignature: 120, deficiencies: 2500,
 }
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
@@ -47,7 +47,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   html += footer(3) + '</section>'
   html += '<section class="page">' + brand(field(values, 'buildingName') + ' · Job ' + field(values, 'jobNumber')) + '<p class="title">Maintenance, Deficiencies, and Technician Review</p><p class="subtitle">Inspection record · ' + date + '</p>'
   html += '<div class="section">Annual maintenance items</div><table>' + tableHead + '<tbody>' + itemTable('maintenance') + '</tbody></table><div class="section">Deficiencies and comments</div><div class="box" style="min-height:70px;white-space:pre-wrap">' + field(values, 'deficiencies') + '</div>'
-  html += '<div class="section">Technician review</div><div class="box"><p>This sample record is not a certification, code-compliance determination, customer report, or AHJ filing. The responsible licensed contractor must review the completed inspection and execute the final report.</p><div class="grid"><div>' + boxField('Print name', field(values, 'technicianName')) + '<div class="sign"></div><span class="small">Technician signature (not applied in preview)</span></div><div>' + boxField('Date', date) + '<div class="sign"></div><span class="small">Date</span></div></div></div>' + footer(4) + '</section></body></html>'
+  html += '<div class="section">Technician review</div><div class="box"><p>This sample record is not a certification, code-compliance determination, customer report, or AHJ filing. The responsible licensed contractor must review the completed inspection and execute the final report.</p><div class="grid"><div>' + boxField('Print name', field(values, 'technicianName')) + '<div class="sign">' + esc(values.technicianSignature || '') + '</div><span class="small">Typed signature (sample only; not a verified electronic signature)</span>'</div><div>' + boxField('Date', date) + '<div class="sign"></div><span class="small">Date</span></div></div></div>' + footer(4) + '</section></body></html>'
   return html
 }
 
