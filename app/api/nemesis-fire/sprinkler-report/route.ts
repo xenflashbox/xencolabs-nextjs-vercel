@@ -172,7 +172,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
   p += place(386.9, 80, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
   p += place(438.1, 80, 'FIRE', { size: 9, bold: true, color: '#D10505' })
-  const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]] as const
+  const page4Rows: Array<[string, number]> = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
   p += place(112.6, 723.5, values.technicianName)
