@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  experimental: {
+    typedRoutes: true,
+    // Link-preview cards read their bundled fonts from disk at request time.
+    outputFileTracingIncludes: {
+      '/lp/[token]/share-image': ['./lib/local-os/og/fonts/**'],
+      '/os/[tenant]/share-image': ['./lib/local-os/og/fonts/**'],
+    },
+  },
 
   // Payload CMS media hosts for the blog (featured images, hero images,
   // author avatars, editorial image blocks). See the payload-blog-template
@@ -20,6 +27,18 @@ const nextConfig = {
   // underlying static files. With trailingSlash=false (the default) Next
   // canonicalises to the no-slash form, so we only rewrite the no-slash URLs;
   // /tools/ and /tools/:slug/ get 308'd to these by Next automatically.
+  // Local OS tenant previews and their media are never indexed (also noindex meta + robots.txt).
+  async headers() {
+    const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, noimageindex' }];
+    return [
+      // Keep tenant presentations out of search results without affecting the XencoLabs corporate site.
+      { source: '/nemesis-fire/:path*', headers: noindex },
+      { source: '/os/nemesis-fire/:path*', headers: noindex },
+      { source: '/os/:path*', headers: noindex },
+      { source: '/os-media/:path*', headers: noindex },
+    ];
+  },
+
   async rewrites() {
     return [
       { source: '/tools/:slug', destination: '/tools/:slug/index.html' },
