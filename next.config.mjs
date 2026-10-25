@@ -27,13 +27,11 @@ const nextConfig = {
   // underlying static files. With trailingSlash=false (the default) Next
   // canonicalises to the no-slash form, so we only rewrite the no-slash URLs;
   // /tools/ and /tools/:slug/ get 308'd to these by Next automatically.
-  // Local OS tenant previews and their media are never indexed (also noindex meta + robots.txt).
+  // Other tenant previews remain excluded from search; the Nemesis customer site is public.
   async headers() {
     const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, noimageindex' }];
-    const nemesisNoindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }];
     return [
-      // Keep tenant presentations out of search results without affecting the XencoLabs corporate site.
-      { source: '/nemesis-fire/:path*', headers: nemesisNoindex },
+      // Keep non-Nemesis tenant previews out of search results without affecting the XencoLabs corporate site.
       { source: '/os/nemesis-fire/:path*', headers: noindex },
       { source: '/os/:path*', headers: noindex },
       { source: '/os-media/:path*', headers: noindex },
