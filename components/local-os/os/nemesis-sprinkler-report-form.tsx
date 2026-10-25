@@ -61,6 +61,7 @@ export function SprinklerReportForm() {
     technicianName: '',
   })
   const [items, setItems] = useState<Record<string, ItemValue>>({})
+  const [signedCopy, setSignedCopy] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [pdfUrl, setPdfUrl] = useState('')
@@ -84,7 +85,7 @@ export function SprinklerReportForm() {
       const response = await fetch('/api/nemesis-fire/sprinkler-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values, items }),
+        body: JSON.stringify({ values, items, signedCopy }),
       })
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}))
@@ -159,6 +160,10 @@ export function SprinklerReportForm() {
         </label>
         <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">{FIELDS[23].label}
           <input value={values.technicianName ?? ''} onChange={(e) => setField('technicianName', e.target.value)} className={INPUT} />
+        </label>
+        <label className="mt-4 flex items-start gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={signedCopy} onChange={(e) => setSignedCopy(e.target.checked)} className="mt-1" />
+          <span>Inspection is complete and Alex Ruiz authorized his signature on this final report.</span>
         </label>
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3">

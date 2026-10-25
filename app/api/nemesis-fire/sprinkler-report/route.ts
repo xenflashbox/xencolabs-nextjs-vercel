@@ -33,7 +33,7 @@ const printDate = (value: string) => {
   return match ? match[2] + '/' + match[3] + '/' + match[1].slice(-2) : value
 }
 
-function buildHtml(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, templateImages: string[]) {
+function buildHtml(values: Record<string, string>, items: Record<string, { result: string; comment: string }>, templateImages: string[], signedCopy: boolean, signaturePng: string) {
   const scale = 4 / 3
   const place = (x: number, y: number, raw: unknown, opts: { size?: number; width?: number; align?: 'left' | 'center' | 'right'; bold?: boolean; italic?: boolean; color?: string } = {}) => {
     const text = String(raw ?? '')
@@ -150,6 +150,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(77, 25, values.systemType || 'Wet Pipe', { size: 9, bold: true, color: '#ffffff' })
   const page4Rows = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
+  if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
   p += place(112.6, 723.5, values.technicianName)
   p += place(496.4, 740.3, date)
   const deficiencyLines = (values.deficiencies || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean)
@@ -159,7 +160,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   })
   pages.push(p + close())
 
-  return '<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:8.5in;font-family:Arial,Helvetica,sans-serif;color:#111}.page{position:relative;width:8.5in;height:11in;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.background{position:absolute;inset:0;width:8.5in;height:11in}.text,.wrap{position:absolute;z-index:1;line-height:1.05;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;font-weight:400}.wrap{white-space:normal;line-height:1.05;overflow:hidden}</style></head><body>' + pages.join('') + '</body></html>'
+  return '<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;width:8.5in;font-family:Arial,Helvetica,sans-serif;color:#111}.page{position:relative;width:8.5in;height:11in;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.background{position:absolute;inset:0;width:8.5in;height:11in}.signature{position:absolute;z-index:2;left:149px;top:984px;width:150px;height:26px;object-fit:contain;object-position:left center}.text,.wrap{position:absolute;z-index:1;line-height:1.05;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;font-weight:400}.wrap{white-space:normal;line-height:1.05;overflow:hidden}</style></head><body>' + pages.join('') + '</body></html>'
 }
 
 async function loadAesTemplateImages() {
@@ -218,7 +219,7 @@ export async function POST(request: NextRequest) {
   try {
     const raw = await request.text()
     if (raw.length > 32_000) return NextResponse.json({ detail: 'Report input is too large.' }, { status: 413 })
-    const body = JSON.parse(raw) as { values?: Record<string, unknown>; items?: Record<string, unknown> }
+    const body = JSON.parse(raw) as { values?: Record<string, unknown>; items?: Record<string, unknown>; signedCopy?: unknown }
     const values: Record<string, string> = {}
     for (const [key, max] of Object.entries(VALUE_LIMITS)) {
       const candidate = body.values?.[key]
@@ -230,6 +231,7 @@ export async function POST(request: NextRequest) {
     }
     values.systemType = ['Wet Pipe', 'Dry Pipe', 'Pre-action', 'Deluge', 'Other / not specified'].includes(String(body.values?.systemType)) ? String(body.values?.systemType) : 'Other / not specified'
     if (values.systemType !== 'Wet Pipe') return NextResponse.json({ detail: 'The current generated form is the official AES 2.2 five-year Wet Pipe form. Select Wet Pipe; other system forms are being mapped before they can be generated.' }, { status: 400 })
+    if (body.signedCopy !== undefined && typeof body.signedCopy !== 'boolean') return NextResponse.json({ detail: 'Invalid report completion status.' }, { status: 400 })
     const items: Record<string, { result: string; comment: string }> = {}
     for (const item of SPRINKLER_REPORT_ITEMS) {
       const input = body.items?.[item.id] as { result?: unknown; comment?: unknown } | undefined
@@ -237,6 +239,11 @@ export async function POST(request: NextRequest) {
       const comment = typeof input?.comment === 'string' ? input.comment.slice(0, 240).replace(/[\u0000-\u001f\u007f]/g, ' ') : ''
       items[item.id] = { result, comment }
     }
+    const signedCopy = body.signedCopy === true
+    const signaturePng = process.env.NEMESIS_ALEX_RUIZ_SIGNATURE_PNG_BASE64 || ''
+    if (signedCopy && !signaturePng) return NextResponse.json({ detail: 'The signed-report signature is not configured on this server.' }, { status: 503 })
+    if (signedCopy && !['alex ruiz', 'alejandro ruiz'].includes(values.technicianName.trim().toLowerCase())) return NextResponse.json({ detail: 'Enter Alex Ruiz as the signing technician before creating a signed copy.' }, { status: 400 })
+    if (signedCopy && Object.values(items).some((item) => !item.result)) return NextResponse.json({ detail: 'Complete every checklist result before creating the signed copy.' }, { status: 400 })
     const apiKey = process.env.DOCUMENT_SERVICE_API_KEY
     if (!apiKey) return NextResponse.json({ detail: 'Document generation is not configured.' }, { status: 503 })
 
@@ -246,7 +253,7 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(15_000),
       headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-API-Key': apiKey },
       body: JSON.stringify({
-        html: buildHtml(values, items, await loadAesTemplateImages()),
+        html: buildHtml(values, items, await loadAesTemplateImages(), signedCopy, signaturePng),
         output_format: 'pdf',
         app_name: 'nemesis-fire',
         metadata: {
