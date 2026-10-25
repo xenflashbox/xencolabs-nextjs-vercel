@@ -18,22 +18,18 @@ const VALUE_LIMITS: Record<string, number> = {
 }
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
-const resultLabel = (value: string) => value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : '—'
-const safeDate = (value: string) => esc(value || '—')
-const field = (values: Record<string, string>, key: string) => esc(values[key] || '—')
-const boxField = (label: string, value: string) => '<div class="field"><b>' + esc(label) + '</b>' + value + '</div>'
 
 const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-template'
 
 const coverValues = (values: Record<string, string>) => {
   const cityStateZip = values.cityStateZip || ''
-  const zip = cityStateZip.match(/\\b(\\d{5}(?:-\\d{4})?)\\s*$/)?.[1] || ''
+  const zip = cityStateZip.match(/\b(\d{5}(?:-\d{4})?)\\s*$/)?.[1] || ''
   const city = zip ? cityStateZip.slice(0, cityStateZip.lastIndexOf(zip)).replace(/[ ,]+$/, '') : cityStateZip
   return { city, zip }
 }
 
 const printDate = (value: string) => {
-  const match = value.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/)
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
   return match ? match[2] + '/' + match[3] + '/' + match[1].slice(-2) : value
 }
 
@@ -62,10 +58,17 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   const comment = (key: string) => items[key]?.comment || ''
   const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
     let html = place(dateX, y, date, { size: 9, width: 46, align: 'center' })
-    const note = key === '1.7' ? values.waterSupplyBelow ? values.waterSupplyBelow + ' psi' : comment(key)
-      : key === '1.8' ? values.waterSupplyAbove ? values.waterSupplyAbove + ' psi' : comment(key)
-      : key === '2.3' && values.waterflowTime ? values.waterflowTime + ' sec.' : comment(key)
-    html += wrapped(commentsX, y + 1, note, commentsWidth, commentsHeight, 7.5)
+    const note = key === '1.7' ? values.waterSupplyBelow || comment(key)
+      : key === '1.8' ? values.waterSupplyAbove || comment(key)
+      : key === '2.3' && values.waterflowTime ? values.waterflowTime : comment(key)
+    if (key === '1.7' || key === '1.8') {
+      html += place(461, y, note, { size: 9, width: 18, align: 'center' })
+      if (note) html += place(516, y + 1, 'psi', { size: 8, width: 15, align: 'center' })
+    } else if (key === '2.3') {
+      html += place(457, y, note, { size: 9, width: 20, align: 'center' })
+    } else {
+      html += wrapped(commentsX, y + 1, note, commentsWidth, commentsHeight, 7.5)
+    }
     html += place(resultX, y, result(key), { size: 9, width: 34, align: 'center' })
     return html
   }
@@ -144,7 +147,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   p += place(112.6, 723.5, values.technicianName)
   p += place(496.4, 740.3, date)
-  const deficiencyLines = (values.deficiencies || '').split(/\\r?\\n/).map(x => x.trim()).filter(Boolean)
+  const deficiencyLines = (values.deficiencies || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean)
   if (deficiencyLines.length > 14) throw new Error('Use no more than 14 deficiency lines so each entry fits the supplied form.')
   deficiencyLines.forEach((line, index) => {
     p += wrapped(178, 402 + index * 15.4, line, 397, 14, 8)
