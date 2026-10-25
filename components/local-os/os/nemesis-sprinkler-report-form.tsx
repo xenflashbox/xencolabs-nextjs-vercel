@@ -59,7 +59,6 @@ export function SprinklerReportForm() {
     riserDiameter: '',
     mainDrainDiameter: '',
     technicianName: '',
-    technicianSignature: '',
   })
   const [items, setItems] = useState<Record<string, ItemValue>>({})
   const [busy, setBusy] = useState(false)
@@ -102,9 +101,6 @@ export function SprinklerReportForm() {
 
   return (
     <form onSubmit={submit} className="space-y-6">
-      <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        <strong>Sample client record.</strong> The PDF is marked as a sample and is not a certification or AHJ filing.
-      </div>
       <section className="rounded-xl border border-slate-200 bg-white p-4">
         <h2 className="text-base font-semibold">Property and visit</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -164,10 +160,6 @@ export function SprinklerReportForm() {
         <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">{FIELDS[23].label}
           <input value={values.technicianName ?? ''} onChange={(e) => setField('technicianName', e.target.value)} className={INPUT} />
         </label>
-        <label className="mt-3 block max-w-md text-xs font-medium text-slate-600">Typed signature (sample only)
-          <input value={values.technicianSignature ?? ''} onChange={(e) => setField('technicianSignature', e.target.value)} className={INPUT} maxLength={120} />
-        </label>
-        <p className="mt-2 text-xs text-slate-500">Shown as typed in this sample PDF; it is not a verified electronic signature or certification.</p>
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-slate-500">{itemCount} of {SPRINKLER_REPORT_ITEMS.length} checklist results recorded</p>
@@ -178,7 +170,7 @@ export function SprinklerReportForm() {
       {error ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p> : null}
       {pdfUrl ? (
         <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-950">
-          PDF generated. <a href={pdfUrl} target="_blank" rel="noreferrer" className="font-semibold underline">Open or download the sample report</a>
+          PDF generated. <a href={pdfUrl} target="_blank" rel="noreferrer" className="font-semibold underline">Open or download the inspection report</a>
         </div>
       ) : null}
     </form>
