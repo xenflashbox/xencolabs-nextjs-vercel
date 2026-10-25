@@ -165,7 +165,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
 async function loadAesTemplateImages() {
   const pages = ['aes-1-1', 'aes-2-2-1', 'aes-2-2-2', 'aes-2-2-3']
   return Promise.all(pages.map(async page => {
-    const response = await fetch(AES_TEMPLATE_BASE_URL + '/' + page + '.opt.png', {
+    const response = await fetch(AES_TEMPLATE_BASE_URL + '/' + page + '.png', {
       method: 'GET',
       cache: 'force-cache',
       signal: AbortSignal.timeout(10_000),
