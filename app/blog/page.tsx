@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { MarketingLayout } from '@/components/layout/marketing-layout'
 import { BlogCard } from '@/components/blog/BlogCard'
 import {
-  fetchLatestArticles,
+  fetchPublishedArticles,
   getArticlePublishedDate,
   getMediaUrlOrNull,
   type Article,
@@ -28,7 +28,7 @@ function toCardCategories(article: Article) {
 }
 
 export default async function BlogIndexPage() {
-  const articles = await fetchLatestArticles({ limit: 24 })
+  const articles = await fetchPublishedArticles()
   const [featured, ...rest] = articles
 
   return (
