@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: { tenant: string } 
     metadataBase: new URL(origin),
     title: { absolute: nemesis ? 'Nemesis Fire | Fire Protection Services' : `${t.name} · private preview` },
     description,
-    robots: ROBOTS,
+    robots: nemesis ? { index: true, follow: true } : ROBOTS,
     icons: { icon: [{ url: icon, type: icon.endsWith('.svg') ? 'image/svg+xml' : 'image/png' }], apple: [{ url: icon }] },
     openGraph: { type: 'website', siteName: nemesis ? 'Nemesis Fire' : 'Xenco Labs', url: base, title, description, images: [image] },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
