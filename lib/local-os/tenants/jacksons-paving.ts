@@ -34,6 +34,7 @@ export const JACKSONS_PAVING: TenantConfig = {
   phone: '(707) 843-7248',
   region: 'Santa Rosa · Sonoma County · North Bay',
   established: null,
+  aiDemo: false,
   verticalKey: COMMERCIAL_PAVING.key,
   // Orange and charcoal from the public logo and website (#F76103 accent).
   branding: {
