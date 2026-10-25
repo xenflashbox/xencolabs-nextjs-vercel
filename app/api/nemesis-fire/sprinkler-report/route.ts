@@ -19,7 +19,7 @@ const VALUE_LIMITS: Record<string, number> = {
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c)
 
-const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-template'
+const AES_TEMPLATE_BASE_URL = 'https://preview.xencolabs.com/nemesis-fire/aes-template-library'
 
 const coverValues = (values: Record<string, string>) => {
   const cityStateZip = values.cityStateZip || ''
@@ -84,8 +84,15 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 119, values.constructionType)
   p += place(350, 140, values.stories)
   p += place(350, 161, values.yearBuilt)
+  p += place(98, 275, 'NEMESIS FIRE', { size: 9, bold: true })
+  p += place(98, 296, 'P.O. Box 11651')
+  p += place(98, 318, 'Santa Rosa')
+  p += place(98, 340, 'California')
+  p += place(98, 362, '(707) 495-5051')
+  p += place(98, 383, '1036129')
   p += place(98, 402, values.jobNumber)
   p += place(98, 424, values.performedBy)
+  p += place(327, 337, 'X', { size: 8, bold: true })
   p += place(376, 509, '1', { size: 9, width: 16, align: 'center' })
   p += place(31, 509, '✔', { size: 9 })
   const statuses = Object.values(items).map(x => x.result).filter(Boolean)
@@ -156,9 +163,9 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
 }
 
 async function loadAesTemplateImages() {
-  const pages = [1, 2, 3, 4]
+  const pages = ['aes-1-1', 'aes-2-2-1', 'aes-2-2-2', 'aes-2-2-3']
   return Promise.all(pages.map(async page => {
-    const response = await fetch(AES_TEMPLATE_BASE_URL + '/aes-' + page + '.png', {
+    const response = await fetch(AES_TEMPLATE_BASE_URL + '/' + page + '.opt.png', {
       method: 'GET',
       cache: 'force-cache',
       signal: AbortSignal.timeout(10_000),
