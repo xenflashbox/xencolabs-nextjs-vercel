@@ -60,6 +60,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
     if (!text) return ''
     return '<span class="wrap" style="left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;width:' + (width * scale) + 'px;height:' + (height * scale) + 'px;font-size:' + (size * scale) + 'px">' + esc(text) + '</span>'
   }
+  const wordmark = (x: number, y: number, size = 9) => '<span style="position:absolute;z-index:1;left:' + (x * scale) + 'px;top:' + (y * scale - 1) + 'px;font-family:Arial,Helvetica,sans-serif;font-size:' + (size * scale) + 'px;font-weight:700;line-height:1;white-space:nowrap"><span style="color:#111">NEMESIS</span><span style="color:#D10505;margin-left:1px">FIRE</span></span>'
   const date = printDate(values.testDate || '')
   const { city, zip } = coverValues(values)
   const pages: string[] = []
@@ -70,12 +71,18 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
     return value === 'pass' ? 'P' : value === 'fail' ? 'F' : value === 'na' ? 'N/A' : ''
   }
   const riserResult = values.riserResult === 'pass' ? 'P' : values.riserResult === 'fail' ? 'F' : values.riserResult === 'na' ? 'N/A' : ''
-  const yesNoMark = (key: string, y: number, boxX: number, yesY = -1.5, noY = 8) => {
+  const yesNoMark = (key: string, y: number, boxX: number) => {
     const value = items[key]?.result
     if (value !== 'yes' && value !== 'no') return ''
-    const x = key === '1.28' ? (value === 'yes' ? boxX : boxX + 52) : boxX - 16
-    const verticalOffset = key === '1.28' ? yesY - 3 : value === 'yes' ? yesY : noY
-    return place(x, y + verticalOffset, '✔', { size: 9, width: 10, align: 'center', bold: true })
+    // Use vector geometry so font metrics cannot shift the mark outside its printed box.
+    const centerX = key === '1.28' ? boxX + (value === 'yes' ? 5 : 57) : 510
+    const centerY = key === '1.28' ? y - 0.5
+      : key === '3.4' ? y + (value === 'yes' ? -2.5 : 8.5)
+      : y + (value === 'yes' ? -4 : 7.5)
+    const size = 8.5 * scale
+    const left = centerX * scale - size / 2
+    const top = centerY * scale - size / 2
+    return '<svg aria-hidden="true" viewBox="0 0 16 16" style="position:absolute;z-index:2;left:' + left + 'px;top:' + top + 'px;width:' + size + 'px;height:' + size + 'px;overflow:visible"><path d="M2.2 8.3 6.2 12 13.8 3.8" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   }
   const comment = (key: string) => COMMENTLESS_ITEM_KEYS.has(key) ? '' : items[key]?.comment || ''
   const putRow = (key: string, y: number, dateX: number, resultX: number, commentsX = 425, commentsWidth = 105, commentsHeight = 13) => {
@@ -108,8 +115,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(350, 119, values.constructionType)
   p += place(350, 140, values.stories)
   p += place(350, 161, values.yearBuilt)
-  p += place(98, 275, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(135, 275, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += wordmark(98, 275)
   p += place(98, 296, 'P.O. Box 11651')
   p += place(98, 318, 'Santa Rosa')
   p += place(98, 340, 'California')
@@ -138,8 +144,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(91, 144, values.contactPhone)
   p += place(91, 164, values.contactEmail)
   p += place(385, 144, values.jobNumber)
-  p += place(385, 82, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(426, 82, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += wordmark(385, 82)
   p += place(385, 98, 'P.O. Box 11651', { size: 8.5 })
   p += place(385, 114, 'Santa Rosa', { size: 8.5 })
   p += place(488, 114, 'CA', { size: 8.5 })
@@ -169,8 +174,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(97, 96, values.address)
   p += place(96, 113, values.cityStateZip)
   p += place(383, 97, 'Job # ' + (values.jobNumber || ''))
-  p += place(383.5, 81, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(425.5, 81, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += wordmark(383.5, 81)
   const page3Rows = [
     ['1.17',202.5],['1.18',223.7],['1.19',244],['1.20',264.3],['1.21',284.6],['1.22',304.4],
     ['1.23',324.8],['1.24',344.8],['1.25',364.5],['1.26',385.4],['1.27',405.8],['1.28',425.5],
@@ -185,8 +189,7 @@ function buildHtml(values: Record<string, string>, items: Record<string, { resul
   p += place(96, 96, values.address)
   p += place(95, 113, values.cityStateZip)
   p += place(383, 95, 'Job # ' + (values.jobNumber || ''))
-  p += place(386.9, 80, 'NEMESIS', { size: 9, bold: true, color: '#111111' })
-  p += place(428, 80, 'FIRE', { size: 9, bold: true, color: '#D10505' })
+  p += wordmark(386.9, 80)
   const page4Rows: Array<[string, number]> = [['3.1',201.4],['3.2',219.4],['3.3',239.7],['3.4',263.2],['3.5',287.2],['3.6',311]]
   for (const [key, y] of page4Rows) p += putRow(key, y, 368.4, 541.3, 414, 123, 12)
   if (signedCopy) p += '<img class="signature" src="data:image/png;base64,' + signaturePng + '" alt="Alex Ruiz signature">'
