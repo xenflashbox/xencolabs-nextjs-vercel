@@ -28,6 +28,17 @@ const NOINDEX = 'noindex, nofollow, noarchive, noimageindex'
 async function presentation(req: NextRequest): Promise<NextResponse> {
   const { pathname, search } = req.nextUrl
   const url = req.nextUrl.clone()
+  // Accept the customer-facing Nemesis URL regardless of capitalization, then keep every
+  // internal route on the canonical lowercase slug. Preserve query parameters, including the
+  // one-time demo token, through the redirect.
+  const canonicalPath = pathname.replace(
+    /^\/(?:(os|os-media|api)\/)?nemesis-fire(?=\/|$)/i,
+    (_match, prefix: string | undefined) => '/' + (prefix ? prefix.toLowerCase() + '/' : '') + 'nemesis-fire',
+  )
+  if (canonicalPath !== pathname) {
+    url.pathname = canonicalPath
+    return NextResponse.redirect(url, 308)
+  }
   const seg = pathname.split('/')
   // /<slug>/…  ·  /os/<slug>/…  ·  /os-media/<slug>/…
   const host = req.headers.get('host')
@@ -45,8 +56,15 @@ async function presentation(req: NextRequest): Promise<NextResponse> {
   let res: NextResponse
   if (!presentationHostAllowed(req.headers.get('host'))) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
-  } else if (!PRESENTATION_TENANT || (!publicTenantPage && !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token')))) {
+  } else if (!PRESENTATION_TENANT) {
     res = new NextResponse('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } })
+  } else if (!publicTenantPage && !hasNemesisDemoAccess(req.cookies.get('nemesis_demo_access')?.value) && !hasNemesisDemoAccess(url.searchParams.get('token'))) {
+    // Office/report paths remain token-gated, but show a useful access message instead of a dead 404.
+    const home = `/${PRESENTATION_TENANT}`
+    res = new NextResponse(
+      `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>Private demo link required</title><body style="font:16px system-ui,sans-serif;max-width:42rem;margin:10vh auto;padding:0 1.25rem;color:#1f2937"><h1 style="font-size:1.7rem">This office demo needs its private link</h1><p>Open the original Nemesis Fire demo link first, then choose Office. The customer-facing site is still available below.</p><p><a href="${home}">Return to the customer site</a></p></body></html>`,
+      { status: 403, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } },
+    )
   } else if (hasNemesisDemoAccess(url.searchParams.get('token'))) {
     // Redeem the share token once, then keep it in an HttpOnly cookie so internal links stay clean.
     const token = url.searchParams.get('token') as string
@@ -152,7 +170,7 @@ export default clerkMiddleware((auth, req) => {
   const host = (req.headers.get('host') || '').split(':')[0].toLowerCase()
   const path = req.nextUrl.pathname
   const dedicatedPreviewHost = host === 'preview.xencolabs.com'
-  const nemesisSharePath = /^\/(?:nemesis-fire|os\/nemesis-fire|os-media\/nemesis-fire|api\/nemesis-fire)(?:\/|$)/.test(path)
+  const nemesisSharePath = /^\/(?:nemesis-fire|os\/nemesis-fire|os-media\/nemesis-fire|api\/nemesis-fire)(?:\/|$)/i.test(path)
   if (PRESENTATION_TENANT && presentationHostAllowed(host) && (dedicatedPreviewHost || nemesisSharePath)) return presentation(req)
 
   const localOsRoute = /^\/(?:os|os-media|api\/nemesis-fire)(?:\/|$)/.test(path)
